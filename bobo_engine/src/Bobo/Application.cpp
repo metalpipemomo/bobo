@@ -1,3 +1,4 @@
+#include "bobopch.h"
 #include "Application.h"
 
 namespace Bobo

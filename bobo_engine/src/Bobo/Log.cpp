@@ -1,3 +1,4 @@
+#include "bobopch.h"
 #include "Log.h"
 
 namespace Bobo

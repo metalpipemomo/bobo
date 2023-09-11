@@ -18,7 +18,10 @@ project "bobo_engine"
     language "C++"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    targetdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    pchheader "bobopch.h"
+    pchsource "bobo_engine/src/bobopch.cpp"
 
     files
     {
@@ -28,6 +31,7 @@ project "bobo_engine"
 
     includedirs
     {
+        "%{prj.name}/src",
         "%{prj.name}/vendor/spdlog/include"
     }
 
@@ -45,7 +49,6 @@ project "bobo_engine"
         postbuildcommands
         {
             ("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/bobo_game/\""),
-            ("{COPY} %{cfg.buildtarget.relpath} \"../bin-int/" .. outputdir .. "/bobo_game/\"")
         }
 
     filter "configurations:Debug"
@@ -67,7 +70,7 @@ project "bobo_game"
     language "C++"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    targetdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
     files
     {
