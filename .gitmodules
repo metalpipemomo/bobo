@@ -1,0 +1,3 @@
+[submodule "bobo_engine/vendor/spdlog"]
+	path = bobo_engine/vendor/spdlog
+	url = https://github.com/gabime/spdlog
