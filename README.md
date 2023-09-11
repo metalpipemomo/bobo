@@ -1,7 +1,27 @@
 # Bobo
 ## a game engine.
 
-Will add any necessary config steps here.
+## How to get started
+#### Step 1: Copy the following commands into your terminal.
+```bash
+git clone https://github.com/MoBaydoun/bobo.git
+gen
+```
+This should clone the project and generate a Visual Studio 2022 project.
+
+#### Step 2: Open the solution file.
+Double click on the following file.
+![image of bobo.sln](https://media.discordapp.net/attachments/308437507148742657/1150649088946208778/image.png?width=850&height=467)
+
+#### Step 3: Build and run the project.
+Click on the "Local Windows Debugger" button.
+![image of vs2022](https://cdn.discordapp.com/attachments/308437507148742657/1150649912866906232/image.png)
+
+### Congratulations! You can now start working on the engine 🎉
+If you run into any issues regarding spdlog, you might need to run the following command in your terminal:
+```bash
+git submodule update --init --recursive
+```
 
 ## Coding Conventions
 
