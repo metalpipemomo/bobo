@@ -62,3 +62,34 @@ private:
     static int* s_StaticPointerVariable; // static supersedes pointer. s -> p -> m
 }
 ```
+
+## Branching
+Now that you've made it this far and are ready to make some changes, start by creating your own branch.
+(P.S: when I use brackets, it is to show where to insert text, there should be no actual brackets)
+#### First, you want to make sure that you are on the right branch:
+```bash
+git branch
+```
+If you are on the **main** branch, then you are on the right track!
+Then, we will create our own branch with the following command:
+```bash
+git checkout -b [name of branch]
+```
+#### Branch Naming Conventions
+Just to keep our GitHub tidy and our commit history clean, the following naming conventions will be enforced:
+```bash
+feature/[feature-title-separated-by-hyphens]
+bugfix/[brief-bug-description-separated-by-hyphens]
+misc/[janitorial-changes-separated-by-hyphens]
+```
+The changes will be enforced by a git hook, so that should help you to avoid making any mistakes.
+Also, keep your name out of the branch name.
+
+#### Once you're done with your work, you can start a pull request:
+First, you need to add, commit, and push your changes.
+```bash
+git add *
+git commit -m "A descriptive message, providing an overview of the changes you are committing."
+git push origin [name of branch]
+```
+Then you can head over to our GitHub page and start click the green merge request button that appears at the top of the page.
