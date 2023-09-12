@@ -1,3 +1,6 @@
-[submodule "bobo_engine/vendor/spdlog"]
-	path = bobo_engine/vendor/spdlog
+[submodule "bobo_engine/external/GLFW"]
+	path = bobo_engine/external/GLFW
+	url = https://github.com/MoBaydoun/glfw
+[submodule "bobo_engine/external/spdlog"]
+	path = bobo_engine/external/spdlog
 	url = https://github.com/gabime/spdlog
