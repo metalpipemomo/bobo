@@ -16,6 +16,10 @@
 #include <unordered_map>
 #include <unordered_set>
 
+// Local
+
+#include "Bobo/Log.h"
+
 // Platform specific
 
 #ifdef BOBO_PLATFORM_WINDOWS

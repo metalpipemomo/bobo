@@ -11,6 +11,11 @@ workspace "Bobo"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+IncludeDir = {}
+IncludeDir["GLFW"] = "bobo_engine/external/GLFW/include"
+
+include "bobo_engine/external/GLFW"
+
 project "bobo_engine"
     location "bobo_engine"
     kind "SharedLib"
@@ -32,12 +37,19 @@ project "bobo_engine"
     includedirs
     {
         "%{prj.name}/src",
-        "%{prj.name}/vendor/spdlog/include"
+        "%{prj.name}/external/spdlog/include",
+        "%{IncludeDir.GLFW}"
+    }
+
+    links
+    {
+        "GLFW",
+        "opengl32.lib"
     }
 
     filter "system:windows"
         cppdialect "C++17"
-        staticruntime "On"
+        staticruntime "off"
         systemversion "latest"
 
         defines
@@ -48,7 +60,7 @@ project "bobo_engine"
 
         postbuildcommands
         {
-            ("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/bobo_game/\""),
+            ("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/bobo_game/\"")
         }
 
     filter "configurations:Debug"
@@ -80,18 +92,18 @@ project "bobo_game"
 
     includedirs
     {
-        "bobo_engine/vendor/spdlog/include",
-        "bobo_engine/src"
+        "bobo_engine/src",
+        "bobo_engine/external/spdlog/include",
     }
 
     links
     {
-        "bobo_engine"
+        "bobo_engine",
     }
 
     filter "system:windows"
         cppdialect "C++17"
-        staticruntime "On"
+        staticruntime "off"
         systemversion "latest"
 
         defines
