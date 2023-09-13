@@ -1,13 +1,12 @@
 #include <Bobo.h>
-
-#include <glm/glm.hpp>
+#include "../../bobo_engine/src/Bobo/ModelLoading/ModelLoader.h"
 
 class Game : public Bobo::Application
 {
 public:
 	Game()
 	{
-		glm::vec4 some = glm::vec4(0, 0, 0, 1);
+		Bobo::ModelLoader::GetInstance().LoadAllModels("src/Models");
 	}
 
 	~Game()
