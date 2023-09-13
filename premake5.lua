@@ -13,6 +13,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "bobo_engine/external/GLFW/include"
+IncludeDir["glm"] = "bobo_engine/external/glm"
 
 include "bobo_engine/external/GLFW"
 
@@ -38,7 +39,8 @@ project "bobo_engine"
     {
         "%{prj.name}/src",
         "%{prj.name}/external/spdlog/include",
-        "%{IncludeDir.GLFW}"
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.glm}"
     }
 
     links
@@ -94,6 +96,7 @@ project "bobo_game"
     {
         "bobo_engine/src",
         "bobo_engine/external/spdlog/include",
+        "%{IncludeDir.glm}"
     }
 
     links
