@@ -13,9 +13,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "bobo_engine/external/GLFW/include"
+IncludeDir["Glad"] = "bobo_engine/external/Glad/include"
 IncludeDir["glm"] = "bobo_engine/external/glm"
 
 include "bobo_engine/external/GLFW"
+include "bobo_engine/external/Glad"
 
 project "bobo_engine"
     location "bobo_engine"
@@ -40,12 +42,14 @@ project "bobo_engine"
         "%{prj.name}/src",
         "%{prj.name}/external/spdlog/include",
         "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Glad}",
         "%{IncludeDir.glm}"
     }
 
     links
     {
         "GLFW",
+        "Glad",
         "opengl32.lib"
     }
 
@@ -57,7 +61,8 @@ project "bobo_engine"
         defines
         {
             "BOBO_PLATFORM_WINDOWS",
-            "BOBO_BUILD_DLL"
+            "BOBO_BUILD_DLL",
+            "GLFW_INCLUDE_NONE"
         }
 
         postbuildcommands
