@@ -1,6 +1,8 @@
 #include "bobopch.h"
 #include "GameWindow.h"
 
+#include <glad/glad.h>
+
 namespace Bobo
 {
 	Window* Window::Create(const WindowProps& props)
@@ -30,6 +32,13 @@ namespace Bobo
 		BOBO_CORE_TRACE("Window successfully created...");
 
 		glfwMakeContextCurrent(p_Window);
+		
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+		{
+			BOBO_CORE_ERROR("Glad failed to initialize...");
+			return;
+		}
+		BOBO_CORE_TRACE("Glad initialized...");
 	}
 
 	GameWindow::~GameWindow()
