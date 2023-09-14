@@ -6,9 +6,6 @@ extern Bobo::Application* Bobo::CreateApplication();
 
 int main(int argc, char** argv)
 {
-	Bobo::Log::Init();
-	BOBO_CORE_TRACE("Logger initialized...");
-
 	auto app = Bobo::CreateApplication();
 	app->Run();
 	delete app;
