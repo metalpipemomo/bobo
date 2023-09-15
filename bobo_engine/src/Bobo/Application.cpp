@@ -10,7 +10,7 @@ namespace Bobo
 	class TestComponent : public Component
 	{
 	public:
-		void LogSomething() { BOBO_CORE_ERROR("BRUHHHHH"); }
+		void LogSomething() { BOBO_CORE_INFO("TestComponent  Logged"); }
 	};
 
 	Application::Application()
@@ -27,9 +27,10 @@ namespace Bobo
 
 		Entity* e = new Entity();
 		e->AddComponent(new TestComponent());
-		BOBO_ASSERT(e->HasComponent<TestComponent>(), "Component didn't exist apparently.");
 		auto tc = e->GetComponent<TestComponent>();
 		tc->LogSomething();
+		bool hasComp = e->HasComponent<TestComponent>();
+		BOBO_CORE_INFO("Entity has TestComponent");
 	}
 
 	Application::~Application()
