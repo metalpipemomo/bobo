@@ -6,7 +6,6 @@ public:
 	Game()
 	{
 		Bobo::ModelLoader::GetInstance().LoadAllModels("src/Models");
-		Log("Bruh");
 	}
 
 	~Game()
