@@ -7,6 +7,8 @@
 #include <utility>
 #include <algorithm>
 #include <functional>
+#include <stdexcept>
+#include <typeindex>
 
 // std Data Structures
 
@@ -19,6 +21,7 @@
 // Local
 
 #include "Bobo/Log.h"
+#include "Bobo/Macro.h"
 
 // Platform specific
 
