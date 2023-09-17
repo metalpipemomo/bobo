@@ -4,6 +4,7 @@
 
 namespace Bobo
 {
+
 	ModelLoader::ModelLoader()
 	{
 
