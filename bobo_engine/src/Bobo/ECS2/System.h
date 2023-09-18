@@ -5,7 +5,7 @@ namespace Bobo2
 	class System
 	{
 	public:
-		virtual ~System() = default;
+		virtual ~System() = 0;
 
 		virtual void Update() {}
 
