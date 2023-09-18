@@ -7,14 +7,8 @@ namespace Bobo2
 	public:
 		virtual ~System() = default;
 
-		void Update()
-		{
+		virtual void Update() {}
 
-		}
-
-		void FixedUpdate()
-		{
-
-		}
+		virtual void FixedUpdate() {}
 	};
 }

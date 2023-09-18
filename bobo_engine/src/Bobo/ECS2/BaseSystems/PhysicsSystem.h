@@ -2,16 +2,16 @@
 
 #include "Bobo/ECS2/System.h"
 
-namespace bobo2
+namespace Bobo2
 {
-	struct PhysicsSystem : public System
+	class PhysicsSystem : public System
 	{
-		void Update()
+		void Update() override
 		{
 
 		}
 
-		void FixedUpdate()
+		void FixedUpdate() override
 		{
 
 		}
