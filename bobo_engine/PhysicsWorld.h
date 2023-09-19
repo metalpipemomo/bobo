@@ -74,13 +74,13 @@ struct SphereCollider : Collider {
 		Vector3 direction = sphereTransform->position - transform->position; // get direction from point A to point B
 
 		float depth = std::sqrt(std::powf(direction.GetX(), 2) + std::powf(direction.GetY(), 2) + std::powf(direction.GetZ(), 2)); // Get length of the direction Vector
-		BOBO_CORE_INFO(std::to_string(depth));
+		BOBO_INFO(std::to_string(depth));
 		Vector3 normal = direction / depth; // Get Normal of the direction vector
 
 		// determine if the objects are colliding
 		// possibly change this so if they are not collding return null 
 		bool hasCollision = false;
-		BOBO_CORE_INFO(std::to_string(sphere->Radius));
+		BOBO_INFO(std::to_string(sphere->Radius));
 
 		if (depth <= 1 + sphere->Radius)
 			hasCollision = true;
@@ -220,13 +220,13 @@ public:
 		for (GameObject* obj : this->m_PhysicsObjects)
 		{
 			if (obj->hasGravity) {
-				BOBO_CORE_INFO("Velocity Y: " + std::to_string(dt));
+				BOBO_INFO("Velocity Y: " + std::to_string(dt));
 				obj->force = obj->force + (m_Gravity * obj->mass);
 
 				obj->velocity = obj->velocity + ((obj->force / obj->mass) * dt);
 				obj->transform->position = obj->transform->position + (obj->velocity * dt);
-				BOBO_CORE_INFO("Velocity Y: " + std::to_string(obj->velocity.GetY()));
-				BOBO_CORE_INFO("Position Y: " + std::to_string((obj->transform->position).GetY()));
+				BOBO_INFO("Velocity Y: " + std::to_string(obj->velocity.GetY()));
+				BOBO_INFO("Position Y: " + std::to_string((obj->transform->position).GetY()));
 
 				obj->force = Vector3(0, 0, 0);
 			}
@@ -253,7 +253,7 @@ public:
 
 				if (points.HasCollision)
 				{
-					BOBO_CORE_INFO("***********************************COLLISION OCCURED************************************");
+					BOBO_INFO("***********************************COLLISION OCCURED************************************");
 					collisions.emplace_back(Collision{ a, b, points });
 				}
 			}
