@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma once
-
 #include "bobopch.h"
 #include "Model.h"
 

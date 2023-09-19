@@ -20,6 +20,7 @@ namespace Bobo
 		// Testing Assert
 		BOBO_ASSERT(true, "This should print false");
 
+		// Testing ECS
 		Scene* s = new Scene();
 
 		auto entity = s->CreateEntity();
@@ -36,8 +37,6 @@ namespace Bobo
 
 		BOBO_INFO("ECS test complete");
 	}
-
-	Application::
 
 	Application::~Application()
 	{

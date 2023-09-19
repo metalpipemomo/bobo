@@ -160,9 +160,12 @@ namespace Bobo
 		{
 			if (dirEntry.path().extension() != ".obj") continue;
 			LoadNewModel(dirEntry.path().stem().generic_string(), dirEntry.path().generic_string());
+			count++;
 		}
 
-		return 0;
+		BOBO_INFO("ModelLoader Loaded {} Models from Directory {}", count, directory);
+
+		return count;
 	}
 
 	Model* ModelLoader::GetModel(std::string& identifier) 
@@ -173,12 +176,14 @@ namespace Bobo
 		// if the passed in identifier is contained in the map, return the associated Model
 		if (m_LoadedModels.count(identifier) == 1) 
 		{
-			// found
+			// Found
+			BOBO_INFO("Found Model with Identifier {}", identifier);
 			return m_LoadedModels.at(identifier);
 		}
 		else 
 		{
 			// not found
+			BOBO_WARN("No Model with Identifier {} has been Loaded", identifier);
 			return nullptr;
 		}
 	}
