@@ -20,10 +20,8 @@ namespace Bobo
 		// Testing Assert
 		BOBO_ASSERT(true, "This should print false");
 
-		TestECS();
+		// TestECS();
 	}
-
-	Application::
 
 	Application::~Application()
 	{
