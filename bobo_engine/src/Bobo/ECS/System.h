@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Bobo2
+namespace Bobo
 {
 	class System
 	{

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Bobo/ECS2/EntityManager.h"
-#include "Bobo/ECS2/Component.h"
+#include "Bobo/ECS/EntityManager.h"
+#include "Bobo/ECS/Component.h"
 
-namespace Bobo2
+namespace Bobo
 {
 	struct Parent : public Component
 	{

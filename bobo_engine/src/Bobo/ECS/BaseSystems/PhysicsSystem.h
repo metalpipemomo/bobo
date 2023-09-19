@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Bobo/ECS2/System.h"
+#include "Bobo/ECS/System.h"
 
-namespace Bobo2
+namespace Bobo
 {
 	class PhysicsSystem : public System
 	{

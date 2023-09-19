@@ -9,6 +9,7 @@
 #include <functional>
 #include <stdexcept>
 #include <typeindex>
+#include <type_traits>
 
 // std Data Structures
 
