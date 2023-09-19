@@ -97,13 +97,11 @@ namespace Bobo {
            float upX, float upY, float upZ);
 
     private:
-        AudioEngine();
-
         // FMOD Studio API system, which can play FMOD sound banks (*.bank)
-        FMOD::Studio::System* m_StudioSystem = nullptr;
+        FMOD::Studio::System* p_StudioSystem = nullptr;
 
         // FMOD's low-level audio system which plays audio files and is obtained from Studio System
-        FMOD::System* m_LowLevelSystem = nullptr;
+        FMOD::System* p_LowLevelSystem = nullptr;
 
         /*
         * Map which caches FMOD Low-Level sounds
@@ -125,18 +123,16 @@ namespace Bobo {
 
         // Max FMOD::Channels for the audio engine 
         static const unsigned int MAX_AUDIO_CHANNELS = 1024;
-
         // Units per meter.  I.e feet would = 3.28.  centimeters would = 100.
         const float DISTANCEFACTOR = 1.0f;
-
         // Listener position, initialized to default value
         FMOD_VECTOR m_ListenerPos = { 0.0f, 0.0f, -1.0f * DISTANCEFACTOR };
-
         // Listener forward vector, initialized to default value
         FMOD_VECTOR m_Forward = { 0.0f, 0.0f, 1.0f };
-
         // Listener upwards vector, initialized to default value
         FMOD_VECTOR m_Up = { 0.0f, 1.0f, 0.0f };
+
+        AudioEngine();
 
         // Checks if a sound file is in the soundCache
         bool SoundLoaded(SoundInfo soundInfo);

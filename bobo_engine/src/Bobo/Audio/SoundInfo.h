@@ -1,27 +1,38 @@
 #include "bobopch.h"
+#include <glm/vec3.hpp>
 
 namespace Bobo {
     struct SoundInfo {
     public:
+        // Constructor
         SoundInfo(const char* filePath = "", bool isLoop = false, bool is3D = false, float x = 0.0f, float y = 0.0f, float z = 0.0f)
-            : filePath(filePath), isLoop(isLoop), is3D(is3D), x(x), y(y), z(z)
+            : m_FilePath(filePath), m_IsLoop(isLoop), m_Is3D(is3D), m_PosInfo(x, y, z)
         {
-            uniqueID = filePath;
+            m_UniqueID = filePath;
         }
-
-        std::string uniqueID;
-
-        const char* filePath;
-
-        bool isLoop;
-        bool is3D;
-        bool isLoaded;
-
-        float x, y, z;
 
         // convienience method to set the 3D coordinates of the sound.
-        void set3DCoords(float x, float y, float z) {
-            this->x = x, this->y = y, this->z = z;
+        void Set3DCoords(float x, float y, float z) 
+        {
+            m_PosInfo.x = x;
+            m_PosInfo.y = y;
+            m_PosInfo.z = z;
         }
+
+        // convienience method to set the 3D coordinates of the sound.
+        void Set3DCoords(glm::vec3 coords) 
+        {
+            m_PosInfo = coords;
+        }
+
+        std::string m_UniqueID;
+
+        const char* m_FilePath;
+
+        bool m_IsLoop;
+        bool m_Is3D;
+        bool m_IsLoaded;
+
+        glm::vec3 m_PosInfo;
     };
 }

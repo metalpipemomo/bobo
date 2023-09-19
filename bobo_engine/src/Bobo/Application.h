@@ -11,7 +11,6 @@ namespace Bobo
 		Application();
 		virtual ~Application();
 		void Run();
-		void TestECS();
 	private:
 		std::unique_ptr<Window> p_Window;
 	};
