@@ -9,12 +9,14 @@
 #include <functional>
 #include <stdexcept>
 #include <typeindex>
+#include <type_traits>
 
 // std Data Structures
 
 #include <string>
 #include <sstream>
 #include <vector>
+#include <map>
 #include <unordered_map>
 #include <unordered_set>
 
