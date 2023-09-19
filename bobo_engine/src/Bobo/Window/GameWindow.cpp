@@ -21,29 +21,29 @@ namespace Bobo
 
 		if (!glfwInit())
 		{
-			BOBO_CORE_ERROR("Could not initialize GLFW.");
+			BOBO_ERROR("Could not initialize GLFW.");
 			return;
 		}
-		BOBO_CORE_TRACE("GLFW initialized...");
+		BOBO_TRACE("GLFW initialized...");
 
 		p_Window = glfwCreateWindow(m_Props.width, m_Props.height, m_Props.title.c_str(), NULL, NULL);
 
 		if (!p_Window)
 		{
-			BOBO_CORE_ERROR("Could not create window.");
+			BOBO_ERROR("Could not create window.");
 			glfwTerminate();
 			return;
 		}
-		BOBO_CORE_TRACE("Window successfully created...");
+		BOBO_TRACE("Window successfully created...");
 
 		glfwMakeContextCurrent(p_Window);
 		
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
-			BOBO_CORE_ERROR("Glad failed to initialize...");
+			BOBO_ERROR("Glad failed to initialize...");
 			return;
 		}
-		BOBO_CORE_TRACE("Glad initialized...");
+		BOBO_TRACE("Glad initialized...");
 	}
 
 	GameWindow::~GameWindow()

@@ -29,7 +29,7 @@ namespace Bobo
 		// Turn String -> Data (Array of Vertices, UVs, Normals)
 		FILE* file = fopen(loadFrom.c_str(), "r");
 		if (file == NULL) {
-			BOBO_CORE_ERROR("The file specified could not be loaded: " + loadFrom);
+			BOBO_ERROR("The file specified could not be loaded: " + loadFrom);
 			return 1;
 		}
 
@@ -59,7 +59,7 @@ namespace Bobo
 				if (fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z) != 3)
 				{
 					// Error
-					BOBO_CORE_ERROR("Could not read Vertex");
+					BOBO_ERROR("Could not read Vertex");
 					return 1;
 				}
 				// Add Vector3 to Vertices Array
@@ -73,7 +73,7 @@ namespace Bobo
 				if (fscanf(file, "%f %f\n", &uv.x, &uv.y) != 2) 
 				{
 					// Error
-					BOBO_CORE_ERROR("Could not read UV");
+					BOBO_ERROR("Could not read UV");
 					return 1;
 				}
 				// Add Vector2 to Texture Coordinates Array
@@ -87,7 +87,7 @@ namespace Bobo
 				if (fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z) != 3) 
 				{
 					// Error
-					BOBO_CORE_ERROR("Could not read Normal");
+					BOBO_ERROR("Could not read Normal");
 					return 1;
 				}
 				// Add Vector3 to Vertex Normals Array
@@ -111,7 +111,7 @@ namespace Bobo
 					&vertexIndex[2], &uvIndex[2], &normalsIndex[2]) != 9) 
 				{
 					// Handle Face cannot be Read Error
-					BOBO_CORE_ERROR("Could not read Face");
+					BOBO_ERROR("Could not read Face");
 
 					return 1;
 				}
@@ -145,7 +145,7 @@ namespace Bobo
 		m_LoadedModels.insert(std::pair<std::string, Model*>(identifier, newModel));
 
 		// Log some Info
-		BOBO_CORE_INFO("Model Loaded From: " + loadFrom + " - Identifier: " + identifier);
+		BOBO_INFO("Model Loaded From: " + loadFrom + " - Identifier: " + identifier);
 
 		return 0;
 	}
@@ -160,9 +160,12 @@ namespace Bobo
 		{
 			if (dirEntry.path().extension() != ".obj") continue;
 			LoadNewModel(dirEntry.path().stem().generic_string(), dirEntry.path().generic_string());
+			count++;
 		}
 
-		return 0;
+		BOBO_INFO("ModelLoader Loaded {} Models from Directory {}", count, directory);
+
+		return count;
 	}
 
 	Model* ModelLoader::GetModel(std::string& identifier) 
@@ -173,12 +176,14 @@ namespace Bobo
 		// if the passed in identifier is contained in the map, return the associated Model
 		if (m_LoadedModels.count(identifier) == 1) 
 		{
-			// found
+			// Found
+			BOBO_INFO("Found Model with Identifier {}", identifier);
 			return m_LoadedModels.at(identifier);
 		}
 		else 
 		{
 			// not found
+			BOBO_WARN("No Model with Identifier {} has been Loaded", identifier);
 			return nullptr;
 		}
 	}
