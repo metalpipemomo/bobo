@@ -7,6 +7,8 @@
 #include "Component.h"
 #include "BaseComponents/Parent.h"
 #include "BaseComponents/Transform.h"
+#include "BaseSystems/PhysicsSystem.h"
+#include "BaseSystems/RendererSystem.h"
 
 namespace Bobo
 {
@@ -115,16 +117,23 @@ namespace Bobo
 
 			return children->second;
 		}
-
-		System* GetSystem(const System* system)
+		
+		System* GetSystem(System* system)
 		{
-			auto system = m_Systems.find(system);
-			if (system == m_Systems.end())
+			/*if (std::is_base_of<system, renderersystem>::value)
+			{
+				return nullptr;
+			}*/
+
+			if (std::find(m_Systems.begin(), m_Systems.end(), system) != m_Systems.end())
+			{
+				return system;
+			}
+			else
 			{
 				return nullptr;
 			}
 
-			return system;
 		}
 
 		std::vector<System*> GetSystems()
@@ -132,10 +141,19 @@ namespace Bobo
 			return m_Systems;
 		}
 
+		void InitialiseMandatorySystems()
+		{
+			RendererSystem* rendererSystem = new RendererSystem();
+			PhysicsSystem* physicsSystem = new PhysicsSystem();
+
+			m_Systems.push_back(rendererSystem);
+			m_Systems.push_back(physicsSystem);
+		}
+
 	private:
 		EntityManager* p_EntityManager;
 		std::map<Entity, std::vector<Entity>> m_ChildMap;
-		std::map<std::type_index, std::map<Entity, Component*>> m_ComponentStore; // become a vector
+		std::map<std::type_index, std::map<Entity, Component*>> m_ComponentStore;
 		std::vector<System*> m_Systems;
 	};
 }

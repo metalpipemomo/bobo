@@ -36,6 +36,10 @@ namespace Bobo
 		s->DestroyEntity(entity);
 
 		BOBO_INFO("ECS test complete");
+
+		// Testing Systems
+		s->InitialiseMandatorySystems();
+
 	}
 
 	Application::~Application()
