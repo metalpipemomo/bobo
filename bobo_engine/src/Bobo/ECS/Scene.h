@@ -116,10 +116,26 @@ namespace Bobo
 			return children->second;
 		}
 
+		System* GetSystem(const System* system)
+		{
+			auto system = m_Systems.find(system);
+			if (system == m_Systems.end())
+			{
+				return nullptr;
+			}
+
+			return system;
+		}
+
+		std::vector<System*> GetSystems()
+		{
+			return m_Systems;
+		}
+
 	private:
 		EntityManager* p_EntityManager;
 		std::map<Entity, std::vector<Entity>> m_ChildMap;
-		std::map<std::type_index, std::map<Entity, Component*>> m_ComponentStore;
+		std::map<std::type_index, std::map<Entity, Component*>> m_ComponentStore; // become a vector
 		std::vector<System*> m_Systems;
 	};
 }
