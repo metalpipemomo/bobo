@@ -1,6 +1,7 @@
 #pragma once
-
+#include "bobopch.h"
 #include "Bobo/ECS/System.h"
+
 
 namespace Bobo
 {
@@ -16,4 +17,5 @@ namespace Bobo
 
 		}
 	};
+
 }

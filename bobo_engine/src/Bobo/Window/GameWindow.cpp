@@ -3,11 +3,6 @@
 
 #include <glad/glad.h>
 
-//johnnystuff remove
-#include "../PhysicsWorld.h"
-#include <chrono>
-#include <thread>
-///
 namespace Bobo
 {
 	Window* Window::Create(const WindowProps& props)
@@ -59,43 +54,12 @@ namespace Bobo
 
 	void GameWindow::EventLoop()
 	{
-		
-		//johnnystuff remove
-		PhysicsWorld& p = PhysicsWorld::GetInstance();
-		GameObject test;
-		GameObject test2;
-		SphereCollider col1;
-		col1.Center = Vector3();
-		test.transform = new Transform();
-		test.Collider = &col1;
-		test.mass = 1;
-		test.velocity = Vector3();
-		test.force = Vector3();
-		p.AddObject(&test);
 
-		SphereCollider col2;
-		col2.Center = Vector3();
-		col2.Radius = 1;
-		test2.transform = new Transform();
-		test2.Collider = &col2;
-		test2.mass = 100;
-		test2.velocity = Vector3();
-		test2.force = Vector3();
-		test2.hasGravity = false;
-		p.AddObject(&test2);
-		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-		p.CalculateDeltaTime();
-		/////
 		while (!glfwWindowShouldClose(p_Window))
 		{
-			float deltaTime = p.CalculateDeltaTime();
 			glClearColor(0, 1, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 			Update();
-
-			//johnnystuff remove
-			p.Update(deltaTime);
-			//
 		}
 
 	}
