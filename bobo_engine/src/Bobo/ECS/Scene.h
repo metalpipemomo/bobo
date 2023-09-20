@@ -118,16 +118,12 @@ namespace Bobo
 			return children->second;
 		}
 		
-		System* GetSystem(System* system)
+		System* GetSystem(System& system)
 		{
-			/*if (std::is_base_of<system, renderersystem>::value)
+			auto it = std::find(m_Systems.begin(), m_Systems.end(), system);
+			if (it != m_Systems.end())
 			{
-				return nullptr;
-			}*/
-
-			if (std::find(m_Systems.begin(), m_Systems.end(), system) != m_Systems.end())
-			{
-				return system;
+				return *it;
 			}
 			else
 			{
