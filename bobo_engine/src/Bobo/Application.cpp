@@ -1,6 +1,7 @@
 #include "bobopch.h"
 #include "Application.h"
 #include "ECS/Scene.h"
+#include "ECS/SystemManager.h"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -23,6 +24,10 @@ namespace Bobo
 		// Testing ECS
 		Scene* s = new Scene();
 
+		// Set the Current Scene
+		SystemManager::GetInstance().SetCurrentScene(s);
+		
+
 		auto entity = s->CreateEntity();
 		
 		BOBO_ASSERT(s->AddComponent<Transform>(entity, glm::vec3(43, 1, 1), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1)), "Add component failed.");
@@ -36,10 +41,6 @@ namespace Bobo
 		s->DestroyEntity(entity);
 
 		BOBO_INFO("ECS test complete");
-
-		// Testing Systems
-		s->InitialiseMandatorySystems();
-
 	}
 
 	Application::~Application()

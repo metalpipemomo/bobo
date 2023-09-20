@@ -18,6 +18,12 @@ namespace Bobo
 		Scene()
 		{
 			p_EntityManager = new EntityManager();
+		
+			RendererSystem* rendererSystem = new RendererSystem();
+			m_Systems.push_back(rendererSystem);
+
+			PhysicsSystem* physicsSystem = new PhysicsSystem();
+			m_Systems.push_back(physicsSystem);
 		}
 
 		Entity CreateEntity()
@@ -77,6 +83,7 @@ namespace Bobo
 			}
 
 			return static_cast<T*>(component->second);
+
 			// Can also just do return static_cast<T*>(m_ComponentStore[std::type_index(typeid(T))][entity]);
 			// It returns nullptr if nothing exists, but it also creates an empty entry there
 			// So not using it to avoid pointless memory allocation
@@ -117,33 +124,24 @@ namespace Bobo
 
 			return children->second;
 		}
-		
-		System* GetSystem(System& system)
-		{
-			auto it = std::find(m_Systems.begin(), m_Systems.end(), system);
-			if (it != m_Systems.end())
-			{
-				return *it;
-			}
-			else
-			{
-				return nullptr;
-			}
 
+		template <typename T>
+		T* GetSystem()
+		{
+			for each (System* var in m_Systems)
+			{
+				if (var == nullptr) continue;
+				T* sys = static_cast<T*>(var);
+				if (var != nullptr) {
+					return sys;
+				}
+			}
+			return nullptr;
 		}
 
 		std::vector<System*> GetSystems()
 		{
 			return m_Systems;
-		}
-
-		void InitialiseMandatorySystems()
-		{
-			RendererSystem* rendererSystem = new RendererSystem();
-			PhysicsSystem* physicsSystem = new PhysicsSystem();
-
-			m_Systems.push_back(rendererSystem);
-			m_Systems.push_back(physicsSystem);
 		}
 
 	private:
