@@ -19,10 +19,10 @@ namespace Bobo
 		virtual ~ShaderLoader() {
 			delete m_LoadedShaders;
 		};
-		void LoadShader(std::string filelocation);
+		void ParseShader(std::string filelocation);
 	private:
 		ShaderLoader();
-		std::string shaderfile;
+		std::string LoadShader(std::string filelocation);
 		std::unordered_map<std::string, Shader*> m_LoadedShaders;
 	};
 }

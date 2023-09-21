@@ -13,6 +13,8 @@ namespace Bobo
 	public:
 		ShaderData();
 		ShaderData(VertexShader v, FragmentShader f);
+		VertexShader GetVertex();
+		FragmentShader GetFragment();
 		virtual ~ShaderData();
 	private:
 		VertexShader vs;

@@ -11,6 +11,7 @@ namespace Bobo
 	{
 	public:
 		Shader(ShaderData* shaderdata);
+		ShaderData& GetShaderData();
 		virtual ~Shader() {
 			delete sd;
 		};

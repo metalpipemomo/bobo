@@ -2,7 +2,7 @@
 
 #include "bobopch.h"
 
-/** Used to the render the geometry of the object/scene.
+/** Holds the VertexShader Data of an object
 */
 
 namespace Bobo
@@ -21,3 +21,4 @@ namespace Bobo
 		vec4 color;
 	};
 }
+

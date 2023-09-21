@@ -10,7 +10,7 @@ ShaderLoader::ShaderLoader() {
 	@param filelocation
 	*/
 
-void ShaderLoader::LoadShader(std::string filelocation) {
+std::string ShaderLoader::LoadShader(std::string filelocation) {
 	std::string final_string = "";
 	std::string line;
 	std::ifstream myfile(filelocation);
@@ -26,5 +26,10 @@ void ShaderLoader::LoadShader(std::string filelocation) {
 		std::cout << "File Cannot Be Opened" << std::endl;
 	}
 
-	shaderfile = final_string;
+	return final_string;
+};
+
+void ShaderLoader::ParseShader(std::string filelocation) {
+	std::string data = LoadShader(filelocation);
+	//Parse this the data from the file, then input it into the loaded shaders map.
 };

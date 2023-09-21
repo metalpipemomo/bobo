@@ -20,6 +20,14 @@ namespace Bobo
 		fs = FragmentShader();
 	}
 
+	VertexShader ShaderData::GetVertex() {
+		return vs;
+	}
+
+	FramgentShader ShaderData::GetFragment() {
+		return fs;
+	}
+
 	/* Model data destructor for use upon program termination.
 	*/
 

@@ -2,7 +2,7 @@
 
 #include "bobopch.h"
 
-/** Used to render the colour of the object/scene.
+/** Holds the Fragment Shader data of an object.
 */
 
 namespace Bobo

@@ -6,6 +6,6 @@ FragmentShader::FragmentShader() {
 }
 
 FragmentShader::FragmentShader(vec4 dep, vec4 col){
-	fragdepth = pos;
+	fragdepth = dep;
 	fragcolor = col;
 }
