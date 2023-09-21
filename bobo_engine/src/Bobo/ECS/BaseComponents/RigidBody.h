@@ -7,11 +7,13 @@ namespace Bobo
 {
 	struct RigidBody : public Component
 	{
-		Transform* transform;
-		glm::vec3 velocity;
-		glm::vec3 force;
-		float mass;
-		bool isStatic;
-		RigidBody(Transform* transform) : transform(transform) {}
+		Transform* p_Transform;
+		glm::vec3 m_Velocity;
+		glm::vec3 m_Force;
+		float m_Mass;
+		bool m_IsStatic;
+
+		Collider* p_Collider;
+		RigidBody(Transform* transform) : p_Transform(transform) {}
 	};
 }
