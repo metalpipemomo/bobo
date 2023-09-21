@@ -3,23 +3,20 @@
 #include "bobopch.h"
 
 #include "Bobo/ECS/System.h"
-#include "Bobo/ECS/BaseComponents/Transform.h"
+#include "Bobo/ECS/Scenes/Scene.h"
+#include "Bobo/ECS/BaseComponents/RigidBody.h"
 
 namespace Bobo
 {
-	class BOBO_API PhysicsSystem : public System
+	class PhysicsSystem : public System
 	{
-		virtual ~PhysicsSystem();
-
-		void Update() override;
-
-		void FixedUpdate() override;
-
 	public:
-		PhysicsSystem(std::string inScene) : System(inScene) {};
-		void RegisterRigidbody(Transform* t);
-
+		PhysicsSystem();
+		virtual ~PhysicsSystem();
+		void Update() override;
+		void FixedUpdate() override;
+		void SetActiveScene(Scene* scene);
 	private:
-		std::vector<Transform*> m_Rigidbodies;
+		Scene* p_ActiveScene;
 	};
 }

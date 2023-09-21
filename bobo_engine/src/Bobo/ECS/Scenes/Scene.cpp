@@ -4,18 +4,11 @@
 
 namespace Bobo 
 {
-	Scene::Scene(std::string name)
+	Scene::Scene(const std::string& name)
 	{
 		m_SceneName = name;
 		m_EntityCount = 0;
 		p_EntityManager = new EntityManager();
-
-		// initialize neccessary Systems
-		// Renderer & Physics
-		RendererSystem* renderer = new RendererSystem(name);
-		PhysicsSystem* physics = new PhysicsSystem(name);
-		m_Systems.push_back(renderer);
-		m_Systems.push_back(physics);
 	}
 
 	Entity Scene::CreateEntity()
@@ -88,37 +81,23 @@ namespace Bobo
 
 	void Scene::UpdateSystems()
 	{
-		for (System* sys : m_Systems)
+		for (System* system : m_Systems)
 		{
-			sys->Update();
+			system->Update();
 		}
 	}
 
 	void Scene::FixedUpdateSystems()
 	{
-		for (System* sys : m_Systems)
+		for (System* system : m_Systems)
 		{
-			sys->FixedUpdate();
+			system->FixedUpdate();
 		}
 	}
 
-	void Scene::AddSystem(System* sys)
+	void Scene::AddSystem(System* system)
 	{
-		BOBO_INFO("Added System {}", typeid(*sys).name());
-		m_Systems.push_back(sys);
-	}
-
-	PhysicsSystem* Scene::GetPhysicsSystem()
-	{
-		System* sys = GetSystem<PhysicsSystem>();
-		if (sys == nullptr) return nullptr;
-		return static_cast<PhysicsSystem*>(sys);
-	}
-
-	RendererSystem* Scene::GetRendererSystem()
-	{
-		System* sys = GetSystem<RendererSystem>();
-		if (sys == nullptr) return nullptr;
-		return static_cast<RendererSystem*>(sys);
+		BOBO_INFO("Added System {}", typeid(*system).name());
+		m_Systems.push_back(system);
 	}
 }

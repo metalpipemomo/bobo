@@ -4,6 +4,11 @@
 
 namespace Bobo
 {
+	RendererSystem::RendererSystem()
+	{
+		p_ActiveScene = nullptr;
+	}
+
 	RendererSystem::~RendererSystem()
 	{
 
@@ -17,5 +22,10 @@ namespace Bobo
 	void RendererSystem::FixedUpdate()
 	{
 		// BOBO_INFO("RendererSystem FixedUpdate");
+	}
+
+	void RendererSystem::SetActiveScene(Scene* scene)
+	{
+		p_ActiveScene = scene;
 	}
 }

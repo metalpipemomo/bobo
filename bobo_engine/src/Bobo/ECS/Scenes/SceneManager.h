@@ -1,8 +1,8 @@
 #pragma once
 
-#include "bobopch.h"
-
 #include "Scene.h"
+#include "Bobo/ECS/BaseSystems/PhysicsSystem.h"
+#include "Bobo/ECS/BaseSystems/RendererSystem.h"
 
 namespace Bobo
 {
@@ -15,13 +15,14 @@ namespace Bobo
 			return *instance;
 		}
 		void RegisterScene(Scene* newScene);
-		void LoadScene(size_t sceneIndex);
+		void LoadScene(const unsigned int& sceneIndex);
 		void UpdateLoadedScene();
 		void FixedUpdateLoadedScene();
 	private:
 		SceneManager();
-
 		std::vector<Scene*> m_RegisteredScenes;
-		Scene* p_CurrentScene;
+		Scene* p_ActiveScene;
+		PhysicsSystem* p_Physics;
+		RendererSystem* p_Renderer;
 	};
 }

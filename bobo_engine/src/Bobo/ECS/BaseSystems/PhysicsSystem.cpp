@@ -4,6 +4,11 @@
 
 namespace Bobo
 {
+	PhysicsSystem::PhysicsSystem()
+	{
+		p_ActiveScene = nullptr;
+	}
+
 	PhysicsSystem::~PhysicsSystem()
 	{
 
@@ -11,22 +16,21 @@ namespace Bobo
 
 	void PhysicsSystem::Update()
 	{
-		BOBO_INFO("PhysicsSystem ({}) Update: Registered Rigidbodies = {}", m_InScene, m_Rigidbodies.size());
+		BOBO_INFO("Phyzics Updoot");
 	}
 
 	void PhysicsSystem::FixedUpdate()
 	{
-		BOBO_INFO("PhysicsSystem ({}) FixedUpdate: Registered Rigidbodies = {}", m_InScene, m_Rigidbodies.size());
+		// You can do something like:
+		// This call is kind of expensive, so probably dont call on frame update
+		// it returns a map of entities and component type
+		// do varname[index]->first for entity, varname[index]->second for rigidbody
+		auto rigidbodies = p_ActiveScene->GetComponentsOfType<RigidBody>();
+		BOBO_INFO("Fixedzics Updoot");
 	}
 
-	void PhysicsSystem::RegisterRigidbody(Transform* t)
+	void PhysicsSystem::SetActiveScene(Scene* scene)
 	{
-		if (t == nullptr) 
-		{
-			BOBO_WARN("Failed to Register Rigidbody, Provided Rigidbody is nullptr");
-			return;
-		}
-		BOBO_INFO("Added {} to PhysicsSystem", typeid(*t).name());
-		m_Rigidbodies.push_back(t);
+		p_ActiveScene = scene;
 	}
 }

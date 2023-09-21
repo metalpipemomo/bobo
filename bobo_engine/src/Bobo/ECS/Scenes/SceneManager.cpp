@@ -6,7 +6,9 @@ namespace Bobo
 {
 	SceneManager::SceneManager()
 	{
-		p_CurrentScene = nullptr;
+		p_ActiveScene = nullptr;
+		p_Physics = new PhysicsSystem();
+		p_Renderer = new RendererSystem();
 	}
 
 	void SceneManager::RegisterScene(Scene* newScene)
@@ -22,7 +24,7 @@ namespace Bobo
 		m_RegisteredScenes.push_back(newScene);
 	}
 
-	void SceneManager::LoadScene(size_t sceneIndex)
+	void SceneManager::LoadScene(const unsigned int& sceneIndex)
 	{
 		if (sceneIndex > m_RegisteredScenes.size())
 		{
@@ -30,26 +32,31 @@ namespace Bobo
 			return;
 		}
 		BOBO_INFO("Loaded Scene {} in SceneManager", sceneIndex);
-		p_CurrentScene = m_RegisteredScenes.at(sceneIndex);
+		p_ActiveScene = m_RegisteredScenes.at(sceneIndex);
+		p_Physics->SetActiveScene(p_ActiveScene);
+		p_Renderer->SetActiveScene(p_ActiveScene);
 	}
 
 	void SceneManager::UpdateLoadedScene()
 	{
-		if (p_CurrentScene == nullptr) 
+		if (p_ActiveScene == nullptr) 
 		{
 			BOBO_WARN("No Scene Loaded to Update");
 			return;
 		};
-		p_CurrentScene->UpdateSystems();
+		p_ActiveScene->UpdateSystems();
+		p_Physics->Update();
+		p_Renderer->Update();
 	}
 
 	void SceneManager::FixedUpdateLoadedScene()
 	{
-		if (p_CurrentScene == nullptr) 
+		if (p_ActiveScene == nullptr) 
 		{
 			BOBO_WARN("No Scene Loaded to FixedUpdate");
 			return;
 		};
-		p_CurrentScene->FixedUpdateSystems();
+		p_ActiveScene->FixedUpdateSystems();
+		p_Physics->FixedUpdate();
 	}
 }

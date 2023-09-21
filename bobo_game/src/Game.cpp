@@ -33,10 +33,7 @@ public:
 		auto entity = s0->CreateEntity();
 
 		// Add Transform Component to Entity
-		s0->AddComponent<Bobo::Transform>(entity, glm::vec3(1, 1, 1), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1)), "Add Component Failed.";
-
-		// Try to Get Transform Component from Entity
-		s0->GetPhysicsSystem()->RegisterRigidbody(s0->GetComponent<Bobo::Transform>(entity));
+		s0->AddComponent<Bobo::Transform>(entity, glm::vec3(1, 1, 1), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1));
 
 		// Create a Child Entity
 		auto child = s0->CreateEntity(entity);

@@ -8,9 +8,4 @@ namespace Bobo
 	{
 		// 
 	}
-
-	System::System(std::string inScene)
-	{
-		m_InScene = inScene;
-	}
 }

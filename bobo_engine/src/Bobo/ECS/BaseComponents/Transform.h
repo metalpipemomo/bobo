@@ -7,10 +7,11 @@ namespace Bobo
 {
 	struct BOBO_API Transform : public Component
 	{
-		Transform(glm::vec3 position, glm::vec3 scale, glm::vec3 rotation);
+		Transform(glm::vec3 position, glm::vec3 scale, glm::vec3 rotation)
+			:position(position), scale(scale), rotation(rotation) {}
 
-		glm::vec3 m_Position;
-		glm::vec3 m_Scale;
-		glm::vec3 m_Rotation;
+		glm::vec3 position;
+		glm::vec3 scale;
+		glm::vec3 rotation;
 	};
 }

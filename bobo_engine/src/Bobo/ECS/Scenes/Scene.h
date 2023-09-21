@@ -3,18 +3,17 @@
 #include "bobopch.h"
 
 #include "../EntityManager.h"
+#include "../System.h"
 #include "../Component.h"
 #include "../BaseComponents/Parent.h"
 #include "../BaseComponents/Transform.h"
-#include "../BaseSystems/PhysicsSystem.h"
-#include "../BaseSystems/RendererSystem.h"
 
 namespace Bobo
 {
 	class BOBO_API Scene
 	{
 	public:
-		Scene(std::string);
+		Scene(const std::string& name);
 
 		Entity CreateEntity();
 
@@ -30,22 +29,18 @@ namespace Bobo
 
 		void FixedUpdateSystems();
 
-		void AddSystem(System* sys);
-
-		PhysicsSystem* GetPhysicsSystem();
-
-		RendererSystem* GetRendererSystem();
+		void AddSystem(System* system);
 
 		template <typename T>
 		T* GetSystem() {
-			for each (System* var in m_Systems)
+			for each (System* system in m_Systems)
 			{
-				if (var == nullptr) continue;
+				if (system == nullptr) continue;
 
-				T* sys = static_cast<T*>(var);
-				if (typeid(*sys) == typeid(T)) {
+				T* specificSystem = static_cast<T*>(system);
+				if (typeid(*specificSystem) == typeid(T)) {
 					BOBO_INFO("Got System {}", typeid(T).name());
-					return sys;
+					return specificSystem;
 				}
 			}
 			BOBO_ERROR("Failed to Get System {}", typeid(T).name());
@@ -82,10 +77,28 @@ namespace Bobo
 			}
 
 			return static_cast<T*>(component->second);
-
 			// Can also just do return static_cast<T*>(m_ComponentStore[std::type_index(typeid(T))][entity]);
 			// It returns nullptr if nothing exists, but it also creates an empty entry there
 			// So not using it to avoid pointless memory allocation	
+		}
+
+
+		template <typename T>
+		std::map<Entity, T*> GetComponentsOfType()
+		{
+			auto componentGroup = m_ComponentStore.find(std::type_index(typeid(T)));
+			if (componentGroup == m_ComponentStore.end())
+			{
+				return {};
+			}
+
+			std::map<Entity, T*> specificGroup;
+			for (auto& pair : componentGroup->second)
+			{
+				specificGroup[pair.first] = static_cast<T*>(pair.second);
+			}
+
+			return specificGroup;
 		}
 
 	private:
