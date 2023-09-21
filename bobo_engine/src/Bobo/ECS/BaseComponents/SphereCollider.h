@@ -10,6 +10,9 @@ namespace Bobo
 		float m_Radius;
 		glm::vec3 m_Center;
 
+		SphereCollider() {};
+		~SphereCollider() {};
+
 		CollisionPoints TestCollision( 
 			const Transform* transform,
 			const Collider* collider,

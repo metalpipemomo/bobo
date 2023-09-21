@@ -5,6 +5,7 @@
 #include "Bobo/ECS/BaseComponents/Collider.h"
 #include "Bobo/ECS/Scenes/Scene.h"
 #include "Bobo/ECS/Physics/Collision.h"
+#include "Bobo/ECS/Physics/CollisionSolver.h"
 
 namespace Bobo
 {

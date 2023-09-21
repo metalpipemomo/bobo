@@ -21,9 +21,9 @@ namespace Bobo
 
 	void PhysicsSystem::FixedUpdate()
 	{
+		BOBO_INFO("Phyzics fixed Updoot");
 
-		CalculateDeltaTime();
-		float dt = CalculateDeltaTime();
+		float dt = 0.16;
 		for (auto entity : m_PhysicsObjects)
 		{
 			//checks if the rigidbody is static, then calculates and applys forces to the object.
@@ -77,6 +77,7 @@ namespace Bobo
 		}
 
 		//add code to resolve collisions after theyve been detected.
+		SolveCollision(collisions);
 	}
 
 	float PhysicsSystem::CalculateDeltaTime()
@@ -97,6 +98,10 @@ namespace Bobo
 
 	void PhysicsSystem::SolveCollision(std::vector<Collision> collisions)
 	{
+		for (Collision col : collisions) 
+		{
+			CollisionSolver::SolveCollision(col);
+		}
 		//move the source code of this into its own file. 
 		//create a base solver class that has a function called SolveCollision(Collision collision);
 		// it will also have specific functions (ie. SolveSphereSphereCollision(), SolvePlaneSphereCollision(), etc..)
