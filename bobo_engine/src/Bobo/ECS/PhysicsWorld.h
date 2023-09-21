@@ -201,27 +201,34 @@
 // 		m_PhysicsObjects.erase(itr);
 // 	}
 
-// 	void Update(float dt)
-// 	{
+ 	void Update(float dt)
+ 	{
 
-// 		for (GameObject* obj : this->m_PhysicsObjects)
-// 		{
-// 			if (obj->hasGravity) {
-// 				BOBO_INFO("Velocity Y: " + std::to_string(dt));
-// 				obj->force = obj->force + (m_Gravity * obj->mass);
+ 	//	for (GameObject* obj : this->m_PhysicsObjects)
+ 	//	{
+ 	//		if (obj->hasGravity) {
+ 	//			BOBO_INFO("Velocity Y: " + std::to_string(dt));
 
-// 				obj->velocity = obj->velocity + ((obj->force / obj->mass) * dt);
-// 				obj->transform->position = obj->transform->position + (obj->velocity * dt);
-// 				BOBO_INFO("Velocity Y: " + std::to_string(obj->velocity.GetY()));
-// 				BOBO_INFO("Position Y: " + std::to_string((obj->transform->position).GetY()));
 
-// 				obj->force = Vector3(0, 0, 0);
-// 			}
-// 		}
+ 	//			obj->force = obj->force + (m_Gravity * obj->mass);
 
-// 		ResolveCollisions(dt);
+ 	//			obj->velocity = obj->velocity + ((obj->force / obj->mass) * dt);
+ 	//			
+  //              obj->transform->position = obj->transform->position + (obj->velocity * dt);
 
-// 	}
+
+
+
+ 	//			BOBO_INFO("Velocity Y: " + std::to_string(obj->velocity.GetY()));
+ 	//			BOBO_INFO("Position Y: " + std::to_string((obj->transform->position).GetY()));
+
+ 	//			obj->force = Vector3(0, 0, 0);
+ 	//		}
+ 	//	}
+
+ 	//	ResolveCollisions(dt);
+
+ 	//}
 
 // 	void ResolveCollisions(float dt) {
 // 		std::vector<Collision> collisions;

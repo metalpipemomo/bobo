@@ -24,6 +24,7 @@ namespace Bobo
 	struct Collider : public Component
 	{
 		Collider() {}
+		~Collider() {};
 
 		virtual CollisionPoints TestCollision(
 			const Transform* transform,

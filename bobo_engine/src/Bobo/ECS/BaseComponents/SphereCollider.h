@@ -2,7 +2,6 @@
 
 #include "Bobo/ECS/EntityManager.h"
 #include "Bobo/ECS/Component.h"
-#include "Bobo/ECS/BaseComponents/Transform.h"
 #include "Bobo/ECS/BaseComponents/Collider.h"
 namespace Bobo
 {
@@ -16,6 +15,8 @@ namespace Bobo
 			const Collider* collider,
 			const Transform* colliderTransform
 		) {};
+
+
 		CollisionPoints TestCollision( //sphere on sphere collision
 			const Transform* transform,
 			const SphereCollider* sphere,
