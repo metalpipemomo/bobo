@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Bobo/Window/Window.h"
+#include "Bobo/ECS/Scenes/SceneManager.h"
 
 #include <GLFW/glfw3.h>
 
