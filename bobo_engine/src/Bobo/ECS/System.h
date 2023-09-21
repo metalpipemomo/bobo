@@ -6,9 +6,7 @@ namespace Bobo
 	{
 	public:
 		virtual ~System() = 0;
-
 		virtual void Update() {}
-
 		virtual void FixedUpdate() {}
 	};
 }
