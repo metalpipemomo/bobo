@@ -7,10 +7,14 @@ namespace Bobo
 	class System
 	{
 	public:
-		// virtual ~System() = 0;
+		System(std::string inScene);
+
+		virtual ~System() = 0;
 
 		virtual void Update() {}
 
 		virtual void FixedUpdate() {}
+	protected:
+		std::string m_InScene;
 	};
 }

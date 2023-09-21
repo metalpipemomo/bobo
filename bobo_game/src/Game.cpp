@@ -16,6 +16,33 @@ public:
 		Bobo::SoundInfo boom = Bobo::SoundInfo("src/TestSFX/Boom.mp3", false, false);
 		Bobo::AudioEngine::GetInstance().LoadSound(boom);
 		Bobo::AudioEngine::GetInstance().PlaySound(boom);
+
+		// Testing Scenes & ECS
+		// Register Scene 1
+		Bobo::Scene* s0 = new Bobo::Scene("Scene0");
+		Bobo::SceneManager::GetInstance().RegisterScene(s0);
+
+		// Register Scene 2
+		Bobo::Scene* s1 = new Bobo::Scene("Scene1");
+		Bobo::SceneManager::GetInstance().RegisterScene(s1);
+		
+		// Load the Scene at SceneIndex 0
+		Bobo::SceneManager::GetInstance().LoadScene(0);
+
+		// Add Entity to Scene 1
+		auto entity = s0->CreateEntity();
+
+		// Add Transform Component to Entity
+		s0->AddComponent<Bobo::Transform>(entity, glm::vec3(1, 1, 1), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1)), "Add Component Failed.";
+
+		// Try to Get Transform Component from Entity
+		s0->GetPhysicsSystem()->RegisterRigidbody(s0->GetComponent<Bobo::Transform>(entity));
+
+		// Create a Child Entity
+		auto child = s0->CreateEntity(entity);
+		
+		// Destroy the child Entitiy
+		s0->DestroyEntity(child);
 	}
 
 	~Game()

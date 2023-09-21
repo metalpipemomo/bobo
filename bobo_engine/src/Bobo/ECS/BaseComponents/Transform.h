@@ -1,17 +1,16 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include "Bobo/ECS/Component.h"
+#include <glm/glm.hpp>
 
 namespace Bobo
 {
-	struct Transform : public Component
+	struct BOBO_API Transform : public Component
 	{
-		glm::vec3 position;
-		glm::vec3 scale;
-		glm::vec3 rotation;
+		Transform(glm::vec3 position, glm::vec3 scale, glm::vec3 rotation);
 
-		Transform(glm::vec3 position, glm::vec3 scale, glm::vec3 rotation)
-			: position(position), scale(scale), rotation(rotation) {}
+		glm::vec3 m_Position;
+		glm::vec3 m_Scale;
+		glm::vec3 m_Rotation;
 	};
 }
