@@ -6,6 +6,8 @@ namespace Bobo
 {
 	struct PlaneCollider : public Collider
 	{
+		float m_size;
+		glm::vec3 m_Center;
 		CollisionPoints TestCollision(
 			const Transform* transform,
 			const Collider* collider,

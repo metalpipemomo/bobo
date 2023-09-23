@@ -11,7 +11,7 @@ namespace Bobo
 	void CollisionSolver::Solve(Collider* colliderA, Collider* colliderB, Collision col)
 	{};
 
-	void CollisionSolver::Solve(SphereCollider* sphereA, SphereCollider* sphereB, Collision col)
+	void CollisionSolver::Solve(SphereCollider* sphereA, SphereCollider* sphereB, Collision col) // this might not work.
 	{
 		if (!col.rbA->m_IsStatic) { //make sure the object your acting on isnt static
 
