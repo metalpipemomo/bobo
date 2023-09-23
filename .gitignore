@@ -7,3 +7,7 @@ bin-int/
 **/obj/
 *.vcxproj
 *.vcxproj.filters
+.idea/vcs.xml
+.idea/modules.xml
+.idea/bobo.iml
+.idea/.gitignore
