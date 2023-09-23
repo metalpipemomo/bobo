@@ -1,14 +1,19 @@
 #pragma once
 
+#include "Bobo/ECS/EntityManager.h"
 #include "Bobo/ECS/Component.h"
-
+#include "Bobo/ECS/BaseComponents/Transform.h"
+#include "Bobo/ECS/BaseComponents/Collider.h"
 namespace Bobo
 {
-	struct BOBO_API RigidBody : public Component
+	struct RigidBody : public Component
 	{
-		// needs more field, just 4 example rn
-		bool gravityEnabled;
+		glm::vec3 m_Velocity;
+		glm::vec3 m_Force;
+		float m_Mass;
+		bool m_IsStatic;
+		Collider* p_Collider;
 
-		RigidBody(bool gravityEnabled) : gravityEnabled(gravityEnabled) {}
+		RigidBody(){} 
 	};
 }

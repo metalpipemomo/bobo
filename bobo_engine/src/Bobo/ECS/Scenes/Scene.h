@@ -101,6 +101,7 @@ namespace Bobo
 			return specificGroup;
 		}
 
+
 	private:
 		std::string m_SceneName;
 		std::size_t m_EntityCount;

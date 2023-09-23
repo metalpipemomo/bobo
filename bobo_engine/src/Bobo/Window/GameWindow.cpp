@@ -78,5 +78,6 @@ namespace Bobo
 			glClear(GL_COLOR_BUFFER_BIT);
 			Update();
 		}
+
 	}
 }
