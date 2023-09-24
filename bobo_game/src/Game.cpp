@@ -25,7 +25,7 @@ public:
 		// Register Scene 2
 		Bobo::Scene* s1 = new Bobo::Scene("Scene1");
 		Bobo::SceneManager::GetInstance().RegisterScene(s1);
-		
+
 		// Load the Scene at SceneIndex 0
 		Bobo::SceneManager::GetInstance().LoadScene(0);
 
@@ -37,9 +37,19 @@ public:
 
 		// Create a Child Entity
 		auto child = s0->CreateEntity(entity);
-		
+
 		// Destroy the child Entitiy
 		s0->DestroyEntity(child);
+
+		// Coroutines
+		auto cs = Bobo::CoroutineScheduler::GetInstance();
+		float waitTime = 2.0f;
+		auto callback = [&waitTime]()
+			{
+				Log("Coroutine ran after {} seconds!", waitTime);
+			};
+		cs.StartCoroutine<Bobo::WaitForSeconds>(waitTime, callback);
+
 	}
 
 	~Game()

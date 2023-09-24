@@ -52,8 +52,9 @@ namespace Bobo
 		// Tracking Time Elapsed
 		m_RealtimeSinceStartup += m_UnscaledDeltaTime;
 		m_RealtimeSinceSceneChange += m_UnscaledDeltaTime;
-		BOBO_INFO("Time Scale: {}, Since Startup: {}, Since Scene Change: {}", m_TimeScale, 
-			m_RealtimeSinceStartup, m_RealtimeSinceSceneChange);
+		// had to comment this so i can see stuff ^^
+		/*BOBO_INFO("Time Scale: {}, Since Startup: {}, Since Scene Change: {}", m_TimeScale, 
+			m_RealtimeSinceStartup, m_RealtimeSinceSceneChange);*/
 
 		// Update the previous time for the next frame
 		m_PreviousTime = m_CurrentTime;

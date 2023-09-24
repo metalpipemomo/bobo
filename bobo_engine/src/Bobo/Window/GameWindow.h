@@ -2,6 +2,7 @@
 
 #include "Bobo/Window/Window.h"
 #include "Bobo/ECS/Scenes/SceneManager.h"
+#include "Bobo/Coroutine/CoroutineScheduler.h"
 
 #include <GLFW/glfw3.h>
 

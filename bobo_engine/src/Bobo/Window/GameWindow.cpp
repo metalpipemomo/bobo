@@ -57,6 +57,7 @@ namespace Bobo
 	void GameWindow::EventLoop()
 	{
 		SceneManager c_SceneManager = SceneManager::GetInstance();
+		CoroutineScheduler cs = CoroutineScheduler::GetInstance();
 		Time c_Time = Time::GetInstance();
 
 		c_Time.StartCallAfterTime(CallbackContainer ([&]() { c_Time.SetTimeScale(5); }), 3);
@@ -68,6 +69,7 @@ namespace Bobo
 			// Update Scene
 			if (c_Time.DidFixedUpdate()) c_SceneManager.FixedUpdateLoadedScene();
 			c_SceneManager.UpdateLoadedScene();
+			cs.Update();
 
 			glClearColor(0, 1, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
