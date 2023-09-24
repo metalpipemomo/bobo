@@ -16,12 +16,12 @@ namespace Bobo
 
 	void PhysicsSystem::Update()
 	{
-		BOBO_INFO("Phyzics Updoot");
+		// BOBO_INFO("Phyzics Updoot");
 	}
 
 	void PhysicsSystem::FixedUpdate()
 	{
-		BOBO_INFO("Phyzics fixed Updoot");
+		// BOBO_INFO("Phyzics fixed Updoot");
 
 		float dt = 0.16;
 		for (auto entity : m_PhysicsObjects)
@@ -78,21 +78,6 @@ namespace Bobo
 
 		//add code to resolve collisions after theyve been detected.
 		SolveCollision(collisions);
-	}
-
-	float PhysicsSystem::CalculateDeltaTime()
-	{
-		// Get the current time
-		m_CurrentTime = std::chrono::high_resolution_clock::now();
-
-		// Calculate the time difference between the current and previous frames
-		std::chrono::duration<float> deltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(m_CurrentTime - m_PreviousTime);
-
-		// Update the previous time for the next frame
-		m_PreviousTime = m_CurrentTime;
-
-		// Return the delta time in seconds
-		return deltaTime.count();
 	}
 
 
