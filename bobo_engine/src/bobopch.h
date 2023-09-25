@@ -10,6 +10,8 @@
 #include <stdexcept>
 #include <typeindex>
 #include <type_traits>
+#include <chrono>
+#include <thread>
 
 // std Data Structures
 
