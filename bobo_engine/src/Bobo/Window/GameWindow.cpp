@@ -55,7 +55,7 @@ namespace Bobo
 	void GameWindow::EventLoop()
 	{
 		SceneManager c_SceneManager = SceneManager::GetInstance();
-		InputManager c_InputManager = InputManager::GetInstance();
+		InputManager::InputInit(p_Window);
 
 		// For Fixed Update
 		int fixedDeltaTime = 16; // this would be a static 60fps

@@ -40,6 +40,15 @@ public:
 		
 		// Destroy the child Entitiy
 		s0->DestroyEntity(child);
+
+		// Testing Input
+		
+		// When W key is pressed
+
+
+		// When W key is released
+
+		// When W key is held
 	}
 
 	~Game()
