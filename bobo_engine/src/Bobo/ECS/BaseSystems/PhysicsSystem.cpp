@@ -99,6 +99,5 @@ namespace Bobo
 	{
 		p_ActiveScene = scene;
 		m_PhysicsObjects = p_ActiveScene->GetComponentsOfType<RigidBody>();
-		BOBO_INFO("Fixedzics Updoot");
 	}
 }

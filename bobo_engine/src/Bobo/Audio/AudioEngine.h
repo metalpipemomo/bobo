@@ -41,10 +41,10 @@ namespace Bobo {
     class BOBO_API AudioEngine {
         
     public:
-        static AudioEngine& GetInstance()
+        static AudioEngine* GetInstance()
         {
-            static AudioEngine* instance = new AudioEngine();
-            return *instance;
+            static AudioEngine instance = AudioEngine();
+            return &instance;
         }
 
         /**

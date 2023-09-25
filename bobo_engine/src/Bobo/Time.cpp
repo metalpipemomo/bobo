@@ -52,9 +52,7 @@ namespace Bobo
 		// Tracking Time Elapsed
 		m_RealtimeSinceStartup += m_UnscaledDeltaTime;
 		m_RealtimeSinceSceneChange += m_UnscaledDeltaTime;
-		// had to comment this so i can see stuff ^^
-		/*BOBO_INFO("Time Scale: {}, Since Startup: {}, Since Scene Change: {}", m_TimeScale, 
-			m_RealtimeSinceStartup, m_RealtimeSinceSceneChange);*/
+
 
 		// Update the previous time for the next frame
 		m_PreviousTime = m_CurrentTime;
@@ -64,22 +62,9 @@ namespace Bobo
 	{
 		if (timeScale < 0)
 		{
-			BOBO_WARN("Attempt to Set a Negative Timescale was Blocked");
+			BOBO_WARN("Attempt to Set a Negative Timescale was ignored");
 			return;
 		}
 		m_TimeScale = timeScale;
-	}
-
-	void Time::StartCallAfterTime(CallbackContainer callback, float wait)
-	{
-		std::thread callAfterTime = std::thread(&Time::CallAfterTime, this, callback, wait);
-		callAfterTime.detach();
-	}
-
-	void Time::CallAfterTime(CallbackContainer callback, float wait)
-	{
-		std::chrono::duration<float> waitDuration(wait);
-		std::this_thread::sleep_for(waitDuration);
-		callback.m_Callback();
 	}
 }

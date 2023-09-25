@@ -3,29 +3,37 @@
 #include "Coroutine.h"
 #include "Waits/WaitForSeconds.h"
 #include "Waits/WaitUntil.h"
+#include "Waits/WaitForCoroutine.h"
+#include "Waits/WaitForEvaluation.h"
 
 namespace Bobo
 {
     class BOBO_API CoroutineScheduler
     {
     public:
-        static CoroutineScheduler& GetInstance()
+        static CoroutineScheduler* GetInstance()
         {
-            static CoroutineScheduler* instance = new CoroutineScheduler();
-            return *instance;
+            static CoroutineScheduler instance = CoroutineScheduler();
+            return &instance;
         }
 
         template <typename T, typename... Args>
-        bool StartCoroutine(Args&& ...args)
+        Coroutine* StartCoroutine(Args&& ...args)
         {
             if (std::is_base_of<Coroutine, T>::value)
             {
                 T* coroutine = new T(std::forward<Args>(args)...);
-                m_Coroutines.push_back(coroutine);
-                return true;
+                return StartCoroutine(coroutine);
             }
 
-            return false;
+            return nullptr;
+        }
+
+        Coroutine* StartCoroutine(Coroutine* coroutine)
+        {
+            Log("New Coroutine: {}", typeid(*coroutine).name());
+            m_Coroutines.push_back(coroutine);
+            return coroutine;
         }
 
         void Update()
@@ -33,16 +41,24 @@ namespace Bobo
             // we iterate inside the loop because otherwise it will increment the iterator
             // after we erase a resolved Coroutine and then error out if there are no more
             // coroutines.
-            auto it = m_Coroutines.begin();
-            while (it != m_Coroutines.end())
+            unsigned int i = 0;
+            while (i < m_Coroutines.size())
             {
-                if ((*it)->Resolve())
+                Coroutine* c = m_Coroutines.at(i);
+                c->Update();
+                if (c->CheckForResolve())
                 {
-                    (*it)->m_Function();
-                    it = m_Coroutines.erase(it);
-                } else
+                    c->m_Function();
+
+                    // Remove the coroutine from the vector 
+                    m_Coroutines.erase(m_Coroutines.begin() + i);
+
+                    // Add Chained coroutine if there is one 
+                    if (c->GetNextCoroutine() != nullptr) { StartCoroutine(c->GetNextCoroutine()); }
+                }
+                else
                 {
-                    it++;
+                    i++;
                 }
             }
         }

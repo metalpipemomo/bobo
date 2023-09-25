@@ -9,10 +9,9 @@ namespace Bobo
     {
     public:
         WaitUntil(T* valueToWatch, T valueToMatch, const std::function<void()>& f)
-            : Coroutine(f), m_ValueToWatch(valueToWatch), m_ValueToMatch(valueToMatch)
-        {}
+            : Coroutine(f), m_ValueToWatch(valueToWatch), m_ValueToMatch(valueToMatch) {}
 
-        bool Resolve() override
+        bool CheckForResolve() override
         {
             return *m_ValueToWatch == m_ValueToMatch;
         }
@@ -21,4 +20,10 @@ namespace Bobo
         T* m_ValueToWatch;
         T m_ValueToMatch;
     };
+
+    // Force Compiler to generate templates for the following data types
+    template class WaitUntil<int>;
+    template class WaitUntil<float>;
+    template class WaitUntil<bool>;
+    template class WaitUntil<std::string>;
 }

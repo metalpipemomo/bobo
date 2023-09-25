@@ -6,20 +6,13 @@
 
 namespace Bobo
 {
-	class CallbackContainer
+	class BOBO_API Time
 	{
 	public:
-		std::function<void()> m_Callback;
-		CallbackContainer(std::function<void()> callback) : m_Callback(callback) {};
-	};
-
-	class Time
-	{
-	public:
-		static Time& GetInstance()
+		static Time* GetInstance()
 		{
-			static Time* instance = new Time();
-			return *instance;
+			static Time instance = Time();
+			return &instance;
 		}
 		Time();
 		void Update();
@@ -28,9 +21,11 @@ namespace Bobo
 		bool DidFixedUpdate() { return m_DidFixedUpdate; }
 		float RealTimeSinceStartup() { return m_RealtimeSinceStartup; }
 		float RealTimeSinceSceneChange() { return m_RealtimeSinceSceneChange; }
-		void StartCallAfterTime(CallbackContainer callback, float wait);
+		float FrameCount() { return m_FrameCount; }
+		float DeltaTime() { return m_DeltaTime; }
+		float UnscaledDeltaTime() { return m_UnscaledDeltaTime; }
+		float FixedDeltaTime() { return m_FixedDeltaTime; }
 	private:
-		void CallAfterTime(CallbackContainer callback, float wait);
 		std::chrono::high_resolution_clock::time_point m_TimeAtStartup;
 		std::chrono::high_resolution_clock::time_point m_PreviousTime;
 		std::chrono::high_resolution_clock::time_point m_PreviousFixedTime;

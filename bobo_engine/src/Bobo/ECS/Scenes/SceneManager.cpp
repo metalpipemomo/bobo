@@ -37,7 +37,7 @@ namespace Bobo
 		p_Physics->SetActiveScene(p_ActiveScene);
 		p_Renderer->SetActiveScene(p_ActiveScene);
 
-		Time::GetInstance().ResetTimeSinceLoadScene();
+		Time::GetInstance()->ResetTimeSinceLoadScene();
 	}
 
 	void SceneManager::UpdateLoadedScene()
