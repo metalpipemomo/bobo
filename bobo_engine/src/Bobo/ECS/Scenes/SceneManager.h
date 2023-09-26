@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Scene.h"
-#include "Bobo/ECS/BaseSystems/PhysicsSystem.h"
-#include "Bobo/ECS/BaseSystems/RendererSystem.h"
+#include "Bobo/ECS/BaseSystems/Physics/PhysicsSystem.h"
+#include "Bobo/ECS/BaseSystems/Renderer/RendererSystem.h"
 
 namespace Bobo
 {

@@ -10,7 +10,7 @@
 #include "Bobo/ECS/Scenes/Scene.h"
 #include "Bobo/ECS/BaseComponents/Transform.h"
 #include "Bobo/ECS/BaseComponents/RigidBody.h"
-#include "Bobo/ECS/BaseSystems/PhysicsSystem.h"
+#include "Bobo/ECS/BaseSystems/Physics/PhysicsSystem.h"
 #include "Bobo/Input/Input.h"
 #include "Bobo/Coroutine/Coroutine.h"
 #include "Bobo/Coroutine/Waits/WaitForSeconds.h"

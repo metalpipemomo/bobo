@@ -1,20 +1,9 @@
 #include "bobopch.h"
 
 #include "ModelLoader.h"
-#include <filesystem>
 
 namespace Bobo
 {
-	ModelLoader::ModelLoader()
-	{
-
-	}
-
-	ModelLoader::~ModelLoader()
-	{
-
-	}
-
 	int ModelLoader::LoadNewModel(std::string& identifier, const std::string& loadFrom)
 	{
 		// Initialize Vectors to store each of the Following while reading: Vertices, UVs, Normals 
@@ -138,7 +127,7 @@ namespace Bobo
 		fclose(file);
 
 		// Make Model from Data
-		Model* newModel = new Model(new ModelData(finalVertices, finalUVs, finalNormals));
+		Model* newModel = new Model(finalVertices, finalUVs, finalNormals);
 
 		// Add this newly loaded Model to Map of Known Models
 		// Make the Identifier all Lowercase first

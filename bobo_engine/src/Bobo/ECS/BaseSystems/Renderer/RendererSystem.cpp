@@ -16,12 +16,10 @@ namespace Bobo
 
 	void RendererSystem::Update()
 	{
-		// BOBO_INFO("RendererSystem Update");
 	}
 
 	void RendererSystem::FixedUpdate()
 	{
-		// BOBO_INFO("RendererSystem FixedUpdate");
 	}
 
 	void RendererSystem::SetActiveScene(Scene* scene)

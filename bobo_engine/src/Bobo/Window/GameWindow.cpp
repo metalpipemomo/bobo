@@ -6,9 +6,9 @@
 
 namespace Bobo
 {
-	bool Input::p_KeyPressArray[GLFW_KEY_LAST];
-	bool Input::p_KeyHoldArray[GLFW_KEY_LAST];
-	bool Input::p_KeyReleaseArray[GLFW_KEY_LAST];
+	bool Input::s_KeyPressArray[GLFW_KEY_LAST];
+	bool Input::s_KeyHoldArray[GLFW_KEY_LAST];
+	bool Input::s_KeyReleaseArray[GLFW_KEY_LAST];
 
 	Window* Window::Create(const WindowProps& props)
 	{
