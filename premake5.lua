@@ -113,6 +113,8 @@ project "bobo_game"
     {
         "bobo_engine/src",
         "bobo_engine/external/spdlog/include",
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Glad}",
         "%{IncludeDir.glm}",
 		"%{IncludeDir.FMODApi}",
 		"%{IncludeDir.FMODStudio}"
@@ -120,6 +122,9 @@ project "bobo_game"
 
     links
     {
+        "GLFW",
+        "Glad",
+        "opengl32.lib",
         "bobo_engine",
 		"./bobo_engine/external/FMODAPI/api/core/lib/x64/fmod_vc.lib",
 		"./bobo_engine/external/FMODAPI/api/studio/lib/x64/fmodstudio_vc.lib"

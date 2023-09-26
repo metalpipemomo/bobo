@@ -11,3 +11,4 @@ bin-int/
 .idea/modules.xml
 .idea/bobo.iml
 .idea/.gitignore
+/bobo_engine/src/Bobo/Input/InputManager.h

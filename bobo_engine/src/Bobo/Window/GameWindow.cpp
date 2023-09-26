@@ -6,6 +6,10 @@
 
 namespace Bobo
 {
+	bool Input::p_KeyPressArray[GLFW_KEY_LAST];
+	bool Input::p_KeyHoldArray[GLFW_KEY_LAST];
+	bool Input::p_KeyReleaseArray[GLFW_KEY_LAST];
+
 	Window* Window::Create(const WindowProps& props)
 	{
 		return new GameWindow(props);
@@ -59,7 +63,7 @@ namespace Bobo
 		SceneManager* c_SceneManager = SceneManager::GetInstance();
 		CoroutineScheduler* c_CoroutineScheduler = CoroutineScheduler::GetInstance();
 		Time* c_Time = Time::GetInstance();
-
+		Input::Init(p_Window);
 		while (!glfwWindowShouldClose(p_Window))
 		{
 			c_Time->Update();
@@ -73,6 +77,14 @@ namespace Bobo
 			glClearColor(0, 1, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 			Update();
+
+			if (Input::GetKey(GLFW_KEY_L) &&
+				Input::GetKey(GLFW_KEY_M) &&
+				Input::GetKey(GLFW_KEY_A) &&
+				Input::GetKey(GLFW_KEY_O))
+			{
+				exit(-1);
+			}
 		}
 	}
 }

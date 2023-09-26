@@ -1,6 +1,8 @@
 #include <Bobo.h>
 
-class Game : public Bobo::Application
+using namespace Bobo;
+
+class Game : public Application
 {
 public:
 	Game()
@@ -33,7 +35,7 @@ public:
 		auto entity = s0->CreateEntity();
 
 		// Add Transform Component to Entity
-		s0->AddComponent<Bobo::Transform>(entity, glm::vec3(1, 1, 1), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1));
+		s0->AddComponent<Transform>(entity, glm::vec3(1, 1, 1), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1));
 
 		// Create a Child Entity
 		auto child = s0->CreateEntity(entity);
