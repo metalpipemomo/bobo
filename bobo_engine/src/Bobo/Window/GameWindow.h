@@ -2,7 +2,7 @@
 
 #include "Bobo/Window/Window.h"
 #include "Bobo/ECS/Scenes/SceneManager.h"
-#include "Bobo/Input/InputManager.h"
+#include "Bobo/Input/Input.h"
 
 #include <GLFW/glfw3.h>
 

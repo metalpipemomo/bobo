@@ -11,7 +11,7 @@
 #include "Bobo/ECS/BaseComponents/Transform.h"
 #include "Bobo/ECS/BaseComponents/RigidBody.h"
 #include "Bobo/ECS/BaseSystems/PhysicsSystem.h"
-#include "Bobo/Input/InputManager.h"
+#include "Bobo/Input/Input.h"
 
 /* ------- Entry Point ------- */
 

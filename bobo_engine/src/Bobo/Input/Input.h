@@ -5,20 +5,15 @@
 
 namespace Bobo
 {
-	class InputManager
+	class BOBO_API Input
 	{
 	public:
-		static void InputInit(GLFWwindow* window)
+		static void Init(GLFWwindow* window)
 		{
-			for (int i = 0; i < sizeof(p_KeyPressArray); i++) {
+			for (int i = 0; i < GLFW_KEY_LAST; i++)
+			{
 				p_KeyPressArray[i] = false;
-			}
-
-			for (int i = 0; i < sizeof(p_KeyHoldArray); i++) {
 				p_KeyHoldArray[i] = false;
-			}
-
-			for (int i = 0; i < sizeof(p_KeyReleaseArray); i++) {
 				p_KeyReleaseArray[i] = false;
 			}
 
@@ -27,26 +22,28 @@ namespace Bobo
 
 		static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
-			if (action == GLFW_PRESS) {
+			if (action == GLFW_PRESS)
+			{
 				p_KeyPressArray[key] = true;
 				p_KeyHoldArray[key] = true;
 			}
-			else if (action == GLFW_RELEASE) {
+			else if (action == GLFW_RELEASE)
+			{
 				p_KeyReleaseArray[key] = true;
 				p_KeyHoldArray[key] = false;
 			}
 		}
 
-		static bool GetKeyPress(const int key)
+		static bool GetKey(const int key)
+		{
+			return p_KeyHoldArray[key];
+		};
+		
+		static bool GetKeyDown(const int key)
 		{
 			bool keyVal = p_KeyPressArray[key];
 			p_KeyPressArray[key] = false;
 			return keyVal;
-		};
-
-		static bool GetKey(const int key)
-		{
-			return p_KeyHoldArray[key];
 		};
 
 		static bool GetKeyUp(const int key)
@@ -61,8 +58,4 @@ namespace Bobo
 		bool static p_KeyHoldArray[GLFW_KEY_LAST];
 		bool static p_KeyReleaseArray[GLFW_KEY_LAST];
 	};
-
-	bool InputManager::p_KeyPressArray[GLFW_KEY_LAST];
-	bool InputManager::p_KeyHoldArray[GLFW_KEY_LAST];
-	bool InputManager::p_KeyReleaseArray[GLFW_KEY_LAST];
 }

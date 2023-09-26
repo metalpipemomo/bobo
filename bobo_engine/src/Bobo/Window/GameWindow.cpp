@@ -5,6 +5,10 @@
 
 namespace Bobo
 {
+	bool Input::p_KeyPressArray[GLFW_KEY_LAST];
+	bool Input::p_KeyHoldArray[GLFW_KEY_LAST];
+	bool Input::p_KeyReleaseArray[GLFW_KEY_LAST];
+
 	Window* Window::Create(const WindowProps& props)
 	{
 		return new GameWindow(props);
@@ -55,7 +59,7 @@ namespace Bobo
 	void GameWindow::EventLoop()
 	{
 		SceneManager c_SceneManager = SceneManager::GetInstance();
-		InputManager::InputInit(p_Window);
+		Input::Init(p_Window);
 
 		// For Fixed Update
 		int fixedDeltaTime = 16; // this would be a static 60fps
@@ -78,6 +82,14 @@ namespace Bobo
 			glClearColor(0, 1, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 			Update();
+
+			if (Input::GetKey(GLFW_KEY_L) &&
+				Input::GetKey(GLFW_KEY_M) &&
+				Input::GetKey(GLFW_KEY_A) &&
+				Input::GetKey(GLFW_KEY_O))
+			{
+				exit(-1);
+			}
 		}
 
 	}

@@ -113,6 +113,8 @@ project "bobo_game"
     {
         "bobo_engine/src",
         "bobo_engine/external/spdlog/include",
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Glad}",
         "%{IncludeDir.glm}",
 		"%{IncludeDir.FMODApi}",
 		"%{IncludeDir.FMODStudio}"
