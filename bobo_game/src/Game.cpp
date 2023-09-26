@@ -1,45 +1,48 @@
 #include <Bobo.h>
 
-class Game : public Bobo::Application
+using namespace Bobo;
+
+class Game : public Application
 {
 public:
 	Game()
 	{
 		// Load all Models
-		Bobo::ModelLoader::GetInstance().LoadAllModels("src/Models");
+		ModelLoader::GetInstance().LoadAllModels("src/Models");
 
 		// Testing Audio
-		Bobo::SoundInfo thwap = Bobo::SoundInfo("src/TestSFX/Punch.mp3", false, false);
-		Bobo::AudioEngine::GetInstance().LoadSound(thwap);
-		Bobo::AudioEngine::GetInstance().PlaySound(thwap);
+		SoundInfo thwap = SoundInfo("src/TestSFX/Punch.mp3", false, false);
+		AudioEngine::GetInstance().LoadSound(thwap);
+		AudioEngine::GetInstance().PlaySound(thwap);
 
-		Bobo::SoundInfo boom = Bobo::SoundInfo("src/TestSFX/Boom.mp3", false, false);
-		Bobo::AudioEngine::GetInstance().LoadSound(boom);
-		Bobo::AudioEngine::GetInstance().PlaySound(boom);
+		SoundInfo boom = SoundInfo("src/TestSFX/Boom.mp3", false, false);
+		AudioEngine::GetInstance().LoadSound(boom);
+		AudioEngine::GetInstance().PlaySound(boom);
 
 		// Testing Scenes & ECS
 		// Register Scene 1
-		Bobo::Scene* s0 = new Bobo::Scene("Scene0");
-		Bobo::SceneManager::GetInstance().RegisterScene(s0);
+		Scene* s0 = new Scene("Scene0");
+		SceneManager::GetInstance().RegisterScene(s0);
 
 		// Register Scene 2
-		Bobo::Scene* s1 = new Bobo::Scene("Scene1");
-		Bobo::SceneManager::GetInstance().RegisterScene(s1);
+		Scene* s1 = new Scene("Scene1");
+		SceneManager::GetInstance().RegisterScene(s1);
 		
 		// Load the Scene at SceneIndex 0
-		Bobo::SceneManager::GetInstance().LoadScene(0);
+		SceneManager::GetInstance().LoadScene(0);
 
 		// Add Entity to Scene 1
 		auto entity = s0->CreateEntity();
 
 		// Add Transform Component to Entity
-		s0->AddComponent<Bobo::Transform>(entity, glm::vec3(1, 1, 1), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1));
+		s0->AddComponent<Transform>(entity, glm::vec3(1, 1, 1), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1));
 
 		// Create a Child Entity
 		auto child = s0->CreateEntity(entity);
 		
-		// Destroy the child Entitiy
+		// Destroy the child Entity
 		s0->DestroyEntity(child);
+
 
 	}
 

@@ -122,6 +122,9 @@ project "bobo_game"
 
     links
     {
+        "GLFW",
+        "Glad",
+        "opengl32.lib",
         "bobo_engine",
 		"./bobo_engine/external/FMODAPI/api/core/lib/x64/fmod_vc.lib",
 		"./bobo_engine/external/FMODAPI/api/studio/lib/x64/fmodstudio_vc.lib"
