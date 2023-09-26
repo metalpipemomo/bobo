@@ -9,10 +9,10 @@ namespace Bobo
 	class BOBO_API SceneManager
 	{
 	public: 
-		static SceneManager& GetInstance()
+		static SceneManager* GetInstance()
 		{
-			static SceneManager* instance = new SceneManager();
-			return *instance;
+			static SceneManager instance = SceneManager();
+			return &instance;
 		}
 		void RegisterScene(Scene* newScene);
 		void LoadScene(const unsigned int& sceneIndex);

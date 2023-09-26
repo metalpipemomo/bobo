@@ -1,6 +1,7 @@
 #include "bobopch.h"
 
 #include "SceneManager.h"
+#include "../../Time.h"
 
 namespace Bobo
 {
@@ -35,6 +36,8 @@ namespace Bobo
 		p_ActiveScene = m_RegisteredScenes.at(sceneIndex);
 		p_Physics->SetActiveScene(p_ActiveScene);
 		p_Renderer->SetActiveScene(p_ActiveScene);
+
+		Time::GetInstance()->ResetTimeSinceLoadScene();
 	}
 
 	void SceneManager::UpdateLoadedScene()

@@ -8,10 +8,10 @@ namespace Bobo
 	class BOBO_API ModelLoader
 	{
 	public:
-		static ModelLoader& GetInstance() 
+		static ModelLoader* GetInstance() 
 		{
-			static ModelLoader* instance = new ModelLoader();
-			return *instance;
+			static ModelLoader instance = ModelLoader();
+			return &instance;
 		}
 		virtual ~ModelLoader();
 		// Will load a Model from a specified file

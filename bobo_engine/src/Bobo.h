@@ -12,6 +12,13 @@
 #include "Bobo/ECS/BaseComponents/RigidBody.h"
 #include "Bobo/ECS/BaseSystems/PhysicsSystem.h"
 #include "Bobo/Input/Input.h"
+#include "Bobo/Coroutine/Coroutine.h"
+#include "Bobo/Coroutine/Waits/WaitForSeconds.h"
+#include "Bobo/Coroutine/Waits/WaitUntil.h"
+#include "Bobo/Coroutine/Waits/WaitForEvaluation.h"
+#include "Bobo/Coroutine/Waits/WaitForCoroutine.h"
+#include "Bobo/Coroutine/CoroutineScheduler.h"
+#include "Bobo/Time.h"
 
 /* ------- Entry Point ------- */
 
