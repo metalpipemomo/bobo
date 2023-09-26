@@ -2,6 +2,7 @@
 #include "GameWindow.h"
 
 #include <glad/glad.h>
+#include <Bobo/Time.h>
 
 namespace Bobo
 {
@@ -52,27 +53,22 @@ namespace Bobo
 		glfwSwapBuffers(p_Window);
 	}
 
+
 	void GameWindow::EventLoop()
 	{
-		SceneManager c_SceneManager = SceneManager::GetInstance();
-
-		// For Fixed Update
-		int fixedDeltaTime = 16; // this would be a static 60fps
-		auto lastTime = std::chrono::high_resolution_clock::now();
-		auto currentTime = std::chrono::high_resolution_clock::now();
+		SceneManager* c_SceneManager = SceneManager::GetInstance();
+		CoroutineScheduler* c_CoroutineScheduler = CoroutineScheduler::GetInstance();
+		Time* c_Time = Time::GetInstance();
 
 		while (!glfwWindowShouldClose(p_Window))
 		{
-			currentTime = std::chrono::high_resolution_clock::now();
-			auto deltaTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime);
+			c_Time->Update();
 
-			if (deltaTime.count() >= fixedDeltaTime)
-			{
-				c_SceneManager.FixedUpdateLoadedScene();
-				lastTime = currentTime;
-			}
-
-			c_SceneManager.UpdateLoadedScene();
+			// Update Scene
+			if (c_Time->DidFixedUpdate()) c_SceneManager->FixedUpdateLoadedScene();
+			
+			c_SceneManager->UpdateLoadedScene();
+			c_CoroutineScheduler->Update();
 
 			glClearColor(0, 1, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
