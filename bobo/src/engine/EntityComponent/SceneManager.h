@@ -14,7 +14,7 @@ public:
 	void CreateScene(const std::string& name)
 	{
 		Scene* scene = new Scene(name);
-
+		m_RegisteredScenes.insert({ name, scene });
 		if (p_ActiveScene == nullptr)
 		{
 			p_ActiveScene = scene;

@@ -28,7 +28,7 @@ public:
 		GetScene()->DestroyEntity(m_Id);
 	}
 
-	/*std::vector<GameObject*> GetChildren()
+	std::vector<GameObject*> GetChildren()
 	{
 		auto kids = GetScene()->GetChildren(m_Id);
 
@@ -42,7 +42,7 @@ public:
 		}
 
 		return children;
-	}*/
+	}
 
 	void SetParent(const GameObject& gameObject)
 	{
@@ -52,13 +52,13 @@ public:
 	template <typename T, typename ...Args>
 	bool AddComponent(Args&&... args)
 	{
-		return GetScene()->AddComponent<T>(args);
+		return GetScene()->AddComponent<T>(m_Id, args...);
 	}
 
 	template <typename T>
 	T* GetComponent()
 	{
-		return GetScene()->GetComponent<T>();
+		return GetScene()->GetComponent<T>(m_Id);
 	}
 
 private:

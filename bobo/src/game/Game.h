@@ -37,6 +37,8 @@ private:
 		transform = object->GetComponent<Transform>();
 		Log("New position x: {}", transform->position.x);
 
+		auto childObject = new GameObject(*object);
+
 
 	}
 };

@@ -5,7 +5,6 @@
 #include "EntityManager.h"
 #include "Component.h"
 #include "BaseComponents/Parent.h"
-#include "GameObject.h"
 
 class Scene
 {
