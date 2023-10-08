@@ -3,6 +3,7 @@
 class Component
 {
 public:
+	Component() {}
 	virtual ~Component() = default;
 	virtual void Awake() {};
 	virtual void Update() {};

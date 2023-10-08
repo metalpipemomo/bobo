@@ -7,4 +7,6 @@ class Parent : public Component
 {
 public:
 	Entity parentId;
+
+	Parent(const Entity& id) : parentId(id) {}
 };
