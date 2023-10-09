@@ -12,6 +12,8 @@ public:
 
 		GetEngineLogger()->set_level(spdlog::level::trace);
 		GetGameLogger()->set_level(spdlog::level::trace);
+
+		GetEngineLogger()->info("Loggers initialized!");
 	}
 
 	static std::shared_ptr<spdlog::logger>& GetEngineLogger()

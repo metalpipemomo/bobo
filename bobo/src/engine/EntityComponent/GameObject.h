@@ -11,16 +11,14 @@ class GameObject
 public:
 	GameObject()
 	{
-		auto sm = SceneManager::GetInstance();
-		m_SceneName = sm->GetActiveScene()->m_SceneName;
-		m_Id = sm->GetScene(m_SceneName)->CreateEntity();
+		m_SceneName = SceneManager::GetActiveScene()->m_SceneName;
+		m_Id = SceneManager::GetScene(m_SceneName)->CreateEntity();
 	}
 
 	GameObject(const GameObject& gameObject)
 	{
-		auto sm = SceneManager::GetInstance();
-		m_SceneName = sm->GetActiveScene()->m_SceneName;
-		m_Id = sm->GetScene(m_SceneName)->CreateEntity(gameObject.m_Id);
+		m_SceneName = SceneManager::GetActiveScene()->m_SceneName;
+		m_Id = SceneManager::GetScene(m_SceneName)->CreateEntity(gameObject.m_Id);
 	}
 
 	~GameObject()
@@ -68,8 +66,7 @@ private:
 
 	Scene* GetScene()
 	{
-		auto sm = SceneManager::GetInstance();
-		return sm->GetScene(m_SceneName);
+		return SceneManager::GetScene(m_SceneName);
 	}
 
 	Entity m_Id;

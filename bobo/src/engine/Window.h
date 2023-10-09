@@ -5,6 +5,12 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include "Input.h"
+#include "Model/ModelLoader.h"
+#include "Audio/Audio.h"
+#include "Time.h"
+#include "Coroutine/CoroutineScheduler.h"
+
 struct WindowProperties
 {
 	unsigned int width, height;
@@ -25,10 +31,14 @@ public:
 	{
 		m_Props = props;
 
-		// Init stuff here
+		// Init stuff here, order matters
 		Log::Init();
-		InitGLFW();
-
+		Init();
+		ModelLoader::Init();
+		Audio::Init();
+		Input::Init(p_Window);
+		Time::Init();
+		CoroutineScheduler::Init();
 	}
 
 	~Window()
@@ -40,7 +50,16 @@ public:
 	{
 		while (!glfwWindowShouldClose(p_Window))
 		{
-			// System Updates
+			// System Frame Updates
+			Time::Update();
+			Audio::Update();
+			CoroutineScheduler::Update();
+
+			// System Fixed Updates
+			if (Time::DidFixedUpdate())
+			{
+
+			}
 
 			// Clear Screen
 			glClearColor(0, 1, 1, 1);
@@ -50,6 +69,15 @@ public:
 
 			// Window Updates
 			Update();
+
+			// Funny exit thing, also input test
+			if (Input::GetKey(GLFW_KEY_L) &&
+				Input::GetKey(GLFW_KEY_M) &&
+				Input::GetKey(GLFW_KEY_A) &&
+				Input::GetKey(GLFW_KEY_O))
+			{
+				exit(-1);
+			}
 		}
 	}
 
@@ -64,7 +92,7 @@ public:
 	}
 
 private:
-	void InitGLFW()
+	void Init()
 	{
 		if (!glfwInit())
 		{

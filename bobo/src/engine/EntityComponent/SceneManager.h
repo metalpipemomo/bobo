@@ -5,42 +5,41 @@
 class SceneManager
 {
 public:
-	static SceneManager* GetInstance()
-	{
-		static SceneManager* instance = new SceneManager();
-		return instance;
-	}
 
-	void CreateScene(const std::string& name)
+	static void CreateScene(const std::string& name)
 	{
+		auto sm = GetInstance();
 		Scene* scene = new Scene(name);
-		m_RegisteredScenes.insert({ name, scene });
-		if (p_ActiveScene == nullptr)
+		sm->m_RegisteredScenes.insert({ name, scene });
+		if (sm->p_ActiveScene == nullptr)
 		{
-			p_ActiveScene = scene;
+			sm->p_ActiveScene = scene;
 		}
 	}
 
-	void LoadScene(const std::string& name)
+	static void LoadScene(const std::string& name)
 	{
-		auto scene = m_RegisteredScenes.find(name);
-		if (scene == m_RegisteredScenes.end())
+		auto sm = GetInstance();
+		auto scene = sm->m_RegisteredScenes.find(name);
+		if (scene == sm->m_RegisteredScenes.end())
 		{
 			BOBO_WARN("Failed to load Scene: {}", name);
 			return;
 		}
-		p_ActiveScene = scene->second;
+		sm->p_ActiveScene = scene->second;
 	}
 
-	Scene* GetActiveScene()
+	static Scene* GetActiveScene()
 	{
-		return p_ActiveScene;
+		auto sm = GetInstance();
+		return sm->p_ActiveScene;
 	}
 
-	Scene* GetScene(const std::string& name)
+	static Scene* GetScene(const std::string& name)
 	{
-		auto scene = m_RegisteredScenes.find(name);
-		if (scene == m_RegisteredScenes.end())
+		auto sm = GetInstance();
+		auto scene = sm->m_RegisteredScenes.find(name);
+		if (scene == sm->m_RegisteredScenes.end())
 		{
 			BOBO_WARN("Scene: {} does not exist...", name);
 			return nullptr;
@@ -50,6 +49,12 @@ public:
 	}
 	
 private:
+	static SceneManager* GetInstance()
+	{
+		static SceneManager* instance = new SceneManager();
+		return instance;
+	}
+
 	SceneManager()
 	{
 		p_ActiveScene = nullptr;
