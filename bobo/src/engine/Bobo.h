@@ -28,3 +28,7 @@
 #include "Coroutine/Waits/WaitForSeconds.h"
 #include "Coroutine/Waits/WaitForCoroutine.h"
 #include "Coroutine/Waits/WaitUntil.h"
+
+// Renderer
+#include "Renderer/TextureLoader.h"
+#include "Model/ModelLoader.h"

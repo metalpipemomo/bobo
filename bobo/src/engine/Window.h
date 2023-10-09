@@ -9,7 +9,12 @@
 #include "Model/ModelLoader.h"
 #include "Audio/Audio.h"
 #include "Time.h"
+#include "EntityComponent/SceneManager.h"
 #include "Coroutine/CoroutineScheduler.h"
+#include "Renderer/Camera.h"
+#include "Renderer/TextureLoader.h"
+#include "Renderer/ShaderLoader.h"
+#include "Renderer/Renderer.h"
 
 struct WindowProperties
 {
@@ -34,10 +39,15 @@ public:
 		// Init stuff here, order matters
 		Log::Init();
 		Init();
-		ModelLoader::Init();
-		Audio::Init();
 		Input::Init(p_Window);
 		Time::Init();
+		Camera::Init((float) GetWidth() / (float) GetHeight());
+		TextureLoader::Init();
+		ShaderLoader::Init();
+		Renderer::Init();
+		SceneManager::Init();
+		ModelLoader::Init();
+		Audio::Init();
 		CoroutineScheduler::Init();
 	}
 
@@ -51,6 +61,7 @@ public:
 		while (!glfwWindowShouldClose(p_Window))
 		{
 			// System Frame Updates
+			Renderer::Update();
 			Time::Update();
 			Audio::Update();
 			CoroutineScheduler::Update();
@@ -62,10 +73,11 @@ public:
 			}
 
 			// Clear Screen
-			glClearColor(0, 1, 1, 1);
+			glClearColor(0, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			// Draw
+			Renderer::Draw();
 
 			// Window Updates
 			Update();
@@ -109,7 +121,7 @@ private:
 			glfwTerminate();
 			return;
 		}
-		BOBO_INFO("Window created!");
+		BOBO_INFO("Window initialized!");
 
 		glfwMakeContextCurrent(p_Window);
 

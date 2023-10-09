@@ -82,6 +82,14 @@ public:
 		if (std::is_base_of<Component, T>::value)
 		{
 			T* component = new T(std::forward<Args>(args)...);
+
+			// Dynamic cast to Component* so we can call SetOwner, best way to do this...
+			Component* base = dynamic_cast<Component*>(component);
+			if (base != nullptr)
+			{
+				base->SetOwner(entity);
+			}
+
 			m_ComponentStore[std::type_index(typeid(T))][entity] = component;
 			return true;
 		}

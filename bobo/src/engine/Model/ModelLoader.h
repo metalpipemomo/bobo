@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Model.h"
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 
 class ModelLoader
 {

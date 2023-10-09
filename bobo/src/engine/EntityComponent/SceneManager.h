@@ -5,6 +5,10 @@
 class SceneManager
 {
 public:
+	static void Init()
+	{
+		GetInstance();
+	}
 
 	static void CreateScene(const std::string& name)
 	{
