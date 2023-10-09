@@ -24,6 +24,7 @@ public:
 			return it->second;
 		}
 
+		BOBO_WARN("Failed to Load Texture with Identifer: {}", identifier);
 		return -1;
 	}
 
@@ -65,7 +66,7 @@ private:
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		free(data);

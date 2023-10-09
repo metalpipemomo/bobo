@@ -21,120 +21,129 @@ struct Vertex
 
 int ModelLoader::LoadNewModel(const std::string& identifier, const std::string& path)
 {
-    std::ifstream file{ path };
+	// Initialize Vectors which will store our final results
+	std::vector<float> positions;
+	std::vector<float> uvs;
+	std::vector<float> normals;
+	std::vector<int> indices;
 
-    std::vector<Vertex> verts{};
+	// Turn String -> Data (Array of Vertices, UVs, Normals)
+	FILE* file = fopen(path.c_str(), "r");
+	if (file == NULL) {
+		BOBO_ERROR("The file specified could not be loaded: {} ", path);
+		return 1;
+	}
 
-    std::vector<glm::vec3> positions{};
-    std::vector<glm::vec2> texCoords{};
-    std::vector<glm::vec3> normals{};
+	// Sample Data
+	// v 1.000000 1.000000 -1.000000 <- Vertex
+	// vn -0.0000 1.0000 -0.0000 <- Normal
+	// vt 0.625000 0.500000 <- UV
+	// f 5/5/1 3/3/1 1/1/1 <- Face
 
-    std::vector<float> finalPositions;
-    std::vector<float> finalTexCoords;
-    std::vector<float> finalNormals;
+	// Read File
+	while (true)
+	{
+		// Read the next token
+		// if it is a header we care about (v, vn, vt, f) we'll go through a certain set of steps depending of which header it is
+		char token[32] = { 0 };
+		int res = fscanf(file, "%31s", token);
 
-    std::vector<int> indices{};
+		// Reached the end of the file, break the loop
+		if (res == EOF)
+			break;
 
-    std::string currentLine;
-    while (std::getline(file, currentLine, '\n'))
-    {
-        std::istringstream iss(currentLine);
-        std::string marker;
-        iss >> marker;
-        if (marker == "v")
-        {
-            float x;
-            float y;
-            float z;
-            iss >> x;
-            iss >> y;
-            iss >> z;
-            positions.emplace_back(glm::vec3{ x, y, z });
-        } else if (marker == "vt")
-        {
-            float x;
-            float y;
-            iss >> x;
-            iss >> y;
-            texCoords.emplace_back(glm::vec2{ x, y });
-        } else if (marker == "vn")
-        {
-            float x;
-            float y;
-            float z;
-            iss >> x;
-            iss >> y;
-            iss >> z;
-            normals.emplace_back(glm::vec3{ x, y, z });
-        } else if (marker == "f")
-        {
-            std::string tri1;
-            iss >> tri1;
-            std::stringstream elem1(tri1);
+		if (strcmp(token, "v") == 0)
+		{
+			// Line starts with v -> Line represents a Vertex, Line contains 3 floats
+			// Scan floats into variables
+			glm::vec3 pos;
+			if (fscanf(file, "%f %f %f\n", &pos.x, &pos.y, &pos.z) != 3)
+			{
+				// Error
+				BOBO_ERROR("Could not read Vertex");
+				return 1;
+			}
+			BOBO_WARN("Read Vertex: <{}, {}, {}>", pos.x, pos.y, pos.z);
 
-            std::string tri2;
-            iss >> tri2;
-            std::stringstream elem2(tri2);
+			// Add to Vertices Vector
+			positions.insert(positions.end(), { pos.x, pos.y, pos.z });
+		}
+		else if (strcmp(token, "vt") == 0)
+		{
+			// Line starts with vt -> Line represents a Texture Coordinate of a Vertex, Line contains 2 floats
+			// Scan floats into variables
+			glm::vec2 uv;
+			if (fscanf(file, "%f %f\n", &uv.x, &uv.y) != 2)
+			{
+				// Error
+				BOBO_ERROR("Could not read UV");
+				return 1;
+			}
+			BOBO_WARN("Read UV: <{}, {}>", uv.x, uv.y);
 
-            std::string tri3;
-            iss >> tri3;
-            std::stringstream elem3(tri3);
+			// Add to Texture Coordinates Vector
+			uvs.insert(uvs.end(), { uv.x, uv.y });
+		}
+		else if (strcmp(token, "vn") == 0)
+		{
+			// Line starts with vn -> Line represents the Normal of a Vertex, Line contains 3 floats
+			// Scan floats into variables
+			glm::vec3 norm;
+			if (fscanf(file, "%f %f %f\n", &norm.x, &norm.y, &norm.z) != 3)
+			{
+				// Error
+				BOBO_ERROR("Could not read Normal");
+				return 1;
+			}
+			BOBO_WARN("Read Normal: <{}, {}, {}>", norm.x, norm.y, norm.z);
 
-            //Waveform format is 1-indexed
-            std::string v1s;
-            std::getline(elem1, v1s, '/');
-            int v1 = std::stoi(v1s) - 1;
-            verts.emplace_back(Vertex(positions.at(v1), glm::vec3{ 0,0,0 }, glm::vec2{ 0, 0 }));
-            std::getline(elem1, v1s, '/');
-            verts.at(verts.size() - 1).texCoord = texCoords.at(std::stoi(v1s) - 1);
-            std::getline(elem1, v1s, '/');
-            verts.at(verts.size() - 1).normal = normals.at(std::stoi(v1s) - 1);
-            indices.push_back(static_cast<int>(verts.size() - 1));
+			// Add to Vertex Normals Vector
+			normals.insert(normals.end(), { norm.x, norm.y, norm.z });
+		}
+		else if (strcmp(token, "f") == 0)
+		{
+			/*
+				Line starts with f -> Line represents a Face, which utilizes all the data above, Line contains 3 of these : X / Y / Z where...
+				X: the Index of the Vertex to Use
+				Y: the Index of the Texture Coordinate to Use
+				Z: the Index of the Normal to Use
+			*/
+			// Make 3 new Arrays, one for each Piece of Data
+			int posIndex[3], uvIndex[3], normalsIndex[3];
 
-            std::string v2s;
-            std::getline(elem2, v2s, '/');
-            int v2 = std::stoi(v2s) - 1;
-            verts.emplace_back(Vertex(positions.at(v2), glm::vec3{ 0,0,0 }, glm::vec2{ 0, 0 }));
-            std::getline(elem2, v2s, '/');
-            verts.at(verts.size() - 1).texCoord = texCoords.at(std::stoi(v2s) - 1);
-            std::getline(elem2, v2s, '/');
-            verts.at(verts.size() - 1).normal = normals.at(std::stoi(v2s) - 1);
-            indices.push_back(static_cast<int>(verts.size() - 1));
+			// Read Info Combonations (ex: 5/11/2) into these Arrays respectively
+			if (fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n",
+				&posIndex[0], &uvIndex[0], &normalsIndex[0],
+				&posIndex[1], &uvIndex[1], &normalsIndex[1],
+				&posIndex[2], &uvIndex[2], &normalsIndex[2]) != 9)
+			{
+				// Handle Face cannot be Read Error
+				BOBO_ERROR("Could not read Face");
 
-            std::string v3s;
-            std::getline(elem3, v3s, '/');
-            int v3 = std::stoi(v3s) - 1;
-            verts.emplace_back(Vertex(positions.at(v3), glm::vec3{ 0,0,0 }, glm::vec2{ 0, 0 }));
-            std::getline(elem3, v3s, '/');
-            verts.at(verts.size() - 1).texCoord = texCoords.at(std::stoi(v3s) - 1);
-            std::getline(elem3, v3s, '/');
-            verts.at(verts.size() - 1).normal = normals.at(std::stoi(v3s) - 1);
-            indices.push_back(static_cast<int>(verts.size() - 1));
-        }
-    }
-    for (int i = 0; i < verts.size(); ++i)
-    {
-        finalPositions.push_back(verts[i].position.x);
-        finalPositions.push_back(verts[i].position.y);
-        finalPositions.push_back(verts[i].position.z);
-        finalNormals.push_back(verts[i].normal.x);
-        finalNormals.push_back(verts[i].normal.y);
-        finalNormals.push_back(verts[i].normal.z);
-        finalTexCoords.push_back(verts[i].texCoord.x);
-        finalTexCoords.push_back(verts[i].texCoord.y);
-    }
+				return 1;
+			}
+
+			BOBO_WARN("Read Vertex Pos from Face: <{}, {}, {}>", posIndex[0], posIndex[1], posIndex[2]);
+
+			// Deal with Vertices
+			indices.insert(indices.end(), { posIndex[0], posIndex[1], posIndex[2] });
+		}
+	}
+
+	// Close File
+	fclose(file);
 
 	// Make Model from Data
-	Model* newModel = new Model(finalPositions, finalTexCoords, finalNormals, indices);
+	Model* newModel = new Model(positions, uvs, normals, indices);
 
 	// Add this newly loaded Model to Map of Known Models
-	// Make the Identifier all Lowercase after copying first
+	// Make the Identifier all Lowercase first
 	std::string copyIdentifier = identifier;
 	std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::tolower);
 	m_LoadedModels.insert(std::pair<std::string, Model*>(copyIdentifier, newModel));
 
 	// Log some Info
-	BOBO_INFO("Model Loaded From: " + path + " - Identifier: " + copyIdentifier);
+	BOBO_INFO("Model Loaded From: {} - Identifier: {}", path, identifier);
 
 	return 0;
 }

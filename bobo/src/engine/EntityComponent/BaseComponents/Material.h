@@ -17,4 +17,10 @@ public:
 	{
 		model = glm::identity<glm::mat4>();
 	}
+
+	Material(Model* modelData)
+		: modelData(modelData), texture(TextureLoader::GetTexture("white"))
+	{
+		model = glm::identity<glm::mat4>();
+	}
 };

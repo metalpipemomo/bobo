@@ -64,9 +64,9 @@ public:
 			glUniform1i(r->m_UniformLocations["tex"], material->texture);
 
 			glBindVertexArray(material->modelData->vao);
-
+			
 			glDrawElements(GL_TRIANGLES, (GLsizei)material->modelData->indices.size(), GL_UNSIGNED_INT, 0);
-
+			
 			glBindVertexArray(0);
 		}
 	}
