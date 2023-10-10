@@ -7,3 +7,6 @@
 [submodule "bobo/libs/glm"]
 	path = bobo/libs/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "bobo/libs/bullet3d"]
+	path = bobo/libs/bullet3d
+	url = https://github.com/bulletphysics/bullet3.git
