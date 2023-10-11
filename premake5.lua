@@ -7,31 +7,33 @@ workspace "Bobo"
         "Release",
         "Dist"
     }
-    startproject "bobo_game"
+
+    startproject "bobo"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
-IncludeDir["GLFW"] = "bobo_engine/external/GLFW/include"
-IncludeDir["Glad"] = "bobo_engine/external/Glad/include"
-IncludeDir["glm"] = "bobo_engine/external/glm"
-IncludeDir["FMODApi"] = "bobo_engine/external/FMODAPI/api/core/inc"
-IncludeDir["FMODStudio"] = "bobo_engine/external/FMODAPI/api/studio/inc"
+IncludeDir["GLFW"] = "bobo/libs/GLFW/include"
+IncludeDir["Glad"] = "bobo/libs/Glad/include"
+IncludeDir["glm"] = "bobo/libs/glm"
+IncludeDir["FMODApi"] = "bobo/libs/FMODAPI/api/core/inc"
+IncludeDir["FMODStudio"] = "bobo/libs/FMODAPI/api/studio/inc"
+IncludeDir["Bullet3D"] = "bobo/libs/bullet3d/src"
 
-include "bobo_engine/external/GLFW"
-include "bobo_engine/external/Glad"
+include "bobo/libs/GLFW"
+include "bobo/libs/Glad"
 
-project "bobo_engine"
-    location "bobo_engine"
-    kind "SharedLib"
+project "bobo"
+    location "bobo"
+    kind "ConsoleApp"
 
     language "C++"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-    pchheader "bobopch.h"
-    pchsource "bobo_engine/src/bobopch.cpp"
+    pchheader "bpch.h"
+    pchsource "bobo/src/bpch.cpp"
 
     files
     {
@@ -42,12 +44,13 @@ project "bobo_engine"
     includedirs
     {
         "%{prj.name}/src",
-        "%{prj.name}/external/spdlog/include",
+        "%{prj.name}/libs/spdlog/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
         "%{IncludeDir.glm}",
 		"%{IncludeDir.FMODApi}",
-		"%{IncludeDir.FMODStudio}"
+		"%{IncludeDir.FMODStudio}",
+        "%{IncludeDir.Bullet3D}"
     }
 
     links
@@ -55,8 +58,8 @@ project "bobo_engine"
         "GLFW",
         "Glad",
         "opengl32.lib",
-		"bobo_engine/external/FMODAPI/api/core/lib/x64/fmod_vc.lib",
-		"bobo_engine/external/FMODAPI/api/studio/lib/x64/fmodstudio_vc.lib"
+		"bobo/libs/FMODAPI/api/core/lib/x64/fmod_vc.lib",
+		"bobo/libs/FMODAPI/api/studio/lib/x64/fmodstudio_vc.lib"
     }
 
     filter "system:windows"
@@ -67,19 +70,13 @@ project "bobo_engine"
         defines
         {
             "BOBO_PLATFORM_WINDOWS",
-            "BOBO_BUILD_DLL",
             "GLFW_INCLUDE_NONE"
         }
-		
-		libdirs 
-		{
-			"bobo_engine/external/FMODAPI/api/core/lib",
-			"bobo_engine/external/FMODAPI/api/studio/lib"
-		}
-		
-        postbuildcommands
+
+        libdirs
         {
-			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/bobo_game/\"")
+            "bobo/libs/FMODAPI/api/core/lib",
+			"bobo/libs/FMODAPI/api/studio/lib"
         }
 
     filter "configurations:Debug"
@@ -90,70 +87,6 @@ project "bobo_engine"
         defines "BOBO_RELEASE"
         optimize "On"
         
-    filter "configurations:Dist"
-        defines "BOBO_DIST"
-        optimize "On"
-
-project "bobo_game"
-    location "bobo_game"
-    kind "ConsoleApp"
-
-    language "C++"
-
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-    files
-    {
-        "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp"
-    }
-
-    includedirs
-    {
-        "bobo_engine/src",
-        "bobo_engine/external/spdlog/include",
-        "%{IncludeDir.GLFW}",
-        "%{IncludeDir.Glad}",
-        "%{IncludeDir.glm}",
-		"%{IncludeDir.FMODApi}",
-		"%{IncludeDir.FMODStudio}"
-    }
-
-    links
-    {
-        "GLFW",
-        "Glad",
-        "opengl32.lib",
-        "bobo_engine",
-		"./bobo_engine/external/FMODAPI/api/core/lib/x64/fmod_vc.lib",
-		"./bobo_engine/external/FMODAPI/api/studio/lib/x64/fmodstudio_vc.lib"
-    }
-
-    filter "system:windows"
-        cppdialect "C++17"
-        staticruntime "off"
-        systemversion "latest"
-
-        defines
-        {
-            "BOBO_PLATFORM_WINDOWS"
-        }
-
-		libdirs 
-		{
-			"./bobo_engine/external/FMODAPI/api/core/lib",
-			"./bobo_engine/external/FMODAPI/api/studio/lib"
-		}
-
-    filter "configurations:Debug"
-        defines "BOBO_DEBUG"
-        symbols "On"
-
-    filter "configurations:Release"
-        defines "BOBO_RELEASE"
-        optimize "On"
-    
     filter "configurations:Dist"
         defines "BOBO_DIST"
         optimize "On"
