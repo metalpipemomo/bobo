@@ -19,7 +19,6 @@ public:
 		r->SetUniform("model");
 		r->SetUniform("view");
 		r->SetUniform("projection");
-		r->SetUniform("objectColor");
 		r->SetUniform("lightColor");
 		r->SetUniform("lightPosition");
 		r->SetUniform("cameraPosition");
@@ -36,11 +35,16 @@ public:
 		for (auto& material : materials)
 		{
 			auto transform = scene->GetComponent<Transform>(material->m_OwnerId);
-			material->model = glm::translate(glm::identity<glm::mat4>(), transform->position);
-			material->model = glm::scale(material->model, transform->scale);
-			material->model = glm::rotate(material->model, transform->rotation.x, glm::vec3{ 1, 0, 0 });
-			material->model = glm::rotate(material->model, transform->rotation.y, glm::vec3{ 0, 1, 0 });
-			material->model = glm::rotate(material->model, transform->rotation.z, glm::vec3{ 0, 0, 1 });
+
+			glm::mat4 translation = glm::identity<glm::mat4>();
+			translation = glm::translate(translation, transform->position);
+			glm::mat4 rotation = glm::identity<glm::mat4>();
+			rotation = glm::rotate(rotation, transform->rotation.x, { 1, 0, 0 });
+			rotation = glm::rotate(rotation, transform->rotation.y, { 0, 1, 0 });
+			rotation = glm::rotate(rotation, transform->rotation.z, { 0, 0, 1 });
+			glm::mat4 scale = glm::identity<glm::mat4>();
+			scale = glm::scale(scale, transform->scale);
+			material->model = translation * rotation * scale;
 		}
 	}
 
@@ -49,6 +53,8 @@ public:
 		auto scene = SceneManager::GetActiveScene();
 		auto materials = scene->GetComponentsOfType<Material>();
 		auto r = GetInstance();
+		auto cPos = Camera::GetPosition();
+
 		glUseProgram(ShaderLoader::GetProgram());
 
 		for (auto& material : materials)
@@ -56,10 +62,8 @@ public:
 			glUniformMatrix4fv(r->m_UniformLocations["model"], 1, FALSE, glm::value_ptr(material->model));
 			glUniformMatrix4fv(r->m_UniformLocations["view"], 1, FALSE, glm::value_ptr(Camera::GetViewMatrix()));
 			glUniformMatrix4fv(r->m_UniformLocations["projection"], 1, FALSE, glm::value_ptr(Camera::GetProjectionMatrix()));
-			glUniform3f(r->m_UniformLocations["objectColor"], 0.23f, 1.0f, 0.72f);
 			glUniform3f(r->m_UniformLocations["lightColor"], 1.0f, 1.0f, 1.0f);
-			glUniform3f(r->m_UniformLocations["lightPosition"], 0.0f, 0.0f, 0.0f);
-			auto cPos = Camera::GetPosition();
+			glUniform3f(r->m_UniformLocations["lightPosition"], 0.0f, 0.0f, -10.0f);
 			glUniform3f(r->m_UniformLocations["cameraPosition"], cPos.x, cPos.y, cPos.z);
 			glUniform1i(r->m_UniformLocations["tex"], material->texture);
 

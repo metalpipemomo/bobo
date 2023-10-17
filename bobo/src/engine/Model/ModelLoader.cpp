@@ -126,7 +126,7 @@ int ModelLoader::LoadNewModel(const std::string& identifier, const std::string& 
 			BOBO_WARN("Read Vertex Pos from Face: <{}, {}, {}>", posIndex[0], posIndex[1], posIndex[2]);
 
 			// Deal with Vertices
-			indices.insert(indices.end(), { posIndex[0], posIndex[1], posIndex[2] });
+			indices.insert(indices.end(), { posIndex[0] - 1, posIndex[1] - 1, posIndex[2] - 1 });
 		}
 	}
 
