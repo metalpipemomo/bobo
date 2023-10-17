@@ -6,7 +6,6 @@ in vec3 Normal;
 in vec2 TexCoord;
 in vec3 FragPosition;
 
-uniform vec3 objectColor;
 uniform vec3 lightColor;
 uniform vec3 lightPosition;
 uniform vec3 cameraPosition;
@@ -33,7 +32,7 @@ void main()
 	float spec = pow(max(dot(cameraDir, reflectionDir), 0.0), 32.0);
 	vec3 specular = specularStrength * spec * lightColor;
 
-	vec3 result = (ambient + diffuse + specular) * objectColor;
 	vec4 texColor = texture(tex, TexCoord);
-	FragColor = texColor * vec4(result, 1.0);
+	vec3 result = texColor.rgb * (ambient + diffuse + specular);
+	FragColor = vec4(result, texColor.a);
 }

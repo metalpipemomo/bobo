@@ -13,6 +13,15 @@
 #define BOBO_ASSERT(x, msg) if (!x) { BOBO_ERROR(msg); throw std::runtime_error("Assertion failed"); }; 
 #endif 
 
+#ifdef BOBO_RELEASE
+#define BOBO_ERROR(...)
+#define BOBO_WARN(...) 
+#define BOBO_INFO(...) 
+#define BOBO_TRACE(...)
+#define BOBO_FATAL(...)
+#define BOBO_ASSERT(x, msg)
+#endif
+
 /* ------ Game Macros ------ */
 
 #define Log(...) Log::GetGameLogger()->trace(__VA_ARGS__)

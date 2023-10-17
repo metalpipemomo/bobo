@@ -26,7 +26,7 @@ private:
 
 		// Get the 'Transform' component from GameObject
 		auto transform = object->GetComponent<Transform>();
-		object->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("crate"));
+		object->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("kar"));
 
 		// Log initial transform position values
 		Log("Initial position x: {}, y: {}, z: {}",
