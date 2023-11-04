@@ -5,9 +5,10 @@
 #include <memory>
 #include "IGameState.h"
 
-class GameStateManager {
+class GameStateManager
+{
 private:
-    std::vector<std::unique_ptr<IGameState>> states;
+    std::vector<std::unique_ptr<IGameState>> m_States;
 
 public:
     GameStateManager() = default;
@@ -21,9 +22,9 @@ public:
     GameStateManager(GameStateManager&& other) noexcept = default;
     GameStateManager& operator=(GameStateManager&& other) noexcept = default;
 
-    void PushState(std::unique_ptr<IGameState> state);
+    void PushState(std::unique_ptr<IGameState> pState);
     void PopState();
-    void ChangeState(std::unique_ptr<IGameState> state);
+    void ChangeState(std::unique_ptr<IGameState> pState);
     void Update(float deltaTime);
     void Render();
 };

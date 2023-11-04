@@ -1,7 +1,8 @@
 #ifndef IGAMESTATE_H
 #define IGAMESTATE_H
 
-class IGameState {
+class IGameState
+{
 public:
     virtual void Enter() = 0;
     virtual void Exit() = 0;

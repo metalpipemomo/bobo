@@ -1,19 +1,22 @@
 #include "MainMenuState.h"
-
 // Include other necessary headers
 
-void MainMenuState::Enter() {
+void MainMenuState::Enter()
+{
     // Initialize main menu
 }
 
-void MainMenuState::Exit() {
+void MainMenuState::Exit()
+{
     // Cleanup main menu
 }
 
-void MainMenuState::Update(float deltaTime) {
+void MainMenuState::Update(float deltaTime)
+{
     // Update main menu logic
 }
 
-void MainMenuState::Render() {
+void MainMenuState::Render()
+{
     // Render main menu
 }

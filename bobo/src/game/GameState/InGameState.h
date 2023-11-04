@@ -3,7 +3,8 @@
 
 #include "IGameState.h"
 
-class InGameState : public IGameState {
+class InGameState : public IGameState
+{
 public:
     void Enter() override;
     void Exit() override;
