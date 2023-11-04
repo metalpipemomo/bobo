@@ -1,32 +1,28 @@
 #ifndef GAMESTATEMANAGER_H
 #define GAMESTATEMANAGER_H
 
-#include <vector>
 #include <memory>
+#include <stack>
 #include "IGameState.h"
 
 class GameStateManager
 {
-private:
-    std::vector<std::unique_ptr<IGameState>> m_States;
-
 public:
     GameStateManager() = default;
-    ~GameStateManager();
+    ~GameStateManager() = default;
 
-    // Prevent copy operations
-    GameStateManager(const GameStateManager& other) = delete;
-    GameStateManager& operator=(const GameStateManager& other) = delete;
+    void AddState(std::unique_ptr<IGameState> state, bool isReplacing = true);
+    void RemoveState();
+    void ProcessStateChanges();
 
-    // Allow move operations
-    GameStateManager(GameStateManager&& other) noexcept = default;
-    GameStateManager& operator=(GameStateManager&& other) noexcept = default;
+    std::unique_ptr<IGameState>& GetCurrentState();
 
-    void PushState(std::unique_ptr<IGameState> pState);
-    void PopState();
-    void ChangeState(std::unique_ptr<IGameState> pState);
-    void Update(float deltaTime);
-    void Render();
+private:
+    std::stack<std::unique_ptr<IGameState>> m_states;
+    std::unique_ptr<IGameState> m_newState;
+    bool m_isAdding = false;
+    bool m_isReplacing = false;
+    bool m_isRemoving = false;
 };
 
 #endif // GAMESTATEMANAGER_H

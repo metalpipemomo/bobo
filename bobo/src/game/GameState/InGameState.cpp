@@ -1,22 +1,31 @@
 #include "InGameState.h"
-// Include other necessary headers
 
 void InGameState::Enter()
 {
-    // Initialize in-game state
+    // Initialize in-game resources
 }
 
 void InGameState::Exit()
 {
-    // Cleanup in-game state
+    // Clean up in-game resources
 }
 
-void InGameState::Update(float deltaTime)
+void InGameState::Pause()
+{
+    // Pause the game
+}
+
+void InGameState::Resume()
+{
+    // Resume the game
+}
+
+void InGameState::Update(float dt)
 {
     // Update in-game logic
 }
 
 void InGameState::Render()
 {
-    // Render in-game state
+    // Render the game to the screen
 }

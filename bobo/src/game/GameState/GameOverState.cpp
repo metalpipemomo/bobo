@@ -1,22 +1,31 @@
 #include "GameOverState.h"
-// Include other necessary headers
 
 void GameOverState::Enter()
 {
-    // Initialize game over state
+    // Initialize game over resources
 }
 
 void GameOverState::Exit()
 {
-    // Cleanup game over state
+    // Clean up game over resources
 }
 
-void GameOverState::Update(float deltaTime)
+void GameOverState::Pause()
 {
-    // Update game over logic
+    // Pause any game over animations or sounds if necessary
+}
+
+void GameOverState::Resume()
+{
+    // Resume any paused animations or sounds if necessary
+}
+
+void GameOverState::Update(float dt)
+{
+    // Update game over logic, such as checking for restart or exit
 }
 
 void GameOverState::Render()
 {
-    // Render game over screen
+    // Render the game over screen to the display
 }

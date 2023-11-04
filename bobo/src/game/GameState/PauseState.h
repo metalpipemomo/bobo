@@ -8,7 +8,9 @@ class PauseState : public IGameState
 public:
     void Enter() override;
     void Exit() override;
-    void Update(float deltaTime) override;
+    void Pause() override;
+    void Resume() override;
+    void Update(float dt) override;
     void Render() override;
 };
 

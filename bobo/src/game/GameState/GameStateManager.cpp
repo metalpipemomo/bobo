@@ -1,60 +1,52 @@
 #include "GameStateManager.h"
 
-GameStateManager::~GameStateManager()
+void GameStateManager::AddState(std::unique_ptr<IGameState> newState, bool isReplacing)
 {
-    while (!m_States.empty())
+    m_isAdding = true;
+    m_isReplacing = isReplacing;
+    m_newState = std::move(newState);
+}
+
+void GameStateManager::RemoveState()
+{
+    m_isRemoving = true;
+}
+
+void GameStateManager::ProcessStateChanges()
+{
+    if (m_isRemoving && !m_states.empty())
     {
-        m_States.back()->Exit();
-        m_States.pop_back();
+        m_states.top()->Exit();
+        m_states.pop();
+
+        if (!m_states.empty())
+        {
+            m_states.top()->Resume();
+        }
+
+        m_isRemoving = false;
+    }
+
+    if (m_isAdding)
+    {
+        if (m_isReplacing && !m_states.empty())
+        {
+            m_states.top()->Exit();
+            m_states.pop();
+        }
+
+        if (!m_states.empty())
+        {
+            m_states.top()->Pause();
+        }
+
+        m_states.push(std::move(m_newState));
+        m_states.top()->Enter();
+        m_isAdding = false;
     }
 }
 
-void GameStateManager::PushState(std::unique_ptr<IGameState> pState)
+std::unique_ptr<IGameState>& GameStateManager::GetCurrentState()
 {
-    if (!m_States.empty())
-    {
-        m_States.back()->Exit();
-    }
-    m_States.push_back(std::move(pState));
-    m_States.back()->Enter();
-}
-
-void GameStateManager::PopState()
-{
-    if (!m_States.empty())
-    {
-        m_States.back()->Exit();
-        m_States.pop_back();
-    }
-    if (!m_States.empty())
-    {
-        m_States.back()->Enter();
-    }
-}
-
-void GameStateManager::ChangeState(std::unique_ptr<IGameState> pState)
-{
-    while (!m_States.empty())
-    {
-        m_States.back()->Exit();
-        m_States.pop_back();
-    }
-    m_States.push_back(std::move(pState));
-    m_States.back()->Enter();
-}
-
-void GameStateManager::Update(float deltaTime)
-{
-    if (!m_States.empty())
-    {
-        m_States.back()->Update(deltaTime);
-    }
-}
-
-void GameStateManager::Render()
-{
-    if (!m_States.empty())
-    {
-        m_States.back()->Render();
-    }
+    return m_states.top();
 }

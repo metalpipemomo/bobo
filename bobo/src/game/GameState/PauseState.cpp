@@ -1,22 +1,31 @@
 #include "PauseState.h"
-// Include other necessary headers
 
 void PauseState::Enter()
 {
-    // Initialize pause state
+    // Initialize pause menu resources
 }
 
 void PauseState::Exit()
 {
-    // Cleanup pause state
+    // Clean up pause menu resources
 }
 
-void PauseState::Update(float deltaTime)
+void PauseState::Pause()
 {
-    // Update pause logic
+    // This might not be used for a pause state
+}
+
+void PauseState::Resume()
+{
+    // This might not be used for a pause state
+}
+
+void PauseState::Update(float dt)
+{
+    // Update pause menu logic
 }
 
 void PauseState::Render()
 {
-    // Render pause menu
+    // Render the pause menu to the screen
 }
