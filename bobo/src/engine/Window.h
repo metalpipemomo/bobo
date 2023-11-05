@@ -2,6 +2,10 @@
 
 #include "bpch.h"
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
@@ -23,7 +27,7 @@ struct WindowProperties
 
 	WindowProperties(
 		unsigned int width = 640,
-		unsigned int height = 480, 
+		unsigned int height = 480,
 		const std::string& name = "Default Window"
 	)
 		: width(width), height(height), name(name) {}
@@ -39,9 +43,10 @@ public:
 		// Init stuff here, order matters
 		Log::Init();
 		Init();
+		InitImGui();
 		Input::Init(p_Window);
 		Time::Init();
-		Camera::Init((float) GetWidth() / (float) GetHeight());
+		Camera::Init((float)GetWidth() / (float)GetHeight());
 		TextureLoader::Init();
 		ShaderLoader::Init();
 		Renderer::Init();
@@ -53,6 +58,11 @@ public:
 
 	~Window()
 	{
+		// Shutdown ImGui
+		ImGui_ImplGlfw_Shutdown();
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui::DestroyContext();
+
 		glfwDestroyWindow(p_Window);
 	}
 
@@ -60,6 +70,12 @@ public:
 	{
 		while (!glfwWindowShouldClose(p_Window))
 		{
+			// ImGui Frame Updates
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+			ImGui::ShowDemoWindow(); // TODO Remove this line when starting work on our own UI
+
 			// System Frame Updates
 			Renderer::Update();
 			Time::Update();
@@ -78,6 +94,10 @@ public:
 
 			// Draw
 			Renderer::Draw();
+
+			// ImGui Render call
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 			// Window Updates
 			Update();
@@ -141,6 +161,22 @@ private:
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		glFrontFace(GL_CCW);
+	}
+
+	void InitImGui()
+	{
+		// Create ImGui Context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		BOBO_INFO("ImGui initialized");
+
+		// Optionally set configuration flags, load fonts, setup style
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+
+		// Initialize Platform and Rendering backends
+		ImGui_ImplGlfw_InitForOpenGL(p_Window, true);
+		ImGui_ImplOpenGL3_Init();
 	}
 
 	void Update()

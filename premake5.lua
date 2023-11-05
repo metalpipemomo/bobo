@@ -19,6 +19,7 @@ IncludeDir["glm"] = "bobo/libs/glm"
 IncludeDir["FMODApi"] = "bobo/libs/FMODAPI/api/core/inc"
 IncludeDir["FMODStudio"] = "bobo/libs/FMODAPI/api/studio/inc"
 IncludeDir["Bullet3D"] = "bobo/libs/bullet3d/src"
+IncludeDir["ImGui"] = "bobo/libs/imgui"
 
 include "bobo/libs/GLFW"
 include "bobo/libs/Glad"
@@ -38,7 +39,8 @@ project "bobo"
     files
     {
         "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp"
+        "%{prj.name}/src/**.cpp",
+		"%{prj.name}/libs/imgui/*.cpp"
     }
 
     includedirs
@@ -50,7 +52,8 @@ project "bobo"
         "%{IncludeDir.glm}",
 		"%{IncludeDir.FMODApi}",
 		"%{IncludeDir.FMODStudio}",
-        "%{IncludeDir.Bullet3D}"
+        "%{IncludeDir.Bullet3D}",
+		"%{IncludeDir.ImGui}"
     }
 
     links
