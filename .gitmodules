@@ -10,3 +10,6 @@
 [submodule "bobo/libs/bullet3d"]
 	path = bobo/libs/bullet3d
 	url = https://github.com/bulletphysics/bullet3.git
+[submodule "bobo/libs/imgui"]
+	path = bobo/libs/imgui
+	url = https://github.com/ocornut/imgui.git
