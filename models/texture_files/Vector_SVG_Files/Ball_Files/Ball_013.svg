@@ -9,6 +9,9 @@
    id="svg5"
    inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
    sodipodi:docname="Ball_013.svg"
+   inkscape:export-filename="..\PNG_Textures\Ball_013.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -25,16 +28,30 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="0.72515432"
-     inkscape:cx="302.69419"
-     inkscape:cy="693.64546"
-     inkscape:window-width="1450"
-     inkscape:window-height="1030"
-     inkscape:window-x="497"
-     inkscape:window-y="110"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="layer4" />
+     inkscape:cx="-24.132794"
+     inkscape:cy="578.49755"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer4-9" />
   <defs
      id="defs2" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer4-9"
+     inkscape:label="Backdrop"
+     style="display:inline;fill:#800080;fill-opacity:1"
+     transform="translate(-223.11486,70.41892)">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke-width:64.9999"
+       id="rect2554-5"
+       width="210.16217"
+       height="296.63513"
+       x="223.66216"
+       y="-70.783783" />
+  </g>
   <g
      inkscape:groupmode="layer"
      id="layer4"
