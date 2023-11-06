@@ -72,7 +72,6 @@ public:
 		{
 			// ImGui Frame Updates
 			CreateImGuiForGame();
-			//ImGui::ShowDemoWindow(); // TODO Remove this line when starting work on our own UI
 
 			// System Frame Updates
 			Renderer::Update();
@@ -178,6 +177,7 @@ private:
 	}
 
 	void CreateImGuiForGame() {
+		//ImGui::ShowDemoWindow();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
