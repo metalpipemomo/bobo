@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="Table.svg"
+   inkscape:export-filename="..\..\PNG_Textures\Table_Textures\Table_Top.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.72515432"
+     inkscape:cx="373.02405"
+     inkscape:cy="581.25559"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Backdrop">
+    <rect
+       style="fill:#008000;stroke-width:64.9999"
+       id="rect297"
+       width="210.16216"
+       height="297.72974"
+       x="0"
+       y="-0.36486486" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Surrounding_Holes">
+    <rect
+       style="fill:#808080;stroke-width:66.2622"
+       id="rect821"
+       width="40.135136"
+       height="38.675678"
+       x="0.36486456"
+       y="-0.36486322" />
+    <rect
+       style="fill:#808080;stroke-width:66.2622"
+       id="rect821-1"
+       width="40.135136"
+       height="38.675678"
+       x="169.5731"
+       y="0.068014711" />
+    <rect
+       style="fill:#808080;stroke-width:66.2622"
+       id="rect821-9"
+       width="40.135136"
+       height="38.675678"
+       x="0.20882696"
+       y="258.3685" />
+    <rect
+       style="fill:#808080;stroke-width:66.2622"
+       id="rect821-1-7"
+       width="40.135136"
+       height="38.675678"
+       x="169.41707"
+       y="258.80139" />
+    <rect
+       style="fill:#808080;stroke-width:66.2622"
+       id="rect821-9-2"
+       width="40.135136"
+       height="38.675678"
+       x="0.6065076"
+       y="123.43032" />
+    <rect
+       style="fill:#808080;stroke-width:66.2622"
+       id="rect821-1-7-3"
+       width="40.135136"
+       height="38.675678"
+       x="169.81412"
+       y="123.86317" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Holes">
+    <ellipse
+       style="fill:#000000;stroke-width:64.9999"
+       id="path456"
+       cx="18.042675"
+       cy="17.860243"
+       rx="17.878378"
+       ry="18.06081" />
+    <ellipse
+       style="fill:#000000;stroke-width:64.9999"
+       id="path456-8"
+       cx="192.53275"
+       cy="17.605293"
+       rx="17.878378"
+       ry="18.06081" />
+    <ellipse
+       style="fill:#000000;stroke-width:64.9999"
+       id="path456-0"
+       cx="18.225281"
+       cy="278.92221"
+       rx="17.878378"
+       ry="18.06081" />
+    <ellipse
+       style="fill:#000000;stroke-width:64.9999"
+       id="path456-8-1"
+       cx="192.71457"
+       cy="278.66727"
+       rx="17.878378"
+       ry="18.06081" />
+    <ellipse
+       style="fill:#000000;stroke-width:64.9999"
+       id="path456-0-3"
+       cx="18.072174"
+       cy="142.65718"
+       rx="17.878378"
+       ry="18.06081" />
+    <ellipse
+       style="fill:#000000;stroke-width:64.9999"
+       id="path456-8-1-3"
+       cx="192.56195"
+       cy="142.40225"
+       rx="17.878378"
+       ry="18.06081" />
+  </g>
+</svg>
