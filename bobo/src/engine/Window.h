@@ -177,11 +177,11 @@ private:
 	}
 
 	void CreateImGuiForGame() {
-		//ImGui::ShowDemoWindow();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		// Set the various window flags.
 		static bool no_titlebar = false;
 		static bool no_scrollbar = true;
 		static bool no_menu = true;
@@ -206,6 +206,7 @@ private:
 		if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 		if (unsaved_document)   window_flags |= ImGuiWindowFlags_UnsavedDocument;
 
+		// Set the window size.
 		const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 100, main_viewport->WorkPos.y + 20), 0);
 		ImGui::SetNextWindowSize(ImVec2(440, 70), 0);
