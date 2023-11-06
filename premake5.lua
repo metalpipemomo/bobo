@@ -65,6 +65,9 @@ project "bobo"
 		"bobo/libs/FMODAPI/api/studio/lib/x64/fmodstudio_vc.lib"
     }
 
+	filter "files:bobo/libs/imgui/*"
+		flags {"NoPCH"}
+
     filter "system:windows"
         cppdialect "C++17"
         staticruntime "off"
