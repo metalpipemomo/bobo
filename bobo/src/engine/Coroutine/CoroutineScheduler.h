@@ -38,14 +38,19 @@ public:
 			if ((*it)->Resolve())
 			{
 				(*it)->m_Function();
-
 				if ((*it)->m_NextCoroutine != nullptr)
 				{
 					StartCoroutine((*it)->m_NextCoroutine);
 				}
-				it = c->m_Coroutines.erase(it);
+				if ((*it)->m_repeat == false)
+				{
+					it = c->m_Coroutines.erase(it);
+				}
+				else {
+					it++;
+				}
 			}
-			else
+			else 
 			{
 				it++;
 			}

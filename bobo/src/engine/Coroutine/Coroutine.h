@@ -11,6 +11,8 @@ public:
 
 	virtual void Update() {};
 
+	bool m_repeat = false;
+
 	Coroutine* ChainCoroutine(Coroutine* coroutine)
 	{
 		if (m_NextCoroutine == nullptr)

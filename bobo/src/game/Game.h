@@ -27,13 +27,15 @@ private:
 		// Get the 'Transform' component from GameObject
 		auto transform = object->GetComponent<Transform>();
 		object->AddComponent<Material>(ModelLoader::GetModel("Ball_1"), TextureLoader::GetTexture("1"));
-
+		// Needs fixing
+		object->AddComponent<FunnyMove>(transform);
+		// 
 		// Log initial transform position values
 		Log("Initial position x: {}, y: {}, z: {}",
 			transform->position.x, transform->position.y, transform->position.z);
 
 		// Change value of x in transform position
-		transform->position.x = 5;
+		transform->position.x = 1;
 
 		// Get transform again just to make sure it is properly being updated
 		transform = object->GetComponent<Transform>();

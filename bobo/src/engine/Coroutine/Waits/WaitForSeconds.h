@@ -15,9 +15,11 @@ enum class TimeMode
 class WaitForSeconds : public Coroutine
 {
 public:
-	WaitForSeconds(const std::function<void()>& f, float timeInSeconds, TimeMode timeMode = TimeMode::DeltaTime)
+
+	WaitForSeconds(const std::function<void()>& f, float timeInSeconds, TimeMode timeMode = TimeMode::DeltaTime, bool repeat = false)
 		: Coroutine(f), m_WaitTime(timeInSeconds), m_TimeMode(timeMode)
 	{
+		m_repeat = repeat;
 		m_ElapsedTime = 0;
 	}
 
