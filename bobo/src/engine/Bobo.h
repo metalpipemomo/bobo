@@ -17,6 +17,7 @@
 #include "EntityComponent/GameObject.h"
 #include "EntityComponent/BaseComponents/Transform.h"
 #include "EntityComponent/BaseComponents/Parent.h"
+#include "EntityComponent/BaseComponents/FunnyMove.h"
 
 // Audio
 #include "Audio/Audio.h"

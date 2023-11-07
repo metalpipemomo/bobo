@@ -33,11 +33,12 @@ private:
 			transform->position.x, transform->position.y, transform->position.z);
 
 		// Change value of x in transform position
-		transform->position.x = 5;
+		transform->position.x = 1;
 
 		// Get transform again just to make sure it is properly being updated
 		transform = object->GetComponent<Transform>();
 		Log("New position x: {}", transform->position.x);
+		object->AddComponent<FunnyMove>(transform);
 
 		// Creating a GameObject with a Parent GameObject
 		auto childObject = new GameObject(*object);
