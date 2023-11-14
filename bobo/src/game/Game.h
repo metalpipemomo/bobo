@@ -3,6 +3,8 @@
 #include "engine/Bobo.h"
 #include "GameComponents/FunnyMove.h"
 
+#include "GameState/GameStateManager.h"
+
 class Game
 {
 public:
@@ -15,6 +17,8 @@ private:
 	void Setup()
 	{
 		/*------ BASIC SETUP ------*/
+		GameStateManager::Init();
+		GameStateManager::EnterGameState(GameStateLabel::MAIN_MENU);
 
 		// Create Scene
 		SceneManager::CreateScene("Scene1");

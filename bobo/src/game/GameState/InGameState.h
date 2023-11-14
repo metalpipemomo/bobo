@@ -1,17 +1,36 @@
-#ifndef INGAMESTATE_H
-#define INGAMESTATE_H
+#include "GameState.h"
 
-#include "IGameState.h"
-
-class InGameState : public IGameState
+class InGameState : public GameState
 {
 public:
-    void Enter() override;
-    void Exit() override;
-    void Pause() override;
-    void Resume() override;
-    void Update(float dt) override;
-    void Render() override;
-};
+    void Enter()
+    {
+        // Initialize game over resources
+        BOBO_INFO("Entered In-Game State");
+    }
 
-#endif // INGAMESTATE_H
+    void Exit()
+    {
+        // Clean up game over resources
+    }
+
+    void Hold()
+    {
+        // Pause any game over animations or sounds if necessary
+    }
+
+    void Resume()
+    {
+        // Resume any paused animations or sounds if necessary
+    }
+
+    void Update()
+    {
+        // Update game over logic, such as checking for restart or exit
+    }
+
+    void Render()
+    {
+        // Render the game over screen to the display
+    }
+};

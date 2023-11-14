@@ -1,17 +1,37 @@
-#ifndef MAINMENUSTATE_H
-#define MAINMENUSTATE_H
+#include "GameState.h"
 
-#include "IGameState.h"
-
-class MainMenuState : public IGameState
+class MainMenuState : public GameState
 {
 public:
-    void Enter() override;
-    void Exit() override;
-    void Pause() override;
-    void Resume() override;
-    void Update(float dt) override;
-    void Render() override;
-};
+    void Enter()
+    {
+        // Initialize main menu resources
+        BOBO_INFO("Entered Main Menu State");
+    }
 
-#endif // MAINMENUSTATE_H
+    void Exit()
+    {
+        // Clean up main menu resources
+    }
+
+    void Hold()
+    {
+        // Pause any main menu animations or sounds
+    }
+
+    void Resume()
+    {
+        // Resume any paused animations or sounds
+    }
+
+    void Update()
+    {
+        // Update main menu logic, e.g., navigation, button selection
+    }
+
+    void Render()
+    {
+        // Render main menu to the screen
+    }
+
+};
