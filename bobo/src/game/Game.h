@@ -1,6 +1,7 @@
 #pragma once
 
 #include "engine/Bobo.h"
+#include "GameComponents/FunnyMove.h"
 
 class Game
 {
@@ -26,18 +27,19 @@ private:
 
 		// Get the 'Transform' component from GameObject
 		auto transform = object->GetComponent<Transform>();
-		object->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("kar"));
+		object->AddComponent<Material>(ModelLoader::GetModel("Ball_1"), TextureLoader::GetTexture("1"));
 
 		// Log initial transform position values
 		Log("Initial position x: {}, y: {}, z: {}",
 			transform->position.x, transform->position.y, transform->position.z);
 
 		// Change value of x in transform position
-		transform->position.x = 5;
+		transform->position.x = 1;
 
 		// Get transform again just to make sure it is properly being updated
 		transform = object->GetComponent<Transform>();
 		Log("New position x: {}", transform->position.x);
+		object->AddComponent<FunnyMove>(transform, 1);
 
 		// Creating a GameObject with a Parent GameObject
 		auto childObject = new GameObject(*object);
@@ -62,6 +64,5 @@ private:
 		auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(printSomething, waitTime);
 		CoroutineScheduler::StartCoroutine<WaitForCoroutine>(printAfter, c);
 		CoroutineScheduler::StartCoroutine<WaitUntil>(printAfterEvaluation, evaluator);
-
 	}
 };

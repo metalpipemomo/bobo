@@ -2,6 +2,10 @@
 
 #include "bpch.h"
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
@@ -23,7 +27,7 @@ struct WindowProperties
 
 	WindowProperties(
 		unsigned int width = 640,
-		unsigned int height = 480, 
+		unsigned int height = 480,
 		const std::string& name = "Default Window"
 	)
 		: width(width), height(height), name(name) {}
@@ -39,13 +43,17 @@ public:
 		// Init stuff here, order matters
 		Log::Init();
 		Init();
+		InitImGui();
 		Input::Init(p_Window);
 		Time::Init();
-		Camera::Init((float) GetWidth() / (float) GetHeight());
+		Camera::Init((float)GetWidth() / (float)GetHeight());
 		TextureLoader::Init();
 		ShaderLoader::Init();
 		Renderer::Init();
+		
 		SceneManager::Init();
+		SceneManager::AddOnSceneChanged("SetSceneHasChanged", [this]() { hasSceneChanged = true;});
+		
 		ModelLoader::Init();
 		Audio::Init();
 		CoroutineScheduler::Init();
@@ -53,6 +61,11 @@ public:
 
 	~Window()
 	{
+		// Shutdown ImGui
+		ImGui_ImplGlfw_Shutdown();
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui::DestroyContext();
+
 		glfwDestroyWindow(p_Window);
 	}
 
@@ -60,16 +73,26 @@ public:
 	{
 		while (!glfwWindowShouldClose(p_Window))
 		{
+			if (hasSceneChanged)
+			{
+				SceneManager::AwakeActiveScene();
+				hasSceneChanged = false;
+			}
+
+			// ImGui Frame Updates
+			CreateImGuiForGame();
+
 			// System Frame Updates
 			Renderer::Update();
 			Time::Update();
 			Audio::Update();
 			CoroutineScheduler::Update();
+			SceneManager::UpdateActiveScene();
 
 			// System Fixed Updates
 			if (Time::DidFixedUpdate())
 			{
-
+				SceneManager::FixedUpdateActiveScene();
 			}
 
 			// Clear Screen
@@ -78,6 +101,10 @@ public:
 
 			// Draw
 			Renderer::Draw();
+
+			// ImGui Render call
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 			// Window Updates
 			Update();
@@ -143,6 +170,63 @@ private:
 		glFrontFace(GL_CCW);
 	}
 
+	void InitImGui()
+	{
+		// Create ImGui Context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		BOBO_INFO("ImGui initialized");
+
+		// Optionally set configuration flags, load fonts, setup style
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+
+		// Initialize Platform and Rendering backends
+		ImGui_ImplGlfw_InitForOpenGL(p_Window, true);
+		ImGui_ImplOpenGL3_Init();
+	}
+
+	void CreateImGuiForGame() {
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		// Set the various window flags.
+		static bool no_titlebar = false;
+		static bool no_scrollbar = true;
+		static bool no_menu = true;
+		static bool no_move = true;
+		static bool no_resize = true;
+		static bool no_collapse = true;
+		static bool no_close = true;
+		static bool no_nav = true;
+		static bool no_background = false;
+		static bool no_bring_to_front = false;
+		static bool unsaved_document = false;
+
+		ImGuiWindowFlags window_flags = 0;
+		if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
+		if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
+		if (!no_menu)           window_flags |= ImGuiWindowFlags_MenuBar;
+		if (no_move)            window_flags |= ImGuiWindowFlags_NoMove;
+		if (no_resize)          window_flags |= ImGuiWindowFlags_NoResize;
+		if (no_collapse)        window_flags |= ImGuiWindowFlags_NoCollapse;
+		if (no_nav)             window_flags |= ImGuiWindowFlags_NoNav;
+		if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
+		if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+		if (unsaved_document)   window_flags |= ImGuiWindowFlags_UnsavedDocument;
+
+		// Set the window size.
+		const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 100, main_viewport->WorkPos.y + 20), 0);
+		ImGui::SetNextWindowSize(ImVec2(440, 70), 0);
+
+		ImGui::Begin("Score", NULL, window_flags);
+		ImGui::Text("Solid Balls Remaining: 7");
+		ImGui::Text("Striped Balls Remaining: 7");
+		ImGui::End();
+	}
+
 	void Update()
 	{
 		glfwPollEvents();
@@ -151,4 +235,5 @@ private:
 
 	GLFWwindow* p_Window;
 	WindowProperties m_Props;
+	bool hasSceneChanged = false;
 };
