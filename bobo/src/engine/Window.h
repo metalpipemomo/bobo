@@ -50,7 +50,10 @@ public:
 		TextureLoader::Init();
 		ShaderLoader::Init();
 		Renderer::Init();
+		
 		SceneManager::Init();
+		SceneManager::AddOnSceneChanged("SetSceneHasChanged", [this]() { hasSceneChanged = true;});
+		
 		ModelLoader::Init();
 		Audio::Init();
 		CoroutineScheduler::Init();
@@ -70,6 +73,12 @@ public:
 	{
 		while (!glfwWindowShouldClose(p_Window))
 		{
+			if (hasSceneChanged)
+			{
+				SceneManager::AwakeActiveScene();
+				hasSceneChanged = false;
+			}
+
 			// ImGui Frame Updates
 			CreateImGuiForGame();
 
@@ -78,11 +87,12 @@ public:
 			Time::Update();
 			Audio::Update();
 			CoroutineScheduler::Update();
+			SceneManager::UpdateActiveScene();
 
 			// System Fixed Updates
 			if (Time::DidFixedUpdate())
 			{
-
+				SceneManager::FixedUpdateActiveScene();
 			}
 
 			// Clear Screen
@@ -225,4 +235,5 @@ private:
 
 	GLFWwindow* p_Window;
 	WindowProperties m_Props;
+	bool hasSceneChanged = false;
 };
