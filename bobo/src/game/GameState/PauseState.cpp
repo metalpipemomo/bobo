@@ -1,3 +1,5 @@
+#include "bpch.h"
+
 #include "PauseState.h"
 
 void PauseState::Enter()

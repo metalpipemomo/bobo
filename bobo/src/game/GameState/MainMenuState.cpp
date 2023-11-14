@@ -1,3 +1,5 @@
+#include "bpch.h"
+
 #include "MainMenuState.h"
 
 void MainMenuState::Enter()
