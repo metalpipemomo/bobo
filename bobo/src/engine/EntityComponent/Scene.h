@@ -137,10 +137,50 @@ public:
 		return components;
 	}
 
+	void Awake()
+	{
+		std::vector<Component*> components = GetAllComponents();
+		for (auto& component : components)
+		{
+			component->Awake();
+		}
+	}
+
+	void Update()
+	{
+		std::vector<Component*> components = GetAllComponents();
+		for (auto& component : components)
+		{
+			component->Update();
+		}
+	}
+
+	void FixedUpdate()
+	{
+		std::vector<Component*> components = GetAllComponents();
+		for (auto& component : components)
+		{
+			component->FixedUpdate();
+		}
+	}
+
 	std::string m_SceneName;
 
 private:
 
 	std::map<Entity, std::vector<Entity>> m_ChildMap;
 	std::map<std::type_index, std::map<Entity, Component*>> m_ComponentStore;
+
+	std::vector<Component*> GetAllComponents()
+	{
+		std::vector<Component*> components;
+		for (auto& compType : m_ComponentStore)
+		{
+			for (auto& component : compType.second)
+			{
+				components.push_back(component.second);
+			}
+		}
+		return components;
+	}
 };

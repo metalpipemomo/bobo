@@ -31,6 +31,9 @@ public:
 			return;
 		}
 		sm->p_ActiveScene = scene->second;
+
+		// Call callbacks associated with the scene changing
+		sm->OnSceneChanged();
 	}
 
 	static Scene* GetActiveScene()
@@ -51,6 +54,39 @@ public:
 
 		return scene->second;
 	}
+
+	static void AwakeActiveScene()
+	{
+		auto sm = GetInstance();
+		if (sm->p_ActiveScene == nullptr) return;
+		sm->p_ActiveScene->Awake();
+	}
+
+	static void UpdateActiveScene()
+	{
+		auto sm = GetInstance();
+		if (sm->p_ActiveScene == nullptr) return;
+		sm->p_ActiveScene->Update();
+	}
+
+	static void FixedUpdateActiveScene()
+	{
+		auto sm = GetInstance();
+		if (sm->p_ActiveScene == nullptr) return;
+		sm->p_ActiveScene->FixedUpdate();
+	}
+
+	static void AddOnSceneChanged(std::string id, std::function<void()> callback)
+	{
+		auto sm = GetInstance();
+		sm->onSceneChangedActions[id] = callback;
+	}
+
+	static void RemoveOnSceneChanged(std::string id)
+	{
+		auto sm = GetInstance();
+		sm->onSceneChangedActions.erase(id);
+	}
 	
 private:
 	static SceneManager* GetInstance()
@@ -63,8 +99,14 @@ private:
 	{
 		p_ActiveScene = nullptr;
 	}
+
+	void OnSceneChanged()
+	{
+		for (auto& callback : onSceneChangedActions)
+			callback.second();
+	}
+
 	std::map<std::string, Scene*> m_RegisteredScenes;
 	Scene* p_ActiveScene;
-
-
+	std::map<std::string, std::function<void()>> onSceneChangedActions;
 };
