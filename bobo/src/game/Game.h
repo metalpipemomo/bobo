@@ -1,9 +1,14 @@
 #pragma once
 
 #include "engine/Bobo.h"
+
 #include "GameComponents/FunnyMove.h"
 
-#include "GameState/GameStateManager.h"
+#include "../engine/GameState/GameStateManager.h"
+#include "GameState/GameOverState.h"
+#include "GameState/MainMenuState.h"
+#include "GameState/PauseMenuState.h"
+#include "GameState/InGameState.h"
 
 class Game
 {
@@ -17,7 +22,12 @@ private:
 	void Setup()
 	{
 		/*------ BASIC SETUP ------*/
-		GameStateManager::Init();
+		GameStateManager::InitWithGameStates(
+			{ 
+				{ GameStateLabel::GAME_OVER, new GameOverState() },
+				{ GameStateLabel::IN_GAME, new InGameState() },
+				{ GameStateLabel::MAIN_MENU, new MainMenuState() }},
+			new PauseMenuState());
 		GameStateManager::EnterGameState(GameStateLabel::MAIN_MENU);
 
 		// Create Scene

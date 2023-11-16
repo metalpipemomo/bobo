@@ -12,7 +12,7 @@ public:
 	FunnyMove(Transform* transform, double speed) : p_Transform(transform), m_Speed(speed) {};
 	void Update() 
 	{
-		m_Interval -= 0.0005 * m_Speed;
+		m_Interval -= m_Speed * Time::DeltaTime();
 		if (m_Interval < 0)
 			m_Interval = 4.0;
 		p_Transform->position.x = sin(m_Interval * 0.5 * PI);
