@@ -14,6 +14,7 @@
 #include "Audio/Audio.h"
 #include "Time.h"
 #include "EntityComponent/SceneManager.h"
+#include "GameState/GameStateManager.h"
 #include "Coroutine/CoroutineScheduler.h"
 #include "Renderer/Camera.h"
 #include "Renderer/TextureLoader.h"
@@ -36,6 +37,9 @@ struct WindowProperties
 class Window
 {
 public:
+	static unsigned int const width = 640;
+	static unsigned int const height = 640;
+
 	Window(const WindowProperties& props = WindowProperties{})
 	{
 		m_Props = props;
@@ -73,14 +77,16 @@ public:
 	{
 		while (!glfwWindowShouldClose(p_Window))
 		{
+			// ImGUI Frame Update
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+
 			if (hasSceneChanged)
 			{
 				SceneManager::AwakeActiveScene();
 				hasSceneChanged = false;
 			}
-
-			// ImGui Frame Updates
-			CreateImGuiForGame();
 
 			// System Frame Updates
 			Renderer::Update();
@@ -88,6 +94,13 @@ public:
 			Audio::Update();
 			CoroutineScheduler::Update();
 			SceneManager::UpdateActiveScene();
+
+			// Pause on pressing Escape
+			if (Input::GetKeyDown(GLFW_KEY_ESCAPE))
+			{
+				GameStateManager::TogglePauseState();
+			}
+			GameStateManager::UpdateCurrentGameState();
 
 			// System Fixed Updates
 			if (Time::DidFixedUpdate())
@@ -184,47 +197,6 @@ private:
 		// Initialize Platform and Rendering backends
 		ImGui_ImplGlfw_InitForOpenGL(p_Window, true);
 		ImGui_ImplOpenGL3_Init();
-	}
-
-	void CreateImGuiForGame() {
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
-		// Set the various window flags.
-		static bool no_titlebar = false;
-		static bool no_scrollbar = true;
-		static bool no_menu = true;
-		static bool no_move = true;
-		static bool no_resize = true;
-		static bool no_collapse = true;
-		static bool no_close = true;
-		static bool no_nav = true;
-		static bool no_background = false;
-		static bool no_bring_to_front = false;
-		static bool unsaved_document = false;
-
-		ImGuiWindowFlags window_flags = 0;
-		if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
-		if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
-		if (!no_menu)           window_flags |= ImGuiWindowFlags_MenuBar;
-		if (no_move)            window_flags |= ImGuiWindowFlags_NoMove;
-		if (no_resize)          window_flags |= ImGuiWindowFlags_NoResize;
-		if (no_collapse)        window_flags |= ImGuiWindowFlags_NoCollapse;
-		if (no_nav)             window_flags |= ImGuiWindowFlags_NoNav;
-		if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
-		if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
-		if (unsaved_document)   window_flags |= ImGuiWindowFlags_UnsavedDocument;
-
-		// Set the window size.
-		const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 100, main_viewport->WorkPos.y + 20), 0);
-		ImGui::SetNextWindowSize(ImVec2(440, 70), 0);
-
-		ImGui::Begin("Score", NULL, window_flags);
-		ImGui::Text("Solid Balls Remaining: 7");
-		ImGui::Text("Striped Balls Remaining: 7");
-		ImGui::End();
 	}
 
 	void Update()
