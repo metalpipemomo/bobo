@@ -9,16 +9,23 @@
 class GameObject
 {
 public:
-	GameObject()
+	GameObject(bool addTransform = true)
 	{
 		m_SceneName = SceneManager::GetActiveScene()->m_SceneName;
 		m_Id = SceneManager::GetScene(m_SceneName)->CreateEntity();
+
+		if (!addTransform) return;
+		AddComponent<Transform>();
+
 	}
 
-	GameObject(const GameObject& gameObject)
+	GameObject(const GameObject& gameObject, bool addTransform = true)
 	{
 		m_SceneName = SceneManager::GetActiveScene()->m_SceneName;
 		m_Id = SceneManager::GetScene(m_SceneName)->CreateEntity(gameObject.m_Id);
+
+		if (!addTransform) return;
+		AddComponent<Transform>();
 	}
 
 	~GameObject()

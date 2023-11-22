@@ -38,7 +38,7 @@ void Audio::LoadSound(SoundInfo soundInfo, const std::string& identifier)
     if (!ae->SoundLoaded(soundInfo))
     {
         std::string copyIdentifier = identifier;
-        std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::tolower);
+        std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
         ae->m_SoundInfoStore.insert({ copyIdentifier, soundInfo });
         FMOD::Sound* sound;
         ERRCHECK(ae->p_LowLevelSystem->createSound(soundInfo.m_FilePath, soundInfo.m_Is3D ? FMOD_3D : FMOD_2D, 0, &sound));
@@ -79,7 +79,11 @@ void Audio::PlaySoundI(SoundInfo soundInfo)
 void Audio::PlaySound(const std::string& identifier)
 {
     auto ae = GetInstance();
-    auto soundInfoIt = ae->m_SoundInfoStore.find(identifier);
+
+    std::string copyIdentifier = identifier;
+    std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
+
+    auto soundInfoIt = ae->m_SoundInfoStore.find(copyIdentifier);
     if (soundInfoIt != ae->m_SoundInfoStore.end())
     {
         SoundInfo* soundInfo = &soundInfoIt->second;

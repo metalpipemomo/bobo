@@ -53,4 +53,39 @@ protected:
         if (unsavedDocument)   window_flags |= ImGuiWindowFlags_UnsavedDocument;
         return window_flags;
     }
+
+    // Helper UI function
+    void MakeCenterText(std::string text, bool centerHorizontally = true, bool centerVertically = false)
+    {
+        // Center Horizontally
+        if (centerHorizontally)
+        {
+            auto windowWidth = ImGui::GetWindowSize().x;
+            auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
+            ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+        }
+
+        // Center Vertically
+        if (centerVertically)
+        {
+            auto windowHeight = ImGui::GetWindowSize().y;
+            auto textHeight = ImGui::CalcTextSize(text.c_str()).y;
+            ImGui::SetCursorPosY((windowHeight - textHeight) * 0.5f);
+        }
+
+        ImGui::Text(text.c_str());
+    }
+
+    // Helper UI function
+    bool MakeCenterButton(std::string text)
+    {
+        ImGuiStyle& style = ImGui::GetStyle();
+        float size = ImGui::CalcTextSize(text.c_str()).x + style.FramePadding.x * 2.0f;
+        float avail = ImGui::GetContentRegionAvail().x;
+        float off = (avail - size) * .5;
+        if (off > 0.0f)
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+        return ImGui::Button(text.c_str());
+    }
 };

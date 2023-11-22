@@ -33,50 +33,66 @@ private:
 		// Create Scene
 		SceneManager::CreateScene("Scene1");
 
+		/* Example of Creating Game Object Begins */
 		// Create GameObject
 		auto object = new GameObject();
+		
+		// Add a material component and tell that material what model to use and what texture to use
+		// models are all loaded in from the assets/Models directory upon game start and the same is done for textures from the assets/Textures directory
+		object->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_3"));
+		/* End Example */
 
-		// Add Component 'Transform' to GameObject
-		object->AddComponent<Transform>();
-
-		// Get the 'Transform' component from GameObject
+		/* Example of Adding a Component to a Game Object */
+		// Get the 'Transform' component from GameObject; Game Objects by default will be created with a Transform component attatched unless 
+		// an argument is passed to the GameObject constructor saying not to - new GameObject(false)
 		auto transform = object->GetComponent<Transform>();
-		object->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("jimin"));
 
-		// Log initial transform position values
-		Log("Initial position x: {}, y: {}, z: {}",
-			transform->position.x, transform->position.y, transform->position.z);
-
-		// Change value of x in transform position
-		transform->position.x = 1;
-
-		// Get transform again just to make sure it is properly being updated
-		transform = object->GetComponent<Transform>();
-		Log("New position x: {}", transform->position.x);
+		// Add the component; In this case, FunnyMove needs two parameters: a transform reference & a speed at which the ball will rotate
 		object->AddComponent<FunnyMove>(transform, 1);
+		/* End Example */
 
-		// Creating a GameObject with a Parent GameObject
+		// Making a few balls
+		auto solidTwoBall = new GameObject();
+		solidTwoBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_2"));
+		solidTwoBall->GetComponent<Transform>()->position.x = -4;
+
+		auto stripedNineBall = new GameObject();
+		stripedNineBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_9"));
+		stripedNineBall->GetComponent<Transform>()->position.x = -2;
+
+		auto stripedTenBall = new GameObject();
+		stripedTenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_10"));
+		stripedTenBall->GetComponent<Transform>()->position.x = 2;
+
+		auto eightBall = new GameObject();
+		eightBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("8_ball"));
+		eightBall->GetComponent<Transform>()->position.x = 4;
+
+		// Example of Creating a GameObject with a Parent GameObject
 		auto childObject = new GameObject(*object);
 
 		/*------ AUDIO ------*/
 
-		// Audio files are loaded from the src/game/Sounds directory, they must be mp3
+		// Audio files are loaded from the assets/Sounds directory, they must be .mp3
 		// The files can be accessed through a string identifier, which corresponds to
-		// the file name, all lowercase without extensions
+		// the file name without extensions. Case doesn't matter
 		Audio::PlaySound("boom");
 		Audio::PlaySound("punch");
 
 		/*------ COROUTINES ------*/
-
-		// I hope this is all self-explanatory
+		// Should be all self-explanatory; Just some examples
+		// Wait for Seconds
 		float waitTime = 3;
 		auto printSomething = [=]() { Log("Printed after {} seconds.", waitTime); };
+		auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(printSomething, waitTime);
+
+		// Wait for another Coroutine
 		auto printAfter = []() { Log("Printed after time print."); };
+		CoroutineScheduler::StartCoroutine<WaitForCoroutine>(printAfter, c);
+
+		// Wait for some Condition
 		auto printAfterEvaluation = []() { Log("Printed after evaluation"); };
 		auto evaluator = []() { return Time::RealTimeSinceStartup() > 10; };
-
-		auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(printSomething, waitTime);
-		CoroutineScheduler::StartCoroutine<WaitForCoroutine>(printAfter, c);
 		CoroutineScheduler::StartCoroutine<WaitUntil>(printAfterEvaluation, evaluator);
 	}
 };

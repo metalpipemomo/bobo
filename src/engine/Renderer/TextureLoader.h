@@ -12,19 +12,24 @@ public:
 	static void Init()
 	{
 		auto tl = GetInstance();
-		tl->LoadAllTextures("../assets/Jims");
+		tl->LoadAllTextures("../assets/Textures");
 	}
 
 	static unsigned int GetTexture(const std::string& identifier)
 	{
+		std::string copyIdentifier = identifier;
+		std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
+
 		auto tl = GetInstance();
-		auto it = tl->m_TexMap.find(identifier);
+
+		auto it = tl->m_TexMap.find(copyIdentifier);
 		if (it != tl->m_TexMap.end())
 		{
 			return it->second;
 		}
-		BOBO_TRACE("TEX COUNT: {}", tl->m_TexMap.size());
-		BOBO_WARN("Failed to Load Texture with Identifer: {}", identifier);
+
+		BOBO_WARN("Failed to load Texture with Identifer: {} - Ensure the requested asset has been placed into the assets/Textures directory and is a .png", 
+			copyIdentifier);
 		return -1;
 	}
 
@@ -45,7 +50,6 @@ private:
 		int count = 0;
 		for (const auto& dirEntry : std::filesystem::directory_iterator{ directory })
 		{
-			if (dirEntry.path().extension() != ".png") continue;
 			LoadTexture(dirEntry.path().generic_string(), dirEntry.path().stem().generic_string());
 			count++;
 		}
@@ -84,7 +88,7 @@ private:
 		stbi_image_free(data);
 		
 		std::string copyIdentifier = identifier;
-		std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::tolower);
+		std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
 		m_TexMap.insert({ copyIdentifier, m_TexCount++ });
 	}
 

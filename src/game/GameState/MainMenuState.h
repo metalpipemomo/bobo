@@ -28,34 +28,14 @@ public:
 
         ImGui::Begin("Main Menu", NULL, MakeFlags(false, true, true, true, true, true, true, false, false, false));
 
-        // Center Text
-        std::string text = "Totally Accurate Pool Simulator (Main Menu)";
-        auto windowWidth = ImGui::GetWindowSize().x;
-        auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
-        ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
-        ImGui::Text(text.c_str());
+        MakeCenterText("Totally Accurate Pool Simulator (Main Menu)");
        
-        // Center Button
-        ImGuiStyle& style = ImGui::GetStyle();
-        float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
-        float avail = ImGui::GetContentRegionAvail().x;
-        float off = (avail - size) * .5;
-        if (off > 0.0f)
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
-        if (ImGui::Button("Play"))
+        if (MakeCenterButton("Play"))
         {
             GameStateManager::EnterGameState(GameStateLabel::IN_GAME);
         }
 
-        // Center Button
-        size = ImGui::CalcTextSize("Exit").x + style.FramePadding.x * 2.0f;
-        avail = ImGui::GetContentRegionAvail().x;
-        off = (avail - size) * .5;
-        if (off > 0.0f)
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
-        if (ImGui::Button("Exit"))
+        if (MakeCenterButton("Exit"))
         {
             exit(-1);
         }

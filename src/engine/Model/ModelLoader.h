@@ -32,22 +32,20 @@ Model* ModelLoader::GetModel(const std::string& identifier)
 {
 	// Copy and make the Identifier all lowercase first
 	std::string copyIdentifier = identifier;
-	std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::tolower);
+	std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
 
 	auto ml = GetInstance();
 
-	// if the passed in identifier is contained in the map, return the associated Model
-	if (ml->m_LoadedModels.count(copyIdentifier) == 1)
-	{
-		// Found
-		BOBO_INFO("Found Model with Identifier {}", copyIdentifier);
-		return ml->m_LoadedModels.at(copyIdentifier);
-	} else
-	{
-		// not found
-		BOBO_WARN("No Model with Identifier {} has been Loaded", copyIdentifier);
-		return nullptr;
-	}
+    // if the passed in identifier is contained in the map, return the associated Model
+    auto it = ml->m_LoadedModels.find(copyIdentifier);
+    if (it != ml->m_LoadedModels.end())
+    {
+        return it->second;
+    }
+
+	// not found
+	BOBO_WARN("Failed to load Model with Identifier: {} - Ensure the requested asset has been placed into the assets/Models directory", copyIdentifier);
+	return nullptr;
 }
 
 void ModelLoader::LoadModel(const std::string& identifier, const std::string& path)
@@ -122,7 +120,7 @@ void ModelLoader::LoadModel(const std::string& identifier, const std::string& pa
 	model->vao = vao;
 
     std::string copyIdentifier = identifier;
-	std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::tolower);
+	std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
 	m_LoadedModels.insert({ copyIdentifier, model });
 }
 

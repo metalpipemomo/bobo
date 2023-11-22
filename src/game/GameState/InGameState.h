@@ -43,6 +43,7 @@ public:
     {
         // Render the game over screen to the display
         const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 25, main_viewport->WorkPos.y + 25), 0);
         ImGui::SetNextWindowSize(ImVec2(500, 200), 0);
 
@@ -50,6 +51,7 @@ public:
 
         ImGui::Text("In-Game");
 
+        // Solids UI
         std::string solidLabel = "Solid Balls Remaining " + std::to_string(m_SolidBallsRemaining);
         ImGui::Text(solidLabel.c_str());
         if (ImGui::Button("Sink Solid"))
@@ -57,8 +59,10 @@ public:
             m_SolidBallsRemaining--;
         }
 
+        // Move Cursor down some
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
+        // Striped UI
         std::string stripedLabel = "Striped Balls Remaining " + std::to_string(m_StripedBallsRemaining);
         ImGui::Text(stripedLabel.c_str());
         if (ImGui::Button("Sink Striped"))

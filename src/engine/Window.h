@@ -37,7 +37,7 @@ class Window
 {
 public:
 	static unsigned int const width = 640;
-	static unsigned int const height = 640;
+	static unsigned int const height = 480;
 
 	Window(const WindowProperties& props = WindowProperties{})
 	{
