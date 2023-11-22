@@ -3,12 +3,12 @@
 #include "../../bpch.h"
 
 #include "engine/EntityComponent/SceneManager.h"
-#include "ShaderLoader.h"
 #include "engine/EntityComponent/BaseComponents/Transform.h"
 #include "engine/EntityComponent/BaseComponents/Material.h"
 #include "Camera.h"
+#include "Shader.h"
+#include "Shaders/Standard/StandardShader.h"
 #include <glad/glad.h>
-#include <glm/gtc/type_ptr.hpp>
 
 class Renderer
 {
@@ -16,13 +16,8 @@ public:
 	static void Init()
 	{
 		auto r = GetInstance();
-		r->SetUniform("model");
-		r->SetUniform("view");
-		r->SetUniform("projection");
-		r->SetUniform("lightColor");
-		r->SetUniform("lightPosition");
-		r->SetUniform("cameraPosition");
-		r->SetUniform("tex");
+
+		r->p_StandardShader = new StandardShader();
 
 		BOBO_INFO("Renderer initialized!");
 	}
@@ -55,17 +50,16 @@ public:
 		auto r = GetInstance();
 		auto cPos = Camera::GetPosition();
 
-		glUseProgram(ShaderLoader::GetProgram());
+		r->p_StandardShader->Use();
 
 		for (auto& material : materials)
 		{
-			glUniformMatrix4fv(r->m_UniformLocations["model"], 1, 0, glm::value_ptr(material->model));
-			glUniformMatrix4fv(r->m_UniformLocations["view"], 1, 0, glm::value_ptr(Camera::GetViewMatrix()));
-			glUniformMatrix4fv(r->m_UniformLocations["projection"], 1, 0, glm::value_ptr(Camera::GetProjectionMatrix()));
-			glUniform3f(r->m_UniformLocations["lightColor"], 1.0f, 1.0f, 1.0f);
-			glUniform3f(r->m_UniformLocations["lightPosition"], 0.0f, 0.0f, -10.0f);
-			glUniform3f(r->m_UniformLocations["cameraPosition"], cPos.x, cPos.y, cPos.z);
-			glUniform1i(r->m_UniformLocations["tex"], material->texture);
+			StandardShaderProps ssp;
+			ssp.model =  glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			ssp.projection = glm::perspective(glm::radians(45.0f), 800 / 600.0f, 0.1f, 40.0f);
+			ssp.view = glm::lookAt(glm::vec3(0.0f, 3.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			ssp.texture = material->texture;
+			r->p_StandardShader->Data(ssp);
 
 			glBindVertexArray(material->modelData->vao);
 			
@@ -83,12 +77,5 @@ private:
 	}
 
 	Renderer() {}
-
-	void SetUniform(const std::string& uniformName)
-	{
-		auto location = glGetUniformLocation(ShaderLoader::GetProgram(), uniformName.c_str());
-		m_UniformLocations.insert({ uniformName, location });
-	}
-
-	std::map<std::string, GLint> m_UniformLocations;
+	StandardShader* p_StandardShader;
 };

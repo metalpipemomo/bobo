@@ -10,9 +10,15 @@
 [submodule "libs/spdlog"]
 	path = libs/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "libs/Jolt"]
-	path = libs/Jolt
-	url = https://github.com/jrouwe/JoltPhysics
 [submodule "libs/glm"]
 	path = libs/glm
 	url = https://github.com/g-truc/glm
+[submodule "libs/Jolt"]
+	path = libs/Jolt
+	url = https://github.com/metalpipemomo/JoltPhysics
+[submodule "libs/stb"]
+	path = libs/stb
+	url = https://github.com/nothings/stb
+[submodule "libs/tinyobjloader"]
+	path = libs/tinyobjloader
+	url = https://github.com/tinyobjloader/tinyobjloader

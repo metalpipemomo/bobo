@@ -2,53 +2,43 @@
 
 #include "../../bpch.h"
 
+#define GLM_FORCE_RADIANS
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
-#include <glad/glad.h>
-#include "../Renderer/ShaderLoader.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/hash.hpp>
 
-struct Model
+using Texture = GLuint;
+
+struct Vertex 
 {
-	std::vector<float> vertices;
-	std::vector<float> texCoords;
-	std::vector<float> normals;
-	std::vector<int> indices;
-	GLuint vao;
+    glm::vec3 position;
+    glm::vec3 color;
+    glm::vec2 texCoord;
 
-	Model(std::vector<float> verts, std::vector<float> tcs, std::vector<float> norms, std::vector<int> idx)
-		: vertices(verts), texCoords(tcs), normals(norms), indices(idx)
-	{
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
-
-		GLuint vertexBuffer;
-		glGenBuffers(1, &vertexBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
-		auto loc = glGetAttribLocation(ShaderLoader::GetProgram(), "position");
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
-		glEnableVertexAttribArray(loc);
-
-		GLuint normalBuffer;
-		glGenBuffers(1, &normalBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
-		glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), &normals[0], GL_STATIC_DRAW);
-		loc = glGetAttribLocation(ShaderLoader::GetProgram(), "normal");
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
-		glEnableVertexAttribArray(loc);
-
-		GLuint texCoordBuffer;
-		glGenBuffers(1, &texCoordBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
-		glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(float), &texCoords[0], GL_STATIC_DRAW);
-		loc = glGetAttribLocation(ShaderLoader::GetProgram(), "texCoord");
-		glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
-		glEnableVertexAttribArray(loc);
-
-		GLuint indexBuffer;
-		glGenBuffers(1, &indexBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), &indices[0], GL_STATIC_DRAW);
-
-		glBindVertexArray(0);
-	}
+    bool operator==(const Vertex& other) const 
+    {
+        return position == other.position && color == other.color && texCoord == other.texCoord;
+    }
 };
+
+struct Model 
+{
+    std::vector<Vertex> vertices;
+    std::vector<GLuint> indices;
+	GLuint vao;
+};
+
+namespace std
+{
+    template<> struct hash<Vertex>
+    {
+        size_t operator()(Vertex const& vertex) const 
+        {
+            return ((hash<glm::vec3>()(vertex.position) ^ (hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^ (hash<glm::vec2>()(vertex.texCoord) << 1);
+        }
+    };
+}

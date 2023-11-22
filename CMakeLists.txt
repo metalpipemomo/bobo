@@ -24,8 +24,12 @@ add_subdirectory(libs/Jolt/build)
 include_directories(libs/glm)
 include_directories(libs/glfw/include)
 add_subdirectory(libs/imgui)
-#include_directories(libs/stb)
-#include_directories(libs/tinyobjloader)
+include_directories(libs/stb)
+include_directories(libs/tinyobjloader)
+include_directories(libs/FMODAPI/api/core/inc)
+include_directories(libs/FMODAPI/api/studio/inc)
+link_directories(libs/FMODAPI/api/core/lib/x64)
+link_directories(libs/FMODAPI/api/studio/lib/x64)
 
 file(GLOB_RECURSE ENGINE_SOURCES "src/engine/*.cpp")
 file(GLOB_RECURSE ENGINE_HEADERS "src/engine/*.h")
@@ -45,10 +49,14 @@ if (NOT MSVC)
     target_compile_definitions(bobo PRIVATE MAC_TARGET)
 endif()
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(bobo PRIVATE BOBO_DEBUG)
+endif()
+
 target_compile_definitions(bobo PRIVATE GLFW_INCLUDE_NONE)
 
 # Handle linking
-target_link_libraries(bobo glfw glad imgui spdlog::spdlog Jolt)
+target_link_libraries(bobo glfw glad imgui spdlog::spdlog Jolt fmod_vc fmodstudio_vc)
 
 target_include_directories(imgui PRIVATE
     # Include GLFW headers
@@ -57,6 +65,20 @@ target_include_directories(imgui PRIVATE
 
 # PCH
 target_precompile_headers(bobo PRIVATE src/bpch.h)
+
+# Get the absolute path to the 'libs' directory
+get_filename_component(FMOD_LIBS_PATH libs/FMODAPI ABSOLUTE)
+
+# Then use this absolute path in your custom command
+add_custom_command(TARGET bobo POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${FMOD_LIBS_PATH}/api/core/lib/x64/fmod.dll"
+    $<TARGET_FILE_DIR:bobo>)
+
+add_custom_command(TARGET bobo POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${FMOD_LIBS_PATH}/api/studio/lib/x64/fmodstudio.dll"
+    $<TARGET_FILE_DIR:bobo>)
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT bobo)
 

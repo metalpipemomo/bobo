@@ -41,7 +41,7 @@ private:
 
 		// Get the 'Transform' component from GameObject
 		auto transform = object->GetComponent<Transform>();
-		object->AddComponent<Material>(ModelLoader::GetModel("Ball_1"), TextureLoader::GetTexture("1"));
+		object->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("jimin"));
 
 		// Log initial transform position values
 		Log("Initial position x: {}, y: {}, z: {}",
@@ -63,8 +63,8 @@ private:
 		// Audio files are loaded from the src/game/Sounds directory, they must be mp3
 		// The files can be accessed through a string identifier, which corresponds to
 		// the file name, all lowercase without extensions
-		//Audio::PlaySound("boom");
-		//Audio::PlaySound("punch");
+		Audio::PlaySound("boom");
+		Audio::PlaySound("punch");
 
 		/*------ COROUTINES ------*/
 

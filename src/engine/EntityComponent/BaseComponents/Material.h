@@ -18,6 +18,13 @@ public:
 		model = glm::identity<glm::mat4>();
 	}
 
+	Material(Model* modelData, const std::string& name)
+		: modelData(modelData)
+	{
+		model = glm::identity<glm::mat4>();
+		texture = TextureLoader::GetTexture(name);
+	}
+
 	Material(Model* modelData)
 		: modelData(modelData), texture(TextureLoader::GetTexture("white"))
 	{

@@ -13,6 +13,12 @@
 #include <chrono>
 #include <thread>
 #include <filesystem>
+#include <cmath>
+#include <cstdlib>
+#include <limits>
+#include <optional>
+#include <cstdint>
+#include <cstddef>
 
 // std Data Structures
 
@@ -23,6 +29,9 @@
 #include <map>
 #include <unordered_map>
 #include <unordered_set>
+#include <array>
+#include <set>
+#include <cstring>
 
 // Local
 

@@ -18,7 +18,6 @@
 #include "Coroutine/CoroutineScheduler.h"
 #include "Renderer/Camera.h"
 #include "Renderer/TextureLoader.h"
-#include "Renderer/ShaderLoader.h"
 #include "Renderer/Renderer.h"
 
 struct WindowProperties
@@ -52,14 +51,13 @@ public:
 		Time::Init();
 		Camera::Init((float)GetWidth() / (float)GetHeight());
 		TextureLoader::Init();
-		ShaderLoader::Init();
 		Renderer::Init();
 		
 		SceneManager::Init();
 		SceneManager::AddOnSceneChanged("SetSceneHasChanged", [this]() { hasSceneChanged = true;});
 		
 		ModelLoader::Init();
-		//Audio::Init();
+		Audio::Init();
 		CoroutineScheduler::Init();
 	}
 
@@ -91,7 +89,7 @@ public:
 			// System Frame Updates
 			Renderer::Update();
 			Time::Update();
-			//Audio::Update();
+			Audio::Update();
 			CoroutineScheduler::Update();
 			SceneManager::UpdateActiveScene();
 
@@ -121,15 +119,6 @@ public:
 
 			// Window Updates
 			Update();
-
-			// Funny exit thing, also input test
-			if (Input::GetKey(GLFW_KEY_L) &&
-				Input::GetKey(GLFW_KEY_M) &&
-				Input::GetKey(GLFW_KEY_A) &&
-				Input::GetKey(GLFW_KEY_O))
-			{
-				exit(-1);
-			}
 		}
 	}
 
@@ -154,9 +143,10 @@ private:
 		BOBO_INFO("GLFW initialized!");
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		glfwWindowHint(GLFW_SAMPLES, 16);
 
 		p_Window = glfwCreateWindow(m_Props.width, m_Props.height, m_Props.name.c_str(), NULL, NULL);
 
@@ -178,9 +168,11 @@ private:
 		BOBO_INFO("Glad initialized!");
 
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-		glFrontFace(GL_CCW);
+    	glEnable(GL_MULTISAMPLE);
+    	glEnable(GL_BLEND);
+    	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    	glEnable(GL_CULL_FACE);
+    	glCullFace(GL_BACK);
 	}
 
 	void InitImGui()

@@ -13,3 +13,4 @@ bin-int/
 .idea/.gitignore
 /bobo_engine/src/Bobo/Input/InputManager.h
 build/
+.vscode/
