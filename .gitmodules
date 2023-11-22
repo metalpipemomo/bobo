@@ -1,12 +1,24 @@
-[submodule "bobo/libs/GLFW"]
-	path = bobo/libs/GLFW
-	url = https://github.com/MoBaydoun/glfw.git
-[submodule "bobo/libs/spdlog"]
-	path = bobo/libs/spdlog
-	url = https://github.com/gabime/spdlog.git
-[submodule "bobo/libs/glm"]
-	path = bobo/libs/glm
-	url = https://github.com/g-truc/glm.git
-[submodule "bobo/libs/imgui"]
-	path = bobo/libs/imgui
-	url = https://github.com/ocornut/imgui.git
+[submodule "libs/glfw"]
+	path = libs/glfw
+	url = https://github.com/glfw/glfw
+[submodule "libs/glad"]
+	path = libs/glad
+	url = https://github.com/metalpipemomo/glad
+[submodule "libs/imgui"]
+	path = libs/imgui
+	url = https://github.com/metalpipemomo/imgui
+[submodule "libs/spdlog"]
+	path = libs/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "libs/glm"]
+	path = libs/glm
+	url = https://github.com/g-truc/glm
+[submodule "libs/Jolt"]
+	path = libs/Jolt
+	url = https://github.com/metalpipemomo/JoltPhysics
+[submodule "libs/stb"]
+	path = libs/stb
+	url = https://github.com/nothings/stb
+[submodule "libs/tinyobjloader"]
+	path = libs/tinyobjloader
+	url = https://github.com/tinyobjloader/tinyobjloader
