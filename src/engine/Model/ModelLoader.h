@@ -26,6 +26,9 @@ private:
 	void LoadModel(const std::string& identifier, const std::string& path);
 	void LoadAllModels(const std::string& directory);
 	std::unordered_map<std::string, Model*> m_LoadedModels;
+    std::mutex m_ModelMtx;
+    std::condition_variable m_CV;
+    bool m_Ready = false;
 };
 
 Model* ModelLoader::GetModel(const std::string& identifier)
@@ -121,7 +124,16 @@ void ModelLoader::LoadModel(const std::string& identifier, const std::string& pa
 
     std::string copyIdentifier = identifier;
 	std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
+
+    BOBO_INFO("MODEL IS LOADING");
+
+    std::unique_lock<std::mutex> insertLock(m_ModelMtx);
+    m_CV.wait(insertLock, [this]{ return m_Ready; });
+
+    BOBO_INFO("MODEL IS INSERTING");
+
 	m_LoadedModels.insert({ copyIdentifier, model });
+    m_CV.notify_all();
 }
 
 void ModelLoader::LoadAllModels(const std::string& directory)
@@ -129,11 +141,27 @@ void ModelLoader::LoadAllModels(const std::string& directory)
 	// Call Load Model for each File inside of Directory
 	// The identifier will be the name of the .obj File without the File Type
 	// Example: file name = "cube.obj", the identifier will be cube
+
+    std::vector<std::thread> modelThreads;
+
 	for (auto const& dirEntry : std::filesystem::directory_iterator{ directory })
 	{
 		if (dirEntry.path().extension() != ".obj") continue;
-		LoadModel(dirEntry.path().stem().generic_string(), dirEntry.path().generic_string());
+        modelThreads.emplace_back(&ModelLoader::LoadModel, this, dirEntry.path().stem().generic_string(), dirEntry.path().generic_string());
 	}
+
+    {
+        std::unique_lock<std::mutex> lock(m_ModelMtx);
+        m_Ready = true;
+        m_CV.notify_all();
+    }
+
+    for (size_t i = 0; i < modelThreads.size(); i++)
+    {
+        modelThreads[i].join();
+    }
+
+    std::vector<std::thread>().swap(modelThreads);
 
 	BOBO_INFO("ModelLoader Loaded Models from Directory {}", directory);
 }
