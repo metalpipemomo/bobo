@@ -127,11 +127,9 @@ void ModelLoader::LoadModel(const std::string& identifier, const std::string& pa
 
     {
         std::lock_guard<std::mutex> lock(m_ModelMtx);
+        BOBO_INFO("MODEL IS INSERTING");
+        m_LoadedModels.insert({ copyIdentifier, model });
     }
-
-    BOBO_INFO("MODEL IS INSERTING");
-
-	m_LoadedModels.insert({ copyIdentifier, model });
 }
 
 void ModelLoader::LoadAllModels(const std::string& directory)
@@ -152,8 +150,6 @@ void ModelLoader::LoadAllModels(const std::string& directory)
     {
         modelThreads[i].join();
     }
-
-    std::vector<std::thread>().swap(modelThreads);
 
 	BOBO_INFO("ModelLoader Loaded Models from Directory {}", directory);
 }
