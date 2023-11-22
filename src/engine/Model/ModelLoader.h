@@ -27,8 +27,6 @@ private:
 	void LoadAllModels(const std::string& directory);
 	std::unordered_map<std::string, Model*> m_LoadedModels;
     std::mutex m_ModelMtx;
-    std::condition_variable m_CV;
-    bool m_Ready = false;
 };
 
 Model* ModelLoader::GetModel(const std::string& identifier)
@@ -127,13 +125,13 @@ void ModelLoader::LoadModel(const std::string& identifier, const std::string& pa
 
     BOBO_INFO("MODEL IS LOADING");
 
-    std::unique_lock<std::mutex> insertLock(m_ModelMtx);
-    m_CV.wait(insertLock, [this]{ return m_Ready; });
+    {
+        std::lock_guard<std::mutex> lock(m_ModelMtx);
+    }
 
     BOBO_INFO("MODEL IS INSERTING");
 
 	m_LoadedModels.insert({ copyIdentifier, model });
-    m_CV.notify_all();
 }
 
 void ModelLoader::LoadAllModels(const std::string& directory)
@@ -149,12 +147,6 @@ void ModelLoader::LoadAllModels(const std::string& directory)
 		if (dirEntry.path().extension() != ".obj") continue;
         modelThreads.emplace_back(&ModelLoader::LoadModel, this, dirEntry.path().stem().generic_string(), dirEntry.path().generic_string());
 	}
-
-    {
-        std::unique_lock<std::mutex> lock(m_ModelMtx);
-        m_Ready = true;
-        m_CV.notify_all();
-    }
 
     for (size_t i = 0; i < modelThreads.size(); i++)
     {
