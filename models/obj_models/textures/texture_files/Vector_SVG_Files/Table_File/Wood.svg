@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg949"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="Wood.svg"
+   inkscape:export-filename="..\..\PNG_Textures\Table_Textures\Wood.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview951"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.72515432"
+     inkscape:cx="397.84635"
+     inkscape:cy="531.61098"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer6-8" />
+  <defs
+     id="defs946" />
+  <g
+     inkscape:label="Wood_Top"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#784421;stroke-width:52.2147"
+       id="rect1126"
+       width="210.16217"
+       height="56.18919"
+       x="-0.36486486"
+       y="0.36486486"
+       ry="0" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer6"
+     inkscape:label="Wood_Leg_Inside">
+    <rect
+       style="fill:#554400;stroke-width:64.9999"
+       id="rect1308"
+       width="209.7973"
+       height="26.999998"
+       x="0"
+       y="107.99999" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer6-8"
+     inkscape:label="Wood_Leg_Outside"
+     transform="translate(0.36486239,19.155414)"
+     style="fill:#aa8800">
+    <rect
+       style="fill:#aa8800;stroke-width:64.9999"
+       id="rect1308-9"
+       width="209.7973"
+       height="26.999998"
+       x="0"
+       y="107.99999" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="Wood_Bottom">
+    <rect
+       style="fill:#502d16;stroke-width:64.9999"
+       id="rect1206"
+       width="210.16216"
+       height="52.175674"
+       x="-0.36486486"
+       y="55.824326" />
+  </g>
+</svg>
