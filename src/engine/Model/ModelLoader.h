@@ -25,12 +25,14 @@ private:
 	ModelLoader() {}
 	void LoadModel(const std::string& identifier, const std::string& path);
 	void LoadAllModels(const std::string& directory);
+    void ConstructVAO(Model* model);
 	std::unordered_map<std::string, Model*> m_LoadedModels;
+    std::mutex m_ModelMtx;
 };
 
 Model* ModelLoader::GetModel(const std::string& identifier)
 {
-	// Copy and make the Identifier all lowercase first
+	// copy and make the Identifier all uppercase first
 	std::string copyIdentifier = identifier;
 	std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
 
@@ -43,7 +45,7 @@ Model* ModelLoader::GetModel(const std::string& identifier)
         return it->second;
     }
 
-	// not found
+	// model was not found
 	BOBO_WARN("Failed to load Model with Identifier: {} - Ensure the requested asset has been placed into the assets/Models directory", copyIdentifier);
 	return nullptr;
 }
@@ -94,7 +96,55 @@ void ModelLoader::LoadModel(const std::string& identifier, const std::string& pa
         }
     }
 
-	GLuint vao;
+    // make identifier all uppercase
+    std::string copyIdentifier = identifier;
+    std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
+
+    // lock the mutex
+    m_ModelMtx.lock();
+
+    // insert the model
+    m_LoadedModels.insert({ copyIdentifier, model });
+
+    // unlock mutex
+    m_ModelMtx.unlock();
+
+    BOBO_INFO("Model ({}) Loaded", copyIdentifier);
+}
+
+void ModelLoader::LoadAllModels(const std::string& directory)
+{
+	// Call Load Model for each File inside of Directory
+	// The identifier will be the name of the .obj File without the File Type
+	// Example: file name = "cube.obj", the identifier will be cube
+
+    std::vector<std::thread> modelThreads;
+
+    // Start threads to load each model
+	for (auto const& dirEntry : std::filesystem::directory_iterator{ directory })
+	{
+		if (dirEntry.path().extension() != ".obj") continue;
+        modelThreads.emplace_back(&ModelLoader::LoadModel, this, dirEntry.path().stem().generic_string(), dirEntry.path().generic_string());
+	}
+
+    // Join all started threads
+    for (size_t i = 0; i < modelThreads.size(); i++)
+    {
+        modelThreads[i].join();
+    }
+
+    // Construct VAOs for each loaded model
+    for (auto& item : m_LoadedModels)
+    {
+        ConstructVAO(item.second);
+    }
+
+	BOBO_INFO("ModelLoader Loaded {} Models from Directory {}", m_LoadedModels.size(), directory);
+}
+
+void ModelLoader::ConstructVAO(Model* model)
+{
+    GLuint vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
@@ -102,11 +152,11 @@ void ModelLoader::LoadModel(const std::string& identifier, const std::string& pa
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, model->vertices.size() * sizeof(Vertex), model->vertices.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, position));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, color));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, texCoord));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
     glEnableVertexAttribArray(2);
 
     GLuint ebo;
@@ -117,23 +167,5 @@ void ModelLoader::LoadModel(const std::string& identifier, const std::string& pa
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-	model->vao = vao;
-
-    std::string copyIdentifier = identifier;
-	std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
-	m_LoadedModels.insert({ copyIdentifier, model });
-}
-
-void ModelLoader::LoadAllModels(const std::string& directory)
-{
-	// Call Load Model for each File inside of Directory
-	// The identifier will be the name of the .obj File without the File Type
-	// Example: file name = "cube.obj", the identifier will be cube
-	for (auto const& dirEntry : std::filesystem::directory_iterator{ directory })
-	{
-		if (dirEntry.path().extension() != ".obj") continue;
-		LoadModel(dirEntry.path().stem().generic_string(), dirEntry.path().generic_string());
-	}
-
-	BOBO_INFO("ModelLoader Loaded Models from Directory {}", directory);
+    model->vao = vao;
 }

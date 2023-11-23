@@ -180,7 +180,6 @@ private:
 		// Create ImGui Context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
-		BOBO_INFO("ImGui initialized");
 
 		// Optionally set configuration flags, load fonts, setup style
 		ImGuiIO& io = ImGui::GetIO();
@@ -189,6 +188,8 @@ private:
 		// Initialize Platform and Rendering backends
 		ImGui_ImplGlfw_InitForOpenGL(p_Window, true);
 		ImGui_ImplOpenGL3_Init();
+
+		BOBO_INFO("ImGui initialized!");
 	}
 
 	void Update()
