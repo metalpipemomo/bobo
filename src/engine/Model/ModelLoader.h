@@ -25,13 +25,14 @@ private:
 	ModelLoader() {}
 	void LoadModel(const std::string& identifier, const std::string& path);
 	void LoadAllModels(const std::string& directory);
+    void ConstructVAO(Model* model);
 	std::unordered_map<std::string, Model*> m_LoadedModels;
     std::mutex m_ModelMtx;
 };
 
 Model* ModelLoader::GetModel(const std::string& identifier)
 {
-	// Copy and make the Identifier all lowercase first
+	// copy and make the Identifier all uppercase first
 	std::string copyIdentifier = identifier;
 	std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
 
@@ -44,7 +45,7 @@ Model* ModelLoader::GetModel(const std::string& identifier)
         return it->second;
     }
 
-	// not found
+	// model was not found
 	BOBO_WARN("Failed to load Model with Identifier: {} - Ensure the requested asset has been placed into the assets/Models directory", copyIdentifier);
 	return nullptr;
 }
@@ -95,41 +96,20 @@ void ModelLoader::LoadModel(const std::string& identifier, const std::string& pa
         }
     }
 
-	GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    GLuint vbo;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, model->vertices.size() * sizeof(Vertex), model->vertices.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, position));
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, color));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, texCoord));
-    glEnableVertexAttribArray(2);
-
-    GLuint ebo;
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, model->indices.size() * sizeof(GLuint), model->indices.data(), GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-	model->vao = vao;
-
+    // make identifier all uppercase
     std::string copyIdentifier = identifier;
-	std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
+    std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
 
-    BOBO_INFO("MODEL IS LOADING");
+    // lock the mutex
+    m_ModelMtx.lock();
 
-    {
-        std::lock_guard<std::mutex> lock(m_ModelMtx);
-        BOBO_INFO("MODEL IS INSERTING");
-        m_LoadedModels.insert({ copyIdentifier, model });
-    }
+    // insert the model
+    m_LoadedModels.insert({ copyIdentifier, model });
+
+    // unlock mutex
+    m_ModelMtx.unlock();
+
+    BOBO_INFO("Model ({}) Loaded", copyIdentifier);
 }
 
 void ModelLoader::LoadAllModels(const std::string& directory)
@@ -140,16 +120,52 @@ void ModelLoader::LoadAllModels(const std::string& directory)
 
     std::vector<std::thread> modelThreads;
 
+    // Start threads to load each model
 	for (auto const& dirEntry : std::filesystem::directory_iterator{ directory })
 	{
 		if (dirEntry.path().extension() != ".obj") continue;
         modelThreads.emplace_back(&ModelLoader::LoadModel, this, dirEntry.path().stem().generic_string(), dirEntry.path().generic_string());
 	}
 
+    // Join all started threads
     for (size_t i = 0; i < modelThreads.size(); i++)
     {
         modelThreads[i].join();
     }
 
-	BOBO_INFO("ModelLoader Loaded Models from Directory {}", directory);
+    // Construct VAOs for each loaded model
+    for (auto& item : m_LoadedModels)
+    {
+        ConstructVAO(item.second);
+    }
+
+	BOBO_INFO("ModelLoader Loaded {} Models from Directory {}", m_LoadedModels.size(), directory);
+}
+
+void ModelLoader::ConstructVAO(Model* model)
+{
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, model->vertices.size() * sizeof(Vertex), model->vertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
+    glEnableVertexAttribArray(2);
+
+    GLuint ebo;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, model->indices.size() * sizeof(GLuint), model->indices.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    model->vao = vao;
 }
