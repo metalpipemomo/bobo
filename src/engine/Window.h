@@ -9,6 +9,9 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include "Physics/Physics.h"
+
+
 #include "Input.h"
 #include "Model/ModelLoader.h"
 #include "Audio/Audio.h"
@@ -59,6 +62,8 @@ public:
 		ModelLoader::Init();
 		Audio::Init();
 		CoroutineScheduler::Init();
+
+		Physics::Init();
 	}
 
 	~Window()
@@ -109,6 +114,7 @@ public:
 			if (Time::DidFixedUpdate())
 			{
 				SceneManager::FixedUpdateActiveScene();
+				Physics::Update();
 			}
 
 			// Clear Screen

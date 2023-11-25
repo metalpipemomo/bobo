@@ -2,6 +2,8 @@
 
 #include "engine/Bobo.h"
 
+#include "../engine/Physics/Rigidbody.h"
+
 #include "GameComponents/FunnyMove.h"
 
 #include "../engine/GameState/GameStateManager.h"
@@ -70,6 +72,23 @@ private:
 
 		// Example of Creating a GameObject with a Parent GameObject
 		auto childObject = new GameObject(*object);
+
+
+		/*----------physics Test ---------------*/
+		auto physicsball = new GameObject();
+
+		physicsball->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_2"));
+		physicsball->AddComponent<Rigidbody>(new SphereShape(1), RVec3(0.0, 10, 0.0), Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
+		physicsball->GetComponent<Rigidbody>()->setTransform(physicsball->GetComponent<Transform>());
+
+
+		auto staticBall = new GameObject();
+
+		staticBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("8_ball"));
+		staticBall->AddComponent<Rigidbody>(new SphereShape(1), RVec3(0.5f, -3.0f, 0.0), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		staticBall->GetComponent<Rigidbody>()->setTransform(staticBall->GetComponent<Transform>());
+
+
 
 		// Creating point lights
 		auto pointlight = new GameObject();
