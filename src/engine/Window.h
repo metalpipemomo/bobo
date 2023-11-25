@@ -73,6 +73,11 @@ public:
 
 	void EventLoop()
 	{
+		GLint maxVertexUniformComponents;
+		GLint maxFragmentUniformComponents;
+		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &maxVertexUniformComponents);
+		glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &maxFragmentUniformComponents);
+		BOBO_INFO("Vertex: {}, Fragment: {}", maxVertexUniformComponents, maxFragmentUniformComponents);
 		while (!glfwWindowShouldClose(p_Window))
 		{
 			// ImGUI Frame Update
