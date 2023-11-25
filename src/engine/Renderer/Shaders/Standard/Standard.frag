@@ -8,40 +8,73 @@ layout(location = 3) in vec3 fragNormal;
 layout(location = 0) out vec4 outColor;
 
 uniform sampler2D texSampler;
+uniform vec3 cameraPos;
+uniform float shininess;
+
+struct Spotlight
+{
+    vec3 position;
+    vec3 direction;
+    float cutoffAngle;
+    vec3 baseColor;
+};
+
+struct Pointlight
+{
+    vec3 position;
+    vec3 baseColor;
+};
+
+uniform int numSpotlights;
+uniform Spotlight spotlights[100];
+
+uniform int numPointlights;
+uniform Pointlight pointlights[100];
 
 void main()
 {
-    // Funny hardcoded spotlight
-    vec3 spotlightPos = vec3(0.0, 5.0, 0.0);
-    vec3 spotlightDir = vec3(0.0, -1.0, 0.0);
-    float cutoffAngle = cos(radians(90));
-    vec3 ambientColor = vec3(0.1, 0.1, 0.1);
-    vec3 diffuseColor = vec3(1.0, 1.0, 1.0);
-    vec3 specularColor = vec3(1.0, 1.0, 1.0);
-    float shininess = 32.0;
-    vec3 viewPos = vec3(0.0, 0.0, 10.0);
-
     vec3 normal = normalize(fragNormal);
-    vec3 lightDir = normalize(spotlightPos - fragPosition);
-    vec3 viewDir = normalize(viewPos - fragPosition);
+    vec3 cameraDir = normalize(cameraPos - fragPosition);
 
-    float theta = dot(lightDir, normalize(-spotlightDir));
-    if (theta > cutoffAngle)
+    vec3 finalColor = vec3(0.0);
+    for (int i = 0; i < numSpotlights; i++)
     {
-        vec3 ambient = ambientColor * fragColor;
+        Spotlight light = spotlights[i];
 
+        vec3 lightDir = normalize(light.position - fragPosition);
+        float theta = dot(lightDir, normalize(-light.direction));
+        float cutoffAngle = cos(radians(light.cutoffAngle));
+
+        vec3 spotlightAmbient = light.baseColor * 0.3;
+        vec3 spotlightEffect = vec3(0.0);
+
+        if (theta > cutoffAngle)
+        {
+            float diff = max(dot(normal, lightDir), 0.0);
+            vec3 diffuse = diff * light.baseColor * fragColor;
+            vec3 reflectDir = reflect(-lightDir, normal);
+            float spec = pow(max(dot(cameraDir, reflectDir), 0.0), shininess);
+            vec3 specular = light.baseColor * spec;
+            spotlightEffect = diffuse + specular;
+        }
+
+        finalColor += spotlightAmbient * fragColor + spotlightEffect;
+    }
+
+    for (int i = 0; i < numPointlights; i++)
+    {
+        Pointlight light = pointlights[i];
+
+        vec3 lightDir = normalize(light.position - fragPosition);
         float diff = max(dot(normal, lightDir), 0.0);
-        vec3 diffuse = diff * diffuseColor * fragColor;
-
+        vec3 diffuse = diff * light.baseColor * fragColor;
         vec3 reflectDir = reflect(-lightDir, normal);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-        vec3 specular = specularColor * spec;
+        float spec = pow(max(dot(cameraDir, reflectDir), 0.0), shininess);
+        vec3 specular = light.baseColor * spec;
 
-        vec3 finalColor = ambient + diffuse + specular;
-        outColor = vec4(finalColor, 1.0) * texture(texSampler, fragTexCoord);
+        vec3 ambient = light.baseColor * 0.3;
+        finalColor += ambient * fragColor + diffuse + specular;
     }
-    else
-    {
-        outColor = vec4(ambientColor * fragColor, 1.0) * texture(texSampler, fragTexCoord);
-    }
+
+    outColor = vec4(finalColor, 1.0) * texture(texSampler, fragTexCoord);
 }
