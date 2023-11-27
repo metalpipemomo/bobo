@@ -39,7 +39,7 @@ namespace Layers
 class ObjectLayerPairFilterImpl : public JPH::ObjectLayerPairFilter
 {
 public:
-	virtual bool					ShouldCollide(JPH::ObjectLayer inObject1, JPH::ObjectLayer inObject2) const override
+	virtual bool ShouldCollide(JPH::ObjectLayer inObject1, JPH::ObjectLayer inObject2) const override
 	{
 		switch (inObject1)
 		{
@@ -72,19 +72,19 @@ namespace BroadPhaseLayers
 class BPLayerInterfaceImpl final : public BroadPhaseLayerInterface
 {
 public:
-									BPLayerInterfaceImpl()
+	BPLayerInterfaceImpl()
 	{
 		// Create a mapping table from object to broad phase layer
 		mObjectToBroadPhase[Layers::NON_MOVING] = BroadPhaseLayers::NON_MOVING;
 		mObjectToBroadPhase[Layers::MOVING] = BroadPhaseLayers::MOVING;
 	}
 
-	virtual uint					GetNumBroadPhaseLayers() const override
+	virtual uint GetNumBroadPhaseLayers() const override
 	{
 		return BroadPhaseLayers::NUM_LAYERS;
 	}
 
-	virtual BroadPhaseLayer			GetBroadPhaseLayer(ObjectLayer inLayer) const override
+	virtual BroadPhaseLayer GetBroadPhaseLayer(ObjectLayer inLayer) const override
 	{
 		JPH_ASSERT(inLayer < Layers::NUM_LAYERS);
 		return mObjectToBroadPhase[inLayer];
@@ -103,14 +103,14 @@ public:
 #endif // JPH_EXTERNAL_PROFILE || JPH_PROFILE_ENABLED
 
 private:
-	BroadPhaseLayer					mObjectToBroadPhase[Layers::NUM_LAYERS];
+	BroadPhaseLayer mObjectToBroadPhase[Layers::NUM_LAYERS];
 };
 
 /// Class that determines if an object layer can collide with a broadphase layer
 class ObjectVsBroadPhaseLayerFilterImpl : public ObjectVsBroadPhaseLayerFilter
 {
 public:
-	virtual bool				ShouldCollide(JPH::ObjectLayer inLayer1, JPH::BroadPhaseLayer inLayer2) const override
+	virtual bool ShouldCollide(JPH::ObjectLayer inLayer1, JPH::BroadPhaseLayer inLayer2) const override
 	{
 		switch (inLayer1)
 		{
@@ -130,7 +130,7 @@ class MyContactListener : public JPH::ContactListener
 {
 public:
 	// See: ContactListener
-	virtual JPH::ValidateResult	OnContactValidate(const JPH::Body& inBody1, const JPH::Body& inBody2, JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult& inCollisionResult) override
+	virtual JPH::ValidateResult OnContactValidate(const JPH::Body& inBody1, const JPH::Body& inBody2, JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult& inCollisionResult) override
 	{
 		std::cout << "Contact validate callback" << std::endl;
 
@@ -138,17 +138,17 @@ public:
 		return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
 	}
 
-	virtual void			OnContactAdded(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings) override
+	virtual void OnContactAdded(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings) override
 	{
 		std::cout << "A contact was added" << std::endl;
 	}
 
-	virtual void			OnContactPersisted(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings) override
+	virtual void OnContactPersisted(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings) override
 	{
 		std::cout << "A contact was persisted" << std::endl;
 	}
 
-	virtual void			OnContactRemoved(const JPH::SubShapeIDPair& inSubShapePair) override
+	virtual void OnContactRemoved(const JPH::SubShapeIDPair& inSubShapePair) override
 	{
 		std::cout << "A contact was removed" << std::endl;
 	}
@@ -158,12 +158,12 @@ public:
 class MyBodyActivationListener : public JPH::BodyActivationListener
 {
 public:
-	virtual void		OnBodyActivated(const JPH::BodyID& inBodyID, JPH::uint64 inBodyUserData) override
+	virtual void OnBodyActivated(const JPH::BodyID& inBodyID, JPH::uint64 inBodyUserData) override
 	{
 		std::cout << "A body got activated" << std::endl;
 	}
 
-	virtual void		OnBodyDeactivated(const JPH::BodyID& inBodyID, JPH::uint64 inBodyUserData) override
+	virtual void OnBodyDeactivated(const JPH::BodyID& inBodyID, JPH::uint64 inBodyUserData) override
 	{
 		std::cout << "A body went to sleep" << std::endl;
 	}
@@ -175,24 +175,23 @@ public:
 class Physics
 {
 public:
-	static void Init() {
+	static void Init() 
+	{
 		PhysicsWorld = new Physics();
 	};
-
-
 
 	static Physics* GetInstance() { return PhysicsWorld; }
 	
 	JPH::PhysicsSystem* GetPhysicsSystem() { return physics_system; }
 	
 	
-	static void Update() {
-		    //
+	static void Update() 
+	{
 		TempAllocatorImpl temp_allocator(10 * 1024 * 1024);
 
-	// We need a job system that will execute physics jobs on multiple threads. Typically
-	// you would implement the JobSystem interface yourself and let Jolt Physics run on top
-	// of your own job scheduler. JobSystemThreadPool is an example implementation.
+		// We need a job system that will execute physics jobs on multiple threads. Typically
+		// you would implement the JobSystem interface yourself and let Jolt Physics run on top
+		// of your own job scheduler. JobSystemThreadPool is an example implementation.
 		JobSystemThreadPool job_system(cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1);
 		auto &body_interface = Physics::PhysicsWorld->physics_system->GetBodyInterface();
 		// Output current position and velocity of the sphere
@@ -207,90 +206,90 @@ public:
 		auto body_id_vector = JPH::BodyIDVector();
 		Physics::PhysicsWorld->physics_system->GetActiveBodies(JPH::EBodyType::RigidBody,body_id_vector);
 		BodyInterface &interface = Physics::PhysicsWorld->physics_system->GetBodyInterface();
-		for(auto body : body_id_vector) {
+		for(auto body : body_id_vector) 
+		{
 			RVec3 position = interface.GetCenterOfMassPosition(body);
 			Vec3 velocity = interface.GetLinearVelocity(body);
-			std::cout << "Position = (" << position.GetX() << ", " << position.GetY() << ", " << position.GetZ() << "), Velocity = (" << velocity.GetX() << ", " << velocity.GetY() << ", " << velocity.GetZ() << ")" << std::endl;
+			//std::cout << "Position = (" << position.GetX() << ", " << position.GetY() << ", " << position.GetZ() << "), Velocity = (" << velocity.GetX() << ", " << velocity.GetY() << ", " << velocity.GetZ() << ")" << std::endl;
 		}
 		
 		// Step the world
 		Physics::PhysicsWorld->physics_system->Update((1.0/60.0), cCollisionSteps, &temp_allocator, &job_system);
-	};
+	}
 
 
 private:
-	Physics() {
-	 // johnnys stuff/ /
+	Physics() 
+	{
+		// johnnys stuff/ /
     	// Register allocation hook
-	RegisterDefaultAllocator();
+		RegisterDefaultAllocator();
 
 
-	// Create a factory
-	Factory::sInstance = new Factory();
+		// Create a factory
+		Factory::sInstance = new Factory();
 
-	// Register all Jolt physics types
-	RegisterTypes();
+		// Register all Jolt physics types
+		RegisterTypes();
 
-	// We need a temp allocator for temporary allocations during the physics update. We're
-	// pre-allocating 10 MB to avoid having to do allocations during the physics update.
-	// B.t.w. 10 MB is way too much for this example but it is a typical value you can use.
-	// If you don't want to pre-allocate you can also use TempAllocatorMalloc to fall back to
-	// malloc / free.
-	TempAllocatorImpl temp_allocator(10 * 1024 * 1024);
+		// We need a temp allocator for temporary allocations during the physics update. We're
+		// pre-allocating 10 MB to avoid having to do allocations during the physics update.
+		// B.t.w. 10 MB is way too much for this example but it is a typical value you can use.
+		// If you don't want to pre-allocate you can also use TempAllocatorMalloc to fall back to
+		// malloc / free.
+		TempAllocatorImpl temp_allocator(10 * 1024 * 1024);
 
-	// We need a job system that will execute physics jobs on multiple threads. Typically
-	// you would implement the JobSystem interface yourself and let Jolt Physics run on top
-	// of your own job scheduler. JobSystemThreadPool is an example implementation.
-	JobSystemThreadPool job_system(cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1);
+		// We need a job system that will execute physics jobs on multiple threads. Typically
+		// you would implement the JobSystem interface yourself and let Jolt Physics run on top
+		// of your own job scheduler. JobSystemThreadPool is an example implementation.
+		JobSystemThreadPool job_system(cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1);
 
-	// This is the max amount of rigid bodies that you can add to the physics system. If you try to add more you'll get an error.
-	// Note: This value is low because this is a simple test. For a real project use something in the order of 65536.
-	const uint cMaxBodies = 1024;
+		// This is the max amount of rigid bodies that you can add to the physics system. If you try to add more you'll get an error.
+		// Note: This value is low because this is a simple test. For a real project use something in the order of 65536.
+		const uint cMaxBodies = 1024;
 
-	// This determines how many mutexes to allocate to protect rigid bodies from concurrent access. Set it to 0 for the default settings.
-	const uint cNumBodyMutexes = 0;
+		// This determines how many mutexes to allocate to protect rigid bodies from concurrent access. Set it to 0 for the default settings.
+		const uint cNumBodyMutexes = 0;
 
-	// This is the max amount of body pairs that can be queued at any time (the broad phase will detect overlapping
-	// body pairs based on their bounding boxes and will insert them into a queue for the narrowphase). If you make this buffer
-	// too small the queue will fill up and the broad phase jobs will start to do narrow phase work. This is slightly less efficient.
-	// Note: This value is low because this is a simple test. For a real project use something in the order of 65536.
-	const uint cMaxBodyPairs = 1024;
+		// This is the max amount of body pairs that can be queued at any time (the broad phase will detect overlapping
+		// body pairs based on their bounding boxes and will insert them into a queue for the narrowphase). If you make this buffer
+		// too small the queue will fill up and the broad phase jobs will start to do narrow phase work. This is slightly less efficient.
+		// Note: This value is low because this is a simple test. For a real project use something in the order of 65536.
+		const uint cMaxBodyPairs = 1024;
 
-	// This is the maximum size of the contact constraint buffer. If more contacts (collisions between bodies) are detected than this
-	// number then these contacts will be ignored and bodies will start interpenetrating / fall through the world.
-	// Note: This value is low because this is a simple test. For a real project use something in the order of 10240.
-	const uint cMaxContactConstraints = 1024;
+		// This is the maximum size of the contact constraint buffer. If more contacts (collisions between bodies) are detected than this
+		// number then these contacts will be ignored and bodies will start interpenetrating / fall through the world.
+		// Note: This value is low because this is a simple test. For a real project use something in the order of 10240.
+		const uint cMaxContactConstraints = 1024;
 
-	// Create mapping table from object layer to broadphase layer
-	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
-	broad_phase_layer_interface = new BPLayerInterfaceImpl{};
+		// Create mapping table from object layer to broadphase layer
+		// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
+		broad_phase_layer_interface = new BPLayerInterfaceImpl{};
 
-	// Create class that filters object vs broadphase layers
-	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
-	object_vs_broadphase_layer_filter = new ObjectVsBroadPhaseLayerFilterImpl{};
+		// Create class that filters object vs broadphase layers
+		// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
+		object_vs_broadphase_layer_filter = new ObjectVsBroadPhaseLayerFilterImpl{};
 
-	// Create class that filters object vs object layers
-	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
-	object_vs_object_layer_filter = new ObjectLayerPairFilterImpl{};
+		// Create class that filters object vs object layers
+		// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
+		object_vs_object_layer_filter = new ObjectLayerPairFilterImpl{};
 
-	// Now we can create the actual physics system.
-	physics_system = new PhysicsSystem{};
-	physics_system->Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, *broad_phase_layer_interface, *object_vs_broadphase_layer_filter, *object_vs_object_layer_filter);
+		// Now we can create the actual physics system.
+		physics_system = new PhysicsSystem{};
+		physics_system->Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, *broad_phase_layer_interface, *object_vs_broadphase_layer_filter, *object_vs_object_layer_filter);
 
-	// A body activation listener gets notified when bodies activate and go to sleep
-	// Note that this is called from a job so whatever you do here needs to be thread safe.
-	// Registering one is entirely optional.
-	body_activation_listener = new MyBodyActivationListener{};
-	physics_system->SetBodyActivationListener(body_activation_listener);
+		// A body activation listener gets notified when bodies activate and go to sleep
+		// Note that this is called from a job so whatever you do here needs to be thread safe.
+		// Registering one is entirely optional.
+		body_activation_listener = new MyBodyActivationListener{};
+		physics_system->SetBodyActivationListener(body_activation_listener);
 
-	// A contact listener gets notified when bodies (are about to) collide, and when they separate again.
-	// Note that this is called from a job so whatever you do here needs to be thread safe.
-	// Registering one is entirely optional.
-	contact_listener = new MyContactListener{};
-	physics_system->SetContactListener(contact_listener);
-
-	
-	};
+		// A contact listener gets notified when bodies (are about to) collide, and when they separate again.
+		// Note that this is called from a job so whatever you do here needs to be thread safe.
+		// Registering one is entirely optional.
+		contact_listener = new MyContactListener{};
+		physics_system->SetContactListener(contact_listener);
+	}
 
 	inline static Physics* PhysicsWorld;
 	JPH::PhysicsSystem* physics_system;
@@ -299,7 +298,6 @@ private:
 	ObjectVsBroadPhaseLayerFilterImpl *object_vs_broadphase_layer_filter;
 	ObjectLayerPairFilterImpl *object_vs_object_layer_filter;
 	BPLayerInterfaceImpl *broad_phase_layer_interface;
-	    //
 
 	// We need a job system that will execute physics jobs on multiple threads. Typically
 	// you would implement the JobSystem interface yourself and let Jolt Physics run on top

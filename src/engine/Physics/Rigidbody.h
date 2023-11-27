@@ -23,12 +23,15 @@
 class Rigidbody : public Component
 {
 public:
-	void Init() {
+	void Init() 
+	{
 		
-	};
+	}
 
-	void Update() {
-		if(transform != nullptr) {
+	void Update() 
+	{
+		if(transform != nullptr) 
+		{
 			auto tempPosition = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetPosition(m_id);
 			auto tempRotation = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetRotation(m_id);
 			transform->position = glm::vec3(tempPosition.GetX(), tempPosition.GetY(), tempPosition.GetZ());
@@ -37,64 +40,72 @@ public:
 		}
 	}
 
-	void setTransform(Transform* t) {
+	void SetTransform(Transform* t) 
+	{
 		transform = t;
 	}
 
-
-	Rigidbody(const JPH::Shape *inShape = new JPH::SphereShape(.5), JPH::RVec3Arg inPosition = JPH::RVec3Arg(0.0f,0.0f,0.0f), JPH::QuatArg inRotation = Quat::sIdentity(), JPH::EMotionType inMotionType = EMotionType::Dynamic, JPH::ObjectLayer inObjectLayer = Layers::MOVING) {
+	Rigidbody(const JPH::Shape *inShape = new JPH::SphereShape(.5), JPH::RVec3Arg inPosition = JPH::RVec3Arg(0.0f,0.0f,0.0f), 
+		JPH::QuatArg inRotation = Quat::sIdentity(), JPH::EMotionType inMotionType = EMotionType::Dynamic, 
+		JPH::ObjectLayer inObjectLayer = Layers::MOVING, Transform *trnsfrm = nullptr) 
+	{
 	
 		JPH::BodyCreationSettings shape_settings(inShape, inPosition, inRotation,inMotionType,inObjectLayer);
 		m_id = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().CreateAndAddBody(shape_settings, EActivation::Activate);
-		transform = nullptr;
-
-	};
+		transform = trnsfrm;
+	}
 	
-	void AddLinearVelocity(Vec3 velocity) {
+	void AddLinearVelocity(Vec3 velocity) 
+	{
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddLinearVelocity(m_id, velocity);
 	}
 
-
-
-	JPH::Vec3 GetPosition() {
+	JPH::Vec3 GetPosition() 
+	{
 		return Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetCenterOfMassPosition(m_id);
 	}
-	void SetPosition(JPH::Vec3 position) {
+
+	void SetPosition(JPH::Vec3 position) 
+	{
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetPosition(m_id, position, EActivation::Activate);
 	}
+
+	// sets the position while resetting velocity
+	void SetPositionHard(JPH::Vec3 position) 
+	{
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetPosition(m_id, position, EActivation::Activate);
+		SetVelocity(JPH::Vec3::sZero());
+	}
 	
-	JPH::Vec3 GetVelocity() {
+	JPH::Vec3 GetVelocity() 
+	{
 		return Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetLinearVelocity(m_id);
 	}
 
-	void SetVelocity(JPH::Vec3 velocity) {
+	void SetVelocity(JPH::Vec3 velocity) 
+	{
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetLinearVelocity(m_id, velocity);
 	}
 
-	float GetFriction() {
+	float GetFriction() 
+	{
 		return Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetFriction(m_id);
 	}
 
-	void SetFriction(float friction) {
+	void SetFriction(float friction) 
+	{
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetFriction(m_id, friction);
 	}
 
-
-	float GetBounce() {
+	float GetBounce() 
+	{
 		return Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetRestitution(m_id);
 	}
 
-	void SetBounce(float bounce) {
+	void SetBounce(float bounce) 
+	{
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetRestitution(m_id, bounce);
 	}
-
-
-	
-
-
-
-	
-
 
 	JPH::BodyID m_id;
 	Transform* transform;
