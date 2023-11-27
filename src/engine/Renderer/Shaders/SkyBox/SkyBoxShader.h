@@ -9,7 +9,7 @@
 
 struct SkyBoxShaderProps
 {
-    glm::mat4 model, view, projection;
+    glm::mat4 view, projection;
     GLuint texture;
 };
 
@@ -30,6 +30,8 @@ public:
     /** Uses and activates the shader. */
     void Use() override
     {
+        glDepthMask(GL_FALSE);
+        glDepthFunc(GL_LEQUAL);
         glUseProgram(m_Program);
     }
     /** Takes in a set of shader properties and applies it to the shader program.
@@ -37,9 +39,8 @@ public:
     */
     void Data(SkyBoxShaderProps ssp)
     {
-        glUniformMatrix4fv(glGetUniformLocation(m_Program, "model"), 1, GL_FALSE, glm::value_ptr(ssp.model));
         glUniformMatrix4fv(glGetUniformLocation(m_Program, "view"), 1, GL_FALSE, glm::value_ptr(ssp.view));
         glUniformMatrix4fv(glGetUniformLocation(m_Program, "projection"), 1, GL_FALSE, glm::value_ptr(ssp.projection));
-        glUniform1i(glGetUniformLocation(m_Program, "texSampler"), ssp.texture);
+        glUniform1i(glGetUniformLocation(m_Program, "skybox"), ssp.texture);
     }
 };

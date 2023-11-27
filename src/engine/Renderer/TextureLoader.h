@@ -13,6 +13,15 @@ public:
 	{
 		auto tl = GetInstance();
 		tl->LoadAllTextures("../assets/Textures");
+		std::vector<std::string> faces{
+			"../assets/SkyBox_Textures/PNGS/Skybox_001.png",
+			"../assets/SkyBox_Textures/PNGS/Skybox_003.png",
+			"../assets/SkyBox_Textures/PNGS/Skybox_006.png",
+			"../assets/SkyBox_Textures/PNGS/Skybox_005.png",
+			"../assets/SkyBox_Textures/PNGS/Skybox_002.png",
+			"../assets/SkyBox_Textures/PNGS/Skybox_004.png"
+		};
+		tl->LoadCubeMap(faces);
 	}
 
 	static unsigned int GetTexture(const std::string& identifier)
@@ -91,6 +100,38 @@ private:
 		std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
 		m_TexMap.insert({ copyIdentifier, m_TexCount++ });
 	}
+
+	void LoadCubeMap(std::vector<std::string> faces) {
+		//Creates Cubemap Texture ID
+		unsigned int textureID;
+		glGenTextures(1, &textureID);
+		glActiveTexture(GL_TEXTURE0 + m_TexCount);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+		//Apply Each Texture for Each Face of the Cube Map
+		int width, height, nrChannels;
+		for (unsigned int i = 0; i < faces.size(); i++)
+		{
+			stbi_uc* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, STBI_rgb_alpha);
+
+			BOBO_ASSERT(data, std::format("Cubemap tex failed to load at path: {}", faces[i]));
+
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+				0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data
+			);
+
+			stbi_image_free(data);
+		}
+
+		//Wrapping and filtering methods are determined here.
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+		m_TexMap.insert({ "SKYBOX", m_TexCount++ });
+	};
 
 	int m_TexCount;
 	std::map<std::string, unsigned int> m_TexMap;

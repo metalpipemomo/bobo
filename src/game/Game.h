@@ -9,7 +9,6 @@
 #include "GameState/MainMenuState.h"
 #include "GameState/PauseMenuState.h"
 #include "GameState/InGameState.h"
-#include "../engine/Renderer/SkyBox/Skybox.h"
 
 class Game
 {
@@ -37,7 +36,7 @@ private:
 		/* Example of Creating Game Object Begins */
 		// Create GameObject
 		auto object = new GameObject();
-		
+
 		// Add a material component and tell that material what model to use and what texture to use
 		// models are all loaded in from the assets/Models directory upon game start and the same is done for textures from the assets/Textures directory
 		object->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_3"));
@@ -71,20 +70,6 @@ private:
 
 		// Example of Creating a GameObject with a Parent GameObject
 		auto childObject = new GameObject(*object);
-
-		/*----- SKYBOX ------*/
-		//Right, Left, Top, Bottom, Front, Back
-		vector<std::string> faces;
-		{
-			"../../assets/Textures/SkyBox_Textures/PNGS/Skybox_001.png",
-				"../../assets/Textures/SkyBox_Textures/PNGS/Skybox_003.png",
-				"../../assets/Textures/SkyBox_Textures/PNGS/Skybox_006.png",
-				"../../assets/Textures/SkyBox_Textures/PNGS/Skybox_005.png",
-				"../../assets/Textures/SkyBox_Textures/PNGS/Skybox_002.png",
-				"../../assets/Textures/SkyBox_Textures/PNGS/Skybox_004.png"
-		};
-
-		SkyBox skyBox = new SkyBox(faces);
 
 		/*------ AUDIO ------*/
 

@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Shaders/Standard/StandardShader.h"
+#include "Shaders/SkyBox/SkyBoxShader.h"
 #include <glad/glad.h>
 
 class Renderer
@@ -18,6 +19,7 @@ public:
 		auto r = GetInstance();
 
 		r->p_StandardShader = new StandardShader();
+		r->p_SkyBoxShader = new SkyBoxShader();
 
 		BOBO_INFO("Renderer initialized!");
 	}
@@ -50,6 +52,21 @@ public:
 		auto r = GetInstance();
 		auto cPos = Camera::GetPosition();
 
+		auto skyBoxModel = ModelLoader::GetModel("cube");
+		auto skyBoxTexture = TextureLoader::GetTexture("SKYBOX");
+
+		r->p_SkyBoxShader->Use();
+
+		SkyBoxShaderProps skyProps;
+		skyProps.view = glm::lookAt(glm::vec3(0.0f, 3.0f, 20.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		skyProps.projection = glm::perspective(glm::radians(45.0f), 800 / 600.0f, 0.1f, 40.0f);
+		skyProps.texture = skyBoxTexture;
+		r->p_SkyBoxShader->Data(skyProps);
+		
+		glBindVertexArray(skyBoxModel->vao);
+		glDrawElements(GL_TRIANGLES, (GLsizei)skyBoxModel->indices.size(), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
 		r->p_StandardShader->Use();
 
 		for (auto& material : materials)
@@ -78,4 +95,5 @@ private:
 
 	Renderer() {}
 	StandardShader* p_StandardShader;
+	SkyBoxShader* p_SkyBoxShader;
 };

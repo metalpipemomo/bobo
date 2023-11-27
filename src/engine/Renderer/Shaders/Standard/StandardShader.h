@@ -25,6 +25,8 @@ public:
 
     void Use() override
     {
+        glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LESS);
         glUseProgram(m_Program);
     }
 
