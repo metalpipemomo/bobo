@@ -73,6 +73,11 @@ public:
 
 	void EventLoop()
 	{
+		GLint maxVertexUniformComponents;
+		GLint maxFragmentUniformComponents;
+		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &maxVertexUniformComponents);
+		glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &maxFragmentUniformComponents);
+		BOBO_INFO("Vertex: {}, Fragment: {}", maxVertexUniformComponents, maxFragmentUniformComponents);
 		while (!glfwWindowShouldClose(p_Window))
 		{
 			// ImGUI Frame Update
@@ -116,6 +121,11 @@ public:
 			// ImGui Render call
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+			if (Input::GetKey(GLFW_KEY_W))
+			{
+				Camera::MoveForward(2.0f * Time::DeltaTime());
+			}
 
 			// Window Updates
 			Update();

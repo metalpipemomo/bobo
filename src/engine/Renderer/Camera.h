@@ -14,10 +14,9 @@ public:
 
 		// Set all the members
 		c->m_Position = glm::vec3{ 0, 0, 10 }; // Camera position
-		c->m_Target = glm::vec3{ 0, 0, -10 }; // What Camera is looking at
-		c->m_Fov = (60.0f * glm::pi<float>()) / 180.0f;
+		c->m_Target = glm::vec3{ 0, 0, -1 }; // What Camera is looking at
 		c->m_AspectRatio = aspectRatio;
-		c->m_NearClipping = 1.0f;
+		c->m_NearClipping = 0.1f;
 		c->m_FarClipping = 80.0f;
 
 		c->UpdateViewMatrix();
@@ -61,6 +60,14 @@ public:
 		return result;
 	}
 
+	static void MoveForward(float speed)
+	{
+		auto c = GetInstance();
+		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+		c->m_Position += speed * cameraFront;
+		c->m_View = glm::lookAt(c->m_Position, c->m_Position + cameraFront, {0.0f, 1.0f, 0.0f});
+	}
+
 	static glm::vec3 GetPosition() { return GetInstance()->m_Position; }
 	static glm::mat4 GetViewMatrix() { return GetInstance()->m_View; }
 	static glm::mat4 GetProjectionMatrix() { return GetInstance()->m_Projection; }
@@ -81,7 +88,7 @@ private:
 
 	void UpdateProjectionMatrix()
 	{
-		m_Projection = glm::perspective(m_Fov, m_AspectRatio, m_NearClipping, m_FarClipping);
+		m_Projection = glm::perspective(glm::radians(45.0f), m_AspectRatio, m_NearClipping, m_FarClipping);
 	}
 
 	glm::vec3 m_Position;

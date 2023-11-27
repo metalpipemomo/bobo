@@ -71,6 +71,22 @@ private:
 		// Example of Creating a GameObject with a Parent GameObject
 		auto childObject = new GameObject(*object);
 
+		// Creating point lights
+		auto pointlight = new GameObject();
+		Pointlight pl;
+		pl.baseColor = { 0.7f, 0.3f, 0.1f }; // RGB, each value goes up to 1.0
+		pl.position = { -5.0f, -5.0f, 5.0f }; // X, Y, Z (Positive Z is closer to camera)
+		pl.intensity = 250.0f;
+		pointlight->AddComponent<PointlightComponent>(pl);
+
+		auto spotlight = new GameObject();
+		Spotlight sl;
+		sl.baseColor = { 0.7, 0.7, 0.7 }; // RGB, same as before
+		sl.cutoffAngle = 45.0f; // The radius of the cone
+		sl.direction = { 0.0f, -1.0f, 0.0f }; // Direction of the light
+		sl.position = { 0.0f, 5.0f, 0.0f }; // X, Y, Z
+		spotlight->AddComponent<SpotlightComponent>(sl);
+
 		/*------ AUDIO ------*/
 
 		// Audio files are loaded from the assets/Sounds directory, they must be .mp3

@@ -5,9 +5,12 @@
 #include "engine/EntityComponent/SceneManager.h"
 #include "engine/EntityComponent/BaseComponents/Transform.h"
 #include "engine/EntityComponent/BaseComponents/Material.h"
+#include "engine/EntityComponent/BaseComponents/SpotlightComponent.h"
+#include "engine/EntityComponent/BaseComponents/PointlightComponent.h"
 #include "Camera.h"
 #include "Shader.h"
 #include "Shaders/Standard/StandardShader.h"
+#include "Light.h"
 #include <glad/glad.h>
 
 class Renderer
@@ -47,6 +50,8 @@ public:
 	{
 		auto scene = SceneManager::GetActiveScene();
 		auto materials = scene->GetComponentsOfType<Material>();
+		auto spotlights = scene->GetComponentsOfType<SpotlightComponent>();
+		auto pointlights = scene->GetComponentsOfType<PointlightComponent>();
 		auto r = GetInstance();
 		auto cPos = Camera::GetPosition();
 
@@ -56,9 +61,13 @@ public:
 		{
 			StandardShaderProps ssp;
 			ssp.model = material->model;
-			ssp.projection = glm::perspective(glm::radians(45.0f), 800 / 600.0f, 0.1f, 40.0f);
-			ssp.view = glm::lookAt(glm::vec3(0.0f, 3.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			ssp.projection = Camera::GetProjectionMatrix();
+			ssp.view = Camera::GetViewMatrix();
 			ssp.texture = material->texture;
+			ssp.shininess = 32.0f;
+			ssp.cameraPos = Camera::GetPosition();
+			ssp.spotlights = spotlights;
+			ssp.pointlights = pointlights;
 			r->p_StandardShader->Data(ssp);
 
 			glBindVertexArray(material->modelData->vao);

@@ -84,6 +84,19 @@ void ModelLoader::LoadModel(const std::string& identifier, const std::string& pa
                 1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
             };
 
+            if (index.normal_index >= 0)
+            {
+                vertex.normal = {
+                    attrib.normals[3 * index.normal_index + 0],
+                    attrib.normals[3 * index.normal_index + 1],
+                    attrib.normals[3 * index.normal_index + 2]
+                };
+            }
+            else
+            {
+            vertex.normal = { 0.0f, 0.0f, 0.0f }; // Default normal if not available
+            }
+
             vertex.color = { 1.0f, 1.0f, 1.0f };
 
             if (uniqueVertices.count(vertex) == 0)
@@ -158,6 +171,8 @@ void ModelLoader::ConstructVAO(Model* model)
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
     glEnableVertexAttribArray(2);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+    glEnableVertexAttribArray(3);
 
     GLuint ebo;
     glGenBuffers(1, &ebo);
