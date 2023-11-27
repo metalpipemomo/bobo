@@ -18,7 +18,7 @@ public:
 		c->m_Fov = (60.0f * glm::pi<float>()) / 180.0f;
 		c->m_AspectRatio = aspectRatio;
 		c->m_NearClipping = 1.0f;
-		c->m_FarClipping = 80.0f;
+		c->m_FarClipping = 1000.0f;
 
 		c->UpdateViewMatrix();
 		c->UpdateProjectionMatrix();

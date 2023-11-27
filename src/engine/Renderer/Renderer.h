@@ -62,7 +62,7 @@ public:
 		{
 			StandardShaderProps ssp;
 			ssp.model = material->model;
-			ssp.projection = glm::perspective(glm::radians(45.0f), 800 / 600.0f, 0.1f, 40.0f);
+			ssp.projection = Camera::GetProjectionMatrix();
 			ssp.view = glm::lookAt(glm::vec3(0.0f, 3.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			ssp.texture = material->texture;
 			ssp.shininess = 32.0f;
