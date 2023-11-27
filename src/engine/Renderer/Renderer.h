@@ -49,7 +49,6 @@ public:
 	static void Draw()
 	{
 		auto scene = SceneManager::GetActiveScene();
-		// materials is a wrapper containing the model data and textures
 		auto materials = scene->GetComponentsOfType<Material>();
 		auto spotlights = scene->GetComponentsOfType<SpotlightComponent>();
 		auto pointlights = scene->GetComponentsOfType<PointlightComponent>();
@@ -63,7 +62,7 @@ public:
 			StandardShaderProps ssp;
 			ssp.model = material->model;
 			ssp.projection = Camera::GetProjectionMatrix();
-			ssp.view = glm::lookAt(glm::vec3(0.0f, 3.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			ssp.view = Camera::GetViewMatrix();
 			ssp.texture = material->texture;
 			ssp.shininess = 32.0f;
 			ssp.cameraPos = Camera::GetPosition();

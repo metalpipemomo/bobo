@@ -95,6 +95,7 @@ private:
 		Pointlight pl;
 		pl.baseColor = { 0.7f, 0.3f, 0.1f }; // RGB, each value goes up to 1.0
 		pl.position = { -5.0f, -5.0f, 5.0f }; // X, Y, Z (Positive Z is closer to camera)
+		pl.intensity = 250.0f;
 		pointlight->AddComponent<PointlightComponent>(pl);
 
 		auto spotlight = new GameObject();

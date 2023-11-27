@@ -128,6 +128,11 @@ public:
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+			if (Input::GetKey(GLFW_KEY_W))
+			{
+				Camera::MoveForward(2.0f * Time::DeltaTime());
+			}
+
 			// Window Updates
 			Update();
 		}
