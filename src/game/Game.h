@@ -21,17 +21,17 @@ public:
 private:
 
 	// Constants for objects position / rotation / scale
-	const glm::vec3 tablePosition = glm::vec3{ 0, -1, -4 };
-	const glm::vec3 ballScale = glm::vec3{ 0.2, 0.2, 0.2 };
-	const glm::vec3 firstBallPos = glm::vec3{ tablePosition.x, tablePosition.y + 1, tablePosition.z + 3 };
-	const float ballDistance = .42;
+	const glm::vec3 m_tablePosition = glm::vec3{ 0, -1.5, -4.5 };
+	const glm::vec3 m_ballScale = glm::vec3{ 0.2, 0.2, 0.2 };
+	const glm::vec3 m_firstBallPos = glm::vec3{ m_tablePosition.x, m_tablePosition.y + 1, m_tablePosition.z + 3 };
+	const float m_ballDistance = .42;
 
-	void setBallPos(GameObject* ball, float xOffset, float zOffset)
+	void SetBallPos(GameObject* ball, float xOffset, float zOffset)
 	{
-		ball->GetComponent<Transform>()->position = firstBallPos;
+		ball->GetComponent<Transform>()->position = m_firstBallPos;
 		ball->GetComponent<Transform>()->position.x += xOffset;
 		ball->GetComponent<Transform>()->position.z += zOffset;
-		ball->GetComponent<Transform>()->scale = ballScale;
+		ball->GetComponent<Transform>()->scale = m_ballScale;
 		ball->GetComponent<Transform>()->rotation.y = -glm::pi<float>()/2;
 		ball->GetComponent<Transform>()->rotation.z = glm::pi<float>() / 2;
 	}
@@ -42,71 +42,68 @@ private:
 		// 1st row
 		auto solidOneBall = new GameObject();
 		solidOneBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_1"));
-		solidOneBall->GetComponent<Transform>()->position = firstBallPos;
-		solidOneBall->GetComponent<Transform>()->scale = ballScale;
+		solidOneBall->GetComponent<Transform>()->position = m_firstBallPos;
+		solidOneBall->GetComponent<Transform>()->scale = m_ballScale;
 		// 2nd row
 		auto StripedNineBall = new GameObject();
 		StripedNineBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_9"));
-		setBallPos(StripedNineBall, -0.5*ballDistance, -ballDistance);
+		SetBallPos(StripedNineBall, -0.5*m_ballDistance, -m_ballDistance);
 		auto SolidTwoBall = new GameObject();
 		SolidTwoBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_2"));
-		setBallPos(SolidTwoBall, 0.5*ballDistance, -ballDistance);
+		SetBallPos(SolidTwoBall, 0.5*m_ballDistance, -m_ballDistance);
 		// 3rd row
 		auto StripedTenBall = new GameObject();
 		StripedTenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_10"));
-		setBallPos(StripedTenBall, -ballDistance, -2*ballDistance);
+		SetBallPos(StripedTenBall, -m_ballDistance, -2*m_ballDistance);
 		auto SolidEightBall = new GameObject();
 		SolidEightBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("8_ball"));
-		setBallPos(SolidEightBall, 0, -2*ballDistance);
+		SetBallPos(SolidEightBall, 0, -2*m_ballDistance);
 		auto SolidThreeBall = new GameObject();
 		SolidThreeBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_3"));
-		setBallPos(SolidThreeBall, ballDistance, -2*ballDistance);
+		SetBallPos(SolidThreeBall, m_ballDistance, -2*m_ballDistance);
 		// 4th row 
 		auto StripedElevenBall = new GameObject();
 		StripedElevenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_11"));
-		setBallPos(StripedElevenBall, -1.5*ballDistance, -3 * ballDistance);
+		SetBallPos(StripedElevenBall, -1.5*m_ballDistance, -3 * m_ballDistance);
 		auto SolidSevenBall = new GameObject();
 		SolidSevenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_7"));
-		setBallPos(SolidSevenBall, -0.5*ballDistance, -3 * ballDistance);
+		SetBallPos(SolidSevenBall, -0.5*m_ballDistance, -3 * m_ballDistance);
 		auto StripedFourteenBall = new GameObject();
 		StripedFourteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_14"));
-		setBallPos(StripedFourteenBall, 0.5*ballDistance, -3 * ballDistance);
+		SetBallPos(StripedFourteenBall, 0.5*m_ballDistance, -3 * m_ballDistance);
 		auto SolidFourBall = new GameObject();
 		SolidFourBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_4"));
-		setBallPos(SolidFourBall, 1.5*ballDistance, -3 * ballDistance);
+		SetBallPos(SolidFourBall, 1.5*m_ballDistance, -3 * m_ballDistance);
 		// 5th row
 		auto SolidFiveBall = new GameObject();
 		SolidFiveBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_5"));
-		setBallPos(SolidFiveBall, -2*ballDistance, -4 * ballDistance);
+		SetBallPos(SolidFiveBall, -2*m_ballDistance, -4 * m_ballDistance);
 		auto StripedThirteenBall = new GameObject();
 		StripedThirteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_13"));
-		setBallPos(StripedThirteenBall, -1 * ballDistance, -4 * ballDistance);
+		SetBallPos(StripedThirteenBall, -1 * m_ballDistance, -4 * m_ballDistance);
 		auto StripedFifteenBall = new GameObject();
 		StripedFifteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_15"));
-		setBallPos(StripedFifteenBall, 0, -4 * ballDistance);
+		SetBallPos(StripedFifteenBall, 0, -4 * m_ballDistance);
 		auto SolidSixBall = new GameObject();
 		SolidSixBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_6"));
-		setBallPos(SolidSixBall, ballDistance, -4 * ballDistance);
+		SetBallPos(SolidSixBall, m_ballDistance, -4 * m_ballDistance);
 		auto StripedTwelveBall = new GameObject();
 		StripedTwelveBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_12"));
-		setBallPos(StripedTwelveBall, 2*ballDistance, -4 * ballDistance);
+		SetBallPos(StripedTwelveBall, 2*m_ballDistance, -4 * m_ballDistance);
 	}
 
 	// Setting up the scene models
 	void SceneSetup() 
 	{
-		Camera::SetPosition(glm::vec3{ 10, 160, 0 });
-		Camera::SetTarget(glm::vec3{ 0, 0, 0 });
-
 		// table creation
 		auto table = new GameObject();
 		table->AddComponent<Material>(ModelLoader::GetModel("Pool_Table"), TextureLoader::GetTexture("Table_Top"));
-		table->GetComponent<Transform>()->position = tablePosition;
+		table->GetComponent<Transform>()->position = m_tablePosition;
 
 		// cue creation
 		auto cue = new GameObject();
 		cue->AddComponent<Material>(ModelLoader::GetModel("pool_cue"), TextureLoader::GetTexture("cue"));
-		cue->GetComponent<Transform>()->position = firstBallPos;
+		cue->GetComponent<Transform>()->position = m_firstBallPos;
 		cue->GetComponent<Transform>()->position += glm::vec3{ 2, 1, 2 };
 		cue->GetComponent<Transform>()->rotation = glm::vec3{-0.5, glm::pi<float>()/4, 0};
 		cue->GetComponent<Transform>()->scale = glm::vec3{ 0.7, 0.7, 0.7 };
@@ -114,27 +111,32 @@ private:
 		// lamp creation
 		auto lamp = new GameObject();
 		lamp->AddComponent<Material>(ModelLoader::GetModel("lamp"));
-		lamp->GetComponent<Transform>()->position = tablePosition;
+		lamp->GetComponent<Transform>()->position = m_tablePosition;
 		lamp->GetComponent<Transform>()->position += glm::vec3{ 0, 5, 0 };
 
 		// bookshelves creation
 		auto shelf1 = new GameObject();
 		shelf1->AddComponent<Material>(ModelLoader::GetModel("book_shelf"), TextureLoader::GetTexture("wood"));
-		shelf1->GetComponent<Transform>()->position = tablePosition;
-		shelf1->GetComponent<Transform>()->position += glm::vec3{ -7, 3, -15 };
+		shelf1->GetComponent<Transform>()->position = m_tablePosition;
+		shelf1->GetComponent<Transform>()->position += glm::vec3{ -7, 3, -20 };
 		shelf1->GetComponent<Transform>()->rotation = glm::vec3{ 0, -glm::pi<float>()/2, 0 };
 		auto shelf2 = new GameObject();
 		shelf2->AddComponent<Material>(ModelLoader::GetModel("book_shelf"), TextureLoader::GetTexture("wood"));
-		shelf2->GetComponent<Transform>()->position = tablePosition;
-		shelf2->GetComponent<Transform>()->position += glm::vec3{ 7, 3, -15 };
+		shelf2->GetComponent<Transform>()->position = m_tablePosition;
+		shelf2->GetComponent<Transform>()->position += glm::vec3{ 7, 3, -20 };
 		shelf2->GetComponent<Transform>()->rotation = glm::vec3{ 0, -glm::pi<float>() / 2, 0 };
 
 		// chairs creation
 		auto chair1 = new GameObject();
 		chair1->AddComponent<Material>(ModelLoader::GetModel("chair_1"));
-		chair1->GetComponent<Transform>()->position = tablePosition;
-		chair1->GetComponent<Transform>()->position += glm::vec3{ 6, 0, 0 };
+		chair1->GetComponent<Transform>()->position = m_tablePosition;
+		chair1->GetComponent<Transform>()->position += glm::vec3{ 7, 0, 0 };
 		chair1->GetComponent<Transform>()->rotation = glm::vec3{ 0, glm::pi<float>() / 4, 0 };
+		auto chair2 = new GameObject();
+		chair2->AddComponent<Material>(ModelLoader::GetModel("chair_2"));
+		chair2->GetComponent<Transform>()->position = m_tablePosition;
+		chair2->GetComponent<Transform>()->position += glm::vec3{ -7, 0, 0 };
+		chair2->GetComponent<Transform>()->rotation = glm::vec3{ 0, glm::pi<float>(), 0 };
 
 		// setup initial balls position
 		BallsSetup();
@@ -154,6 +156,9 @@ private:
 		// Create Scene
 		SceneManager::CreateScene("Scene1");
 
+		// Setting up initial scene
+		SceneSetup();
+
 		/* Example of Creating Game Object Begins */
 		// Create GameObject
 		auto object = new GameObject();
@@ -172,9 +177,6 @@ private:
 		object->AddComponent<FunnyMove>(transform, 1);
 		object->~GameObject();
 		/* End Example */
-		
-		// Setting up initial scene
-		SceneSetup();
 
 		// Example of Creating a GameObject with a Parent GameObject
 		auto childObject = new GameObject(*object);
