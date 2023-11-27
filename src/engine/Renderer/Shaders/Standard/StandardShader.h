@@ -58,6 +58,7 @@ public:
             std::string baseName = "pointlights[" + std::to_string(i) + "].";
             glUniform3fv(glGetUniformLocation(m_Program, (baseName + "position").c_str()), 1, glm::value_ptr(ssp.pointlights[i]->pointlight.position));
             glUniform3fv(glGetUniformLocation(m_Program, (baseName + "baseColor").c_str()), 1, glm::value_ptr(ssp.pointlights[i]->pointlight.baseColor));
+            glUniform1f(glGetUniformLocation(m_Program, (baseName + "intensity").c_str()), ssp.pointlights[i]->pointlight.intensity);
         }
     }
 };

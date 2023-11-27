@@ -33,6 +33,17 @@ public:
 		return -1;
 	}
 
+	static void IncrementCount()
+	{
+		auto tl = GetInstance();
+		tl->m_TexCount++;
+	}
+
+	static int GetCount()
+	{
+		return GetInstance()->m_TexCount;
+	}
+
 private:
 	static TextureLoader* GetInstance()
 	{

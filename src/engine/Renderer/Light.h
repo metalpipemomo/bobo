@@ -17,4 +17,5 @@ struct Pointlight
 {
     glm::vec3 position;
     glm::vec3 baseColor;
+    GLfloat intensity;
 };
