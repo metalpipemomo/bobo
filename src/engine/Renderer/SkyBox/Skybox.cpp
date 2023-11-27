@@ -1,12 +1,40 @@
 #include "Skybox.h"
 
+/**REFERENCES:
+    https://learnopengl.com/Advanced-OpenGL/Cubemaps
+    */
+
 //Public Functions
+
+/** Skybox constructor, which takes in an array of texture file directories
+to load up a cube map tailored to those textures. Then, that cube map serves as
+the sky box's cubeMapTexture. 
+
+@param faces
+*/
 
 SkyBox::Skybox(vector<std::string> faces) {
     m_cubeMapTexture = LoadCubeMap(faces);
+    m_skyboxShader = new SkyBoxShader();
+
+	glDepthMask(GL_FALSE);
+	skyboxShader.use();
+	// ... set view and projection matrix
+	glBindVertexArray(m_skyboxVertices);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMapTexture);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDepthMask(GL_TRUE);
 };
 
 //Private Functions
+
+/** Takes in an array of texture file directories, and applies those
+textures to a cubemap. These are then wrapped and filtered and returned
+as an unsigned integer.
+
+@param faces
+@return textureID
+*/
 
 SkyBox::unsigned int LoadCubeMap(vector<std::string> faces) {
 	//Creates Cubemap Texture ID

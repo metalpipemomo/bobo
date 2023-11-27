@@ -9,6 +9,7 @@
 #include "GameState/MainMenuState.h"
 #include "GameState/PauseMenuState.h"
 #include "GameState/InGameState.h"
+#include "../engine/SkyBox/Skybox.h"
 
 class Game
 {
@@ -70,6 +71,20 @@ private:
 
 		// Example of Creating a GameObject with a Parent GameObject
 		auto childObject = new GameObject(*object);
+
+		/*----- SKYBOX ------*/
+		//Right, Left, Top, Bottom, Front, Back
+		vector<std::string> faces;
+		{
+			"../../assets/Textures/SkyBox_Textures/PNGS/Skybox_001.png",
+				"../../assets/Textures/SkyBox_Textures/PNGS/Skybox_003.png",
+				"../../assets/Textures/SkyBox_Textures/PNGS/Skybox_006.png",
+				"../../assets/Textures/SkyBox_Textures/PNGS/Skybox_005.png",
+				"../../assets/Textures/SkyBox_Textures/PNGS/Skybox_002.png",
+				"../../assets/Textures/SkyBox_Textures/PNGS/Skybox_004.png"
+		};
+
+		SkyBox skyBox = new SkyBox(faces);
 
 		/*------ AUDIO ------*/
 
