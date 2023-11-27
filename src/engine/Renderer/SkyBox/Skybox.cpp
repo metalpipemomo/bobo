@@ -13,12 +13,11 @@ the sky box's cubeMapTexture.
 @param faces
 */
 
-SkyBox::Skybox(vector<std::string> faces) {
+SkyBox::SkyBox(std::vector<std::string> faces) {
     m_cubeMapTexture = LoadCubeMap(faces);
-    m_skyboxShader = new SkyBoxShader();
-
+    m_skyboxVertices = 1;
 	glDepthMask(GL_FALSE);
-	skyboxShader.use();
+	m_skyboxShader.Use();
 	// ... set view and projection matrix
 	glBindVertexArray(m_skyboxVertices);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMapTexture);
@@ -36,7 +35,7 @@ as an unsigned integer.
 @return textureID
 */
 
-SkyBox::unsigned int LoadCubeMap(vector<std::string> faces) {
+unsigned int SkyBox::LoadCubeMap(std::vector<std::string> faces) {
 	//Creates Cubemap Texture ID
 	unsigned int textureID;
 	glGenTextures(1, &textureID);

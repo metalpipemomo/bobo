@@ -9,7 +9,7 @@
 #include "GameState/MainMenuState.h"
 #include "GameState/PauseMenuState.h"
 #include "GameState/InGameState.h"
-#include "../engine/SkyBox/Skybox.h"
+#include "../engine/Renderer/SkyBox/Skybox.h"
 
 class Game
 {
