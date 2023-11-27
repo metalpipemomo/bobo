@@ -32,3 +32,6 @@
 // Renderer
 #include "Renderer/TextureLoader.h"
 #include "Model/ModelLoader.h"
+
+// Physics
+#include "Physics/Physics.h"

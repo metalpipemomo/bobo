@@ -79,16 +79,21 @@ private:
 
 		physicsball->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_2"));
 		physicsball->AddComponent<Rigidbody>(new SphereShape(1), RVec3(0.0, 10, 0.0), Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
-		physicsball->GetComponent<Rigidbody>()->SetTransform(physicsball->GetComponent<Transform>());
-
+		auto physicsBallRb = physicsball->GetComponent<Rigidbody>();
+		physicsBallRb->SetTransform(physicsball->GetComponent<Transform>());
+		physicsBallRb->SetOnCollision([](JPH::BodyID other) {
+			std::cout << "collision happened on beautiful planet earth" << std::endl;
+			});
 
 		auto staticBall = new GameObject();
 
 		staticBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("8_ball"));
 		staticBall->AddComponent<Rigidbody>(new SphereShape(1), RVec3(0.5f, -3.0f, 0.0), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
-		staticBall->GetComponent<Rigidbody>()->SetTransform(staticBall->GetComponent<Transform>());
-
-
+		auto staticBallRb = staticBall->GetComponent<Rigidbody>();
+		staticBallRb->SetTransform(staticBall->GetComponent<Transform>());
+		staticBallRb->SetOnCollisionEnd([](JPH::BodyID other) {
+			std::cout << "a collision has ended in lego city" << std::endl;
+			});
 
 		// Creating point lights
 		auto pointlight = new GameObject();
