@@ -11,7 +11,55 @@
 #include "Shader.h"
 #include "Shaders/Standard/StandardShader.h"
 #include "Light.h"
+#include "Shaders/SkyBox/SkyBoxShader.h"
+#include "../Model/ModelLoader.h"
+#include "TextureLoader.h"
 #include <glad/glad.h>
+
+float skyboxVertices[] = {
+	// positions          
+	-1.0f,  1.0f, -1.0f,
+	-1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+
+	-1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+
+	-1.0f, -1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	-1.0f,  1.0f, -1.0f,
+	1.0f,  1.0f, -1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f, -1.0f,
+
+	-1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	1.0f, -1.0f,  1.0f
+};
 
 class Renderer
 {
@@ -21,6 +69,21 @@ public:
 		auto r = GetInstance();
 
 		r->p_StandardShader = new StandardShader();
+		r->p_SkyBoxShader = new SkyBoxShader();
+
+		r->p_SkyBoxShader->Use();
+
+		GLuint skyboxVBO;
+		glGenVertexArrays(1, &r->skyboxVAO);
+		glGenBuffers(1, &skyboxVBO);
+		glBindVertexArray(r->skyboxVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 
 		BOBO_INFO("Renderer initialized!");
 	}
@@ -63,7 +126,7 @@ public:
 			ssp.model = material->model;
 			ssp.projection = Camera::GetProjectionMatrix();
 			ssp.view = Camera::GetViewMatrix();
-			ssp.texture = material->texture;
+			ssp.texture = 0;
 			ssp.shininess = 32.0f;
 			ssp.cameraPos = Camera::GetPosition();
 			ssp.spotlights = spotlights;
@@ -71,14 +134,36 @@ public:
 			r->p_StandardShader->Data(ssp);
 
 			glBindVertexArray(material->modelData->vao);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, material->texture);
 			
 			glDrawElements(GL_TRIANGLES, (GLsizei)material->modelData->indices.size(), GL_UNSIGNED_INT, 0);
 			
 			glBindVertexArray(0);
 		}
+
+		auto skyBoxModel = ModelLoader::GetModel("cube");
+		auto skyBoxTexture = TextureLoader::GetTexture("SKYBOX");
+
+		glDepthFunc(GL_LEQUAL);
+		r->p_SkyBoxShader->Use();
+
+		SkyBoxShaderProps skyProps;
+		skyProps.view = glm::mat4(glm::mat3(Camera::GetViewMatrix()));
+		skyProps.projection = Camera::GetProjectionMatrix();
+		skyProps.texture = 0;
+		r->p_SkyBoxShader->Data(skyProps);
+		
+		glBindVertexArray(r->skyboxVAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTexture);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+		glDepthFunc(GL_LESS);
 	}
 
 private:
+
 	static Renderer* GetInstance()
 	{
 		static Renderer* instance = new Renderer();
@@ -87,4 +172,6 @@ private:
 
 	Renderer() {}
 	StandardShader* p_StandardShader;
+	SkyBoxShader* p_SkyBoxShader;
+	GLuint skyboxVAO;
 };

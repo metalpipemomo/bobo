@@ -87,7 +87,7 @@ public:
 		auto sm = GetInstance();
 		sm->onSceneChangedActions.erase(id);
 	}
-	
+
 private:
 	static SceneManager* GetInstance()
 	{

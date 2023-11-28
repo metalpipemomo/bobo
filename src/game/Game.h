@@ -36,7 +36,7 @@ private:
 		/* Example of Creating Game Object Begins */
 		// Create GameObject
 		auto object = new GameObject();
-		
+
 		// Add a material component and tell that material what model to use and what texture to use
 		// models are all loaded in from the assets/Models directory upon game start and the same is done for textures from the assets/Textures directory
 		object->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_3"));
