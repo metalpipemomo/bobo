@@ -107,6 +107,21 @@ public:
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetRestitution(m_id, bounce);
 	}
 
+	void SetOnCollision(function<void(BodyID)> callback)
+	{
+		Physics::GetInstance()->contactListener->SetOnCollisionListener(m_id, callback);
+	}
+
+	void SetOnCollisionEnd(function<void(BodyID)> callback)
+	{
+		Physics::GetInstance()->contactListener->SetOnCollisionEndListener(m_id, callback);
+	}
+
+	void SetOnCollisionPersist(function<void(BodyID)> callback)
+	{
+		Physics::GetInstance()->contactListener->SetOnCollisionPersistListener(m_id, callback);
+	}
+
 	JPH::BodyID m_id;
 	Transform* transform;
 private: 

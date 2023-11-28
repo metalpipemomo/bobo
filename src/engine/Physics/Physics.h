@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 // going to need an update function
 #include <Jolt/Jolt.h>
 
@@ -154,6 +153,74 @@ public:
 	}
 };
 
+class ActionableContactListener : public JPH::ContactListener
+{
+public:
+	// set a function to be called when some body starts a collision
+	void SetOnCollisionListener(BodyID bodyID, function<void(BodyID)> function) {
+		onCollisionListeners[bodyID] = function;
+	}
+
+	// set a function to be called when some body finishes a collision
+	void SetOnCollisionEndListener(BodyID bodyID, function<void(BodyID)> function) {
+		onCollisionEndListeners[bodyID] = function;
+	}
+
+	// set a function to be called while some body continues to be in a collision
+	void SetOnCollisionPersistListener(BodyID bodyID, function<void(BodyID)> function) {
+		onCollisionPersistListeners[bodyID] = function;
+	}
+
+	virtual void OnContactAdded(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings) override
+	{
+		BodyID body1ID = inBody1.GetID();
+		BodyID body2ID = inBody2.GetID();
+
+		if (onCollisionListeners.find(body1ID) != onCollisionListeners.end()) {
+			onCollisionListeners[body1ID](body2ID);
+		}
+
+		if (onCollisionListeners.find(body2ID) != onCollisionListeners.end()) {
+			onCollisionListeners[body2ID](body1ID);
+		}
+	}
+
+	virtual void OnContactPersisted(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings) override
+	{
+		BodyID body1ID = inBody1.GetID();
+		BodyID body2ID = inBody2.GetID();
+
+		if (onCollisionPersistListeners.find(body1ID) != onCollisionPersistListeners.end()) {
+			onCollisionPersistListeners[body1ID](body2ID);
+		}
+
+		if (onCollisionPersistListeners.find(body2ID) != onCollisionPersistListeners.end()) {
+			onCollisionPersistListeners[body2ID](body1ID);
+		}
+	}
+
+	virtual void OnContactRemoved(const JPH::SubShapeIDPair& inSubShapePair) override
+	{
+		BodyID body1ID = inSubShapePair.GetBody1ID();
+		BodyID body2ID = inSubShapePair.GetBody2ID();
+
+		if (onCollisionEndListeners.find(body1ID) != onCollisionEndListeners.end()) {
+			onCollisionEndListeners[body1ID](body2ID);
+		}
+
+		if (onCollisionEndListeners.find(body2ID) != onCollisionEndListeners.end()) {
+			onCollisionEndListeners[body2ID](body1ID);
+		}
+	}
+
+private:
+	// all of these have a key of the body id of the object whose collision we care about, 
+	// and value of a function to be called on collision, with a parameter of the other object
+	std::map<BodyID, function<void(BodyID)>> onCollisionListeners;
+	std::map<BodyID, function<void(BodyID)>> onCollisionEndListeners;
+	std::map<BodyID, function<void(BodyID)>> onCollisionPersistListeners;
+};
+
 // An example activation listener
 class MyBodyActivationListener : public JPH::BodyActivationListener
 {
@@ -217,6 +284,7 @@ public:
 		Physics::PhysicsWorld->physics_system->Update((1.0/60.0), cCollisionSteps, &temp_allocator, &job_system);
 	}
 
+	ActionableContactListener *contactListener;
 
 private:
 	Physics() 
@@ -287,8 +355,9 @@ private:
 		// A contact listener gets notified when bodies (are about to) collide, and when they separate again.
 		// Note that this is called from a job so whatever you do here needs to be thread safe.
 		// Registering one is entirely optional.
-		contact_listener = new MyContactListener{};
-		physics_system->SetContactListener(contact_listener);
+		//contact_listener = new MyContactListener{};
+		contactListener = new ActionableContactListener();
+		physics_system->SetContactListener(contactListener);
 	}
 
 	inline static Physics* PhysicsWorld;
