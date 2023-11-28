@@ -60,37 +60,66 @@ public:
 		return result;
 	}
 
+
+	static void MoveUp(float speed) {
+	
+		auto c = GetInstance();
+		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+		glm::vec3 moveAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+		c->m_Position += speed * moveAxis;
+		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront, {0.0f, 1.0f, 0.0f});
+	}
+
+
 	static void MoveForward(float speed)
 	{
 		auto c = GetInstance();
 		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-		c->m_Position += speed * cameraFront;
-		c->m_View = glm::lookAt(c->m_Position, c->m_Position + cameraFront, {0.0f, 1.0f, 0.0f});
+		c->m_Position += speed * c->cameraFront;
+		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront, {0.0f, 1.0f, 0.0f});
 	}
 
 	static void MoveRight(float speed)
 	{
 		auto c = GetInstance();
 		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-		glm::vec3 moveAxis = glm::vec3(-1,0,0);
+		glm::vec3 moveAxis = glm::normalize(glm::cross(c->cameraFront, {0.0f, 1.0f, 0.0f}));;
 		c->m_Position += speed * moveAxis;
-		c->m_View = glm::lookAt(c->m_Position, c->m_Position + cameraFront, {0.0f, 1.0f, 0.0f});
+		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront, {0.0f, 1.0f, 0.0f});
 	}
 
 	static void LookUp(float speed){
-		//auto c = GetInstance();
-		//glm::vec3 currentTarget = c->m_Target; // Example vector
-		//float angle = glm::radians(10.0f); // Rotate 90 degrees
-		//glm::vec3 rotationAxis = glm::vec3(0,1,0); // Rotate around Z axis
-		//glm::quat quaternion = glm::angleAxis(angle, rotationAxis);
-		//glm::vec3 rotatedVector = quaternion * currentTarget;
-		//c->m_Target = rotatedVector;
+		auto c = GetInstance();
+		c->m_Pitch += speed;
 
-		//BOBO_INFO(c->m_Target.x);
-		//BOBO_INFO(c->m_Target.y);
-		//BOBO_INFO(c->m_Target.z);
-		//BOBO_INFO("------");
-		/*c->UpdateViewMatrix();*/
+		// Clamp pitch to prevent flipping upside down
+		if (c->m_Pitch > 89.0f) c->m_Pitch = 89.0f;
+		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+    // Update camera front vector using yaw and pitch angles
+		glm::vec3 front;
+		front.x = cos(glm::radians(c->m_Yaw)) * cos(glm::radians(c->m_Pitch));
+		front.y = sin(glm::radians(c->m_Pitch));
+		front.z = sin(glm::radians(c->m_Yaw)) * cos(glm::radians(c->m_Pitch));
+		c->cameraFront = glm::normalize(front);
+		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront,  {0.0f, 1.0f, 0.0f});
+	
+	}
+
+	static void LookRight(float speed){
+		auto c = GetInstance();
+		c->m_Yaw += speed;
+
+		// Clamp pitch to prevent flipping upside down
+		if (c->m_Pitch > 89.0f) c->m_Pitch = 89.0f;
+		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+    // Update camera front vector using yaw and pitch angles
+		glm::vec3 front;
+		front.x = cos(glm::radians(c->m_Yaw)) * cos(glm::radians(c->m_Pitch));
+		front.y = sin(glm::radians(c->m_Pitch));
+		front.z = sin(glm::radians(c->m_Yaw)) * cos(glm::radians(c->m_Pitch));
+		c->cameraFront = glm::normalize(front);
+		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront,  {0.0f, 1.0f, 0.0f});
+	
 	}
 
 	static glm::vec3 GetPosition() { return GetInstance()->m_Position; }
@@ -108,7 +137,7 @@ private:
 
 	void UpdateViewMatrix()
 	{
-		m_View = glm::lookAt(m_Position, m_Target, glm::vec3{ 0, 1, 0 });
+		m_View = glm::lookAt(m_Position, m_Position + m_Target, glm::vec3{ 0, 1, 0 });
 	}
 
 	void UpdateProjectionMatrix()
@@ -123,6 +152,13 @@ private:
 	float m_AspectRatio;
 	float m_NearClipping;
 	float m_FarClipping;
+
+	// johnny variables//
+
+	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+	float m_Yaw   = -90.0f; // Initialize yaw angle
+	float m_Pitch = 0.0f;   // Initialize pitch angle
+	///
 
 	glm::mat4 m_View;
 	glm::mat4 m_Projection;
