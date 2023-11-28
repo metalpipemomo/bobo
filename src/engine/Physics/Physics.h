@@ -273,16 +273,6 @@ public:
 		// If you take larger steps than 1 / 60th of a second you need to do multiple collision steps in order to keep the simulation stable. Do 1 collision step per 1 / 60th of a second (round up).
 		const int cCollisionSteps = 1;
 
-		// code to display active body positions.
-		auto body_id_vector = JPH::BodyIDVector();
-		Physics::PhysicsWorld->physics_system->GetActiveBodies(JPH::EBodyType::RigidBody,body_id_vector);
-		BodyInterface &interface = Physics::PhysicsWorld->physics_system->GetBodyInterface();
-		for(auto body : body_id_vector) 
-		{
-			RVec3 position = interface.GetCenterOfMassPosition(body);
-			Vec3 velocity = interface.GetLinearVelocity(body);
-			//std::cout << "Position = (" << position.GetX() << ", " << position.GetY() << ", " << position.GetZ() << "), Velocity = (" << velocity.GetX() << ", " << velocity.GetY() << ", " << velocity.GetZ() << ")" << std::endl;
-		}
 		
 		// Step the world
 		Physics::PhysicsWorld->physics_system->Update((1.0/60.0), cCollisionSteps, &temp_allocator, &job_system);

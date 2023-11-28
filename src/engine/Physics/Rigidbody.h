@@ -21,11 +21,11 @@
 class Rigidbody : public Component
 {
 public:
-	Rigidbody(const JPH::Shape* inShape = new JPH::SphereShape(.5), JPH::RVec3Arg inPosition = JPH::RVec3Arg(0.0f, 0.0f, 0.0f),
+	Rigidbody(const JPH::Shape* inShape = new JPH::SphereShape(.5), glm::vec3 inPosition = glm::vec3(0.0f, 0.0f, 0.0f),
 		JPH::QuatArg inRotation = Quat::sIdentity(), JPH::EMotionType inMotionType = EMotionType::Dynamic,
 		JPH::ObjectLayer inObjectLayer = Layers::MOVING, Transform* trnsfrm = nullptr, bool isTrigger = false)
 	{
-		JPH::BodyCreationSettings shape_settings(inShape, inPosition, inRotation, inMotionType, inObjectLayer);
+		JPH::BodyCreationSettings shape_settings(inShape, JPH::Vec3(inPosition.x, inPosition.y, inPosition.z), inRotation, inMotionType, inObjectLayer);
 		
 		shape_settings.mIsSensor = isTrigger;
 		
