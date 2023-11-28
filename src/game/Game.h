@@ -110,7 +110,7 @@ private:
 
 		// lamp creation
 		auto lamp = new GameObject();
-		lamp->AddComponent<Material>(ModelLoader::GetModel("lamp"));
+		lamp->AddComponent<Material>(ModelLoader::GetModel("lamp"), TextureLoader::GetTexture("lamp"));
 		lamp->GetComponent<Transform>()->position = m_tablePosition;
 		lamp->GetComponent<Transform>()->position += glm::vec3{ 0, 5, 0 };
 
