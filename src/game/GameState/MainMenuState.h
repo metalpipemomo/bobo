@@ -30,10 +30,14 @@ public:
 
         MakeCenterText("Totally Accurate Pool Simulator (Main Menu)");
        
+        LowerCursor();
+
         if (MakeCenterButton("Play"))
         {
             GameStateManager::EnterGameState(GameStateLabel::IN_GAME);
         }
+
+        LowerCursor();
 
         if (MakeCenterButton("Exit"))
         {

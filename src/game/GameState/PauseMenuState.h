@@ -37,10 +37,14 @@ public:
 
         MakeCenterText("Game Paused");
 
+        LowerCursor();
+
         if (MakeCenterButton("Resume"))
         {
             GameStateManager::EnterGameState(GameStateLabel::IN_GAME);
         }
+
+        LowerCursor();
 
         if (MakeCenterButton("Go to Game Over State"))
         {

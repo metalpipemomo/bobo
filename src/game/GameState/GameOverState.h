@@ -33,6 +33,8 @@ public:
         // Center Text
         MakeCenterText("Congratulations " + winner + "!", true, true);
 
+        LowerCursor();
+
         if (MakeCenterButton("Return to Main Menu"))
         {
             GameStateManager::ResetGameStateStack();
