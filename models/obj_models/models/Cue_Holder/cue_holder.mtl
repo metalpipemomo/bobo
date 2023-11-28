@@ -1,0 +1,22 @@
+# Blender 3.4.1 MTL File: 'cue_holder.blend'
+# www.blender.org
+
+newmtl Material.001
+Ns 324.000031
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/jaffa/Downloads/Pool_Cue/C:/Users/User/Desktop/Work/Term_7/COMP_8551-0_-_Adv_Games_Programming/bobo/models/texture_files/PNG_Textures/Cue_Texture/36-inch-one-piece-pool-cue-moneymachines.com__09246.jpg
+
+newmtl Material.002
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Cue_Holder_Wood.png
