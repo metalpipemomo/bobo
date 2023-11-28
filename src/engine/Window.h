@@ -54,13 +54,13 @@ public:
 		Time::Init();
 		Camera::Init((float)GetWidth() / (float)GetHeight());
 		TextureLoader::Init();
+		ModelLoader::Init();
 		Renderer::Init();
 		
 		SceneManager::Init();
 		SceneManager::AddOnSceneChanged("SetSceneHasChanged", [this]() { hasSceneChanged = true;});
 		hasSceneChanged = true;
 		
-		ModelLoader::Init();
 		Audio::Init();
 		CoroutineScheduler::Init();
 
@@ -79,11 +79,6 @@ public:
 
 	void EventLoop()
 	{
-		GLint maxVertexUniformComponents;
-		GLint maxFragmentUniformComponents;
-		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &maxVertexUniformComponents);
-		glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &maxFragmentUniformComponents);
-		BOBO_INFO("Vertex: {}, Fragment: {}", maxVertexUniformComponents, maxFragmentUniformComponents);
 		while (!glfwWindowShouldClose(p_Window))
 		{
 			// ImGUI Frame Update
@@ -175,6 +170,15 @@ public:
 			}
 
 
+
+			if (Input::GetKeyDown(GLFW_KEY_X))
+			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			}
+			else if (Input::GetKeyDown(GLFW_KEY_Y))
+			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			}
 
 			// Window Updates
 			Update();

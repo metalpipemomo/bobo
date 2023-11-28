@@ -25,7 +25,7 @@ private:
 	ModelLoader() {}
 	void LoadModel(const std::string& identifier, const std::string& path);
 	void LoadAllModels(const std::string& directory);
-    void ConstructVAO(Model* model);
+    void ConstructVAO(const std::string& name, Model* model);
 	std::unordered_map<std::string, Model*> m_LoadedModels;
     std::mutex m_ModelMtx;
 };
@@ -149,13 +149,13 @@ void ModelLoader::LoadAllModels(const std::string& directory)
     // Construct VAOs for each loaded model
     for (auto& item : m_LoadedModels)
     {
-        ConstructVAO(item.second);
+        ConstructVAO(item.first, item.second);
     }
 
 	BOBO_INFO("ModelLoader Loaded {} Models from Directory {}", m_LoadedModels.size(), directory);
 }
 
-void ModelLoader::ConstructVAO(Model* model)
+void ModelLoader::ConstructVAO(const std::string& name, Model* model)
 {
     GLuint vao;
     glGenVertexArrays(1, &vao);
@@ -167,12 +167,15 @@ void ModelLoader::ConstructVAO(Model* model)
     glBufferData(GL_ARRAY_BUFFER, model->vertices.size() * sizeof(Vertex), model->vertices.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
-    glEnableVertexAttribArray(3);
+    if (name != "CUBE")
+    {
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+        glEnableVertexAttribArray(3);
+    }
 
     GLuint ebo;
     glGenBuffers(1, &ebo);

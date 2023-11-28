@@ -1,0 +1,33 @@
+# Blender MTL File: 'Lamp.blend'
+# Material Count: 3
+
+newmtl Chain
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.258546 0.124668 0.051624
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl Lamp_Texture
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\User\\Desktop\\Work\\Term_7\\COMP_8551-0_-_Adv_Games_Programming\\bobo\\models\\texture_files\\Vector_SVG_Files\\Lamp_File\\lamp.png
+
+newmtl Lightbulb_Texture
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
