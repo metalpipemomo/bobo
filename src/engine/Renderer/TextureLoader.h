@@ -13,6 +13,15 @@ public:
 	{
 		auto tl = GetInstance();
 		tl->LoadAllTextures("../assets/Textures");
+		std::vector<std::string> faces{
+			"../assets/Skybox/right.png",
+			"../assets/Skybox/left.png",
+			"../assets/Skybox/top.png",
+			"../assets/Skybox/bottom.png",
+			"../assets/Skybox/front.png",
+			"../assets/Skybox/back.png"
+		};
+		tl->LoadCubeMap(faces);
 	}
 
 	static unsigned int GetTexture(const std::string& identifier)
@@ -78,7 +87,6 @@ private:
 
 		unsigned int texture;
 		glGenTextures(1, &texture);
-		glActiveTexture(GL_TEXTURE0 + m_TexCount);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -100,8 +108,43 @@ private:
 		
 		std::string copyIdentifier = identifier;
 		std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
-		m_TexMap.insert({ copyIdentifier, m_TexCount++ });
+		m_TexMap.insert({ copyIdentifier, texture });
 	}
+
+	void LoadCubeMap(std::vector<std::string> faces) {
+		//Creates Cubemap Texture ID
+		unsigned int textureID;
+		glGenTextures(1, &textureID);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+		//Apply Each Texture for Each Face of the Cube Map
+		int width, height, nrChannels;
+		for (unsigned int i = 0; i < faces.size(); i++)
+		{
+			stbi_uc* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, STBI_rgb_alpha);
+
+			if (data == nullptr)
+			{
+				BOBO_WARN("RUH OH");
+			}
+
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+				0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data
+			);
+
+			stbi_image_free(data);
+		}
+
+		//Wrapping and filtering methods are determined here.
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+
+		m_TexMap.insert({ "SKYBOX", textureID });
+	};
 
 	int m_TexCount;
 	std::map<std::string, unsigned int> m_TexMap;
