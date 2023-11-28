@@ -76,7 +76,6 @@ private:
 
 		/*----------physics Test ---------------*/
 		auto physicsball = new GameObject();
-
 		physicsball->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_2"));
 		physicsball->AddComponent<Rigidbody>(new SphereShape(1), RVec3(0.0, 10, 0.0), Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
 		auto physicsBallRb = physicsball->GetComponent<Rigidbody>();
@@ -86,13 +85,23 @@ private:
 			});
 
 		auto staticBall = new GameObject();
-
 		staticBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("8_ball"));
 		staticBall->AddComponent<Rigidbody>(new SphereShape(1), RVec3(0.5f, -3.0f, 0.0), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
 		auto staticBallRb = staticBall->GetComponent<Rigidbody>();
 		staticBallRb->SetTransform(staticBall->GetComponent<Transform>());
 		staticBallRb->SetOnCollisionEnd([](JPH::BodyID other) {
 			std::cout << "a collision has ended in lego city" << std::endl;
+			});
+
+		auto triggerBox = new GameObject();
+		triggerBox->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("8_ball"));
+		triggerBox->AddComponent<Rigidbody>(new BoxShape(Vec3::sReplicate(1.0f)), RVec3(0.5f, -3.0f, 1.0), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING, nullptr, true);
+		auto triggerBoxRb = staticBall->GetComponent<Rigidbody>();
+		triggerBoxRb->SetTransform(staticBall->GetComponent<Transform>());
+		triggerBoxRb->SetOnCollision([](JPH::BodyID other) {
+			std::cout << "a gorgeous single object has just gone through this very trigger" << std::endl;
+			Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
+			printf("the gorgeous single object's handsome name..? %d\n", en);
 			});
 
 		// Creating point lights

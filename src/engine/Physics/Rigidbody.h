@@ -1,6 +1,4 @@
 #pragma once
-#pragma once
-#pragma once
 // going to need an update function
 #include <Jolt/Jolt.h>
 #include "../EntityComponent/BaseComponents/Transform.h"
@@ -23,9 +21,19 @@
 class Rigidbody : public Component
 {
 public:
-	void Init() 
+	Rigidbody(const JPH::Shape* inShape = new JPH::SphereShape(.5), JPH::RVec3Arg inPosition = JPH::RVec3Arg(0.0f, 0.0f, 0.0f),
+		JPH::QuatArg inRotation = Quat::sIdentity(), JPH::EMotionType inMotionType = EMotionType::Dynamic,
+		JPH::ObjectLayer inObjectLayer = Layers::MOVING, Transform* trnsfrm = nullptr, bool isTrigger = false)
 	{
-		
+		JPH::BodyCreationSettings shape_settings(inShape, inPosition, inRotation, inMotionType, inObjectLayer);
+		shape_settings.mIsSensor = isTrigger;
+		m_id = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().CreateAndAddBody(shape_settings, EActivation::Activate);
+		transform = trnsfrm;
+	}
+
+	void Awake() 
+	{
+		Physics::GetInstance()->SetJoltRbEntity(m_id, m_OwnerId);
 	}
 
 	void Update() 
@@ -43,16 +51,6 @@ public:
 	void SetTransform(Transform* t) 
 	{
 		transform = t;
-	}
-
-	Rigidbody(const JPH::Shape *inShape = new JPH::SphereShape(.5), JPH::RVec3Arg inPosition = JPH::RVec3Arg(0.0f,0.0f,0.0f), 
-		JPH::QuatArg inRotation = Quat::sIdentity(), JPH::EMotionType inMotionType = EMotionType::Dynamic, 
-		JPH::ObjectLayer inObjectLayer = Layers::MOVING, Transform *trnsfrm = nullptr) 
-	{
-	
-		JPH::BodyCreationSettings shape_settings(inShape, inPosition, inRotation,inMotionType,inObjectLayer);
-		m_id = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().CreateAndAddBody(shape_settings, EActivation::Activate);
-		transform = trnsfrm;
 	}
 	
 	void AddLinearVelocity(Vec3 velocity) 
@@ -107,22 +105,38 @@ public:
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetRestitution(m_id, bounce);
 	}
 
+	// set a function to be called when this object collides with another object.
+	// the function to be called takes 1 parameter, which is the BodyID of the other object
 	void SetOnCollision(function<void(BodyID)> callback)
 	{
-		Physics::GetInstance()->contactListener->SetOnCollisionListener(m_id, callback);
+		Physics::GetInstance()->m_ContactListener->SetOnCollisionListener(m_id, callback);
 	}
 
+	// set a function to be called when this object is finishes colliding with another object.
+	// the function to be called takes 1 parameter, which is the BodyID of the other object
 	void SetOnCollisionEnd(function<void(BodyID)> callback)
 	{
-		Physics::GetInstance()->contactListener->SetOnCollisionEndListener(m_id, callback);
+		Physics::GetInstance()->m_ContactListener->SetOnCollisionEndListener(m_id, callback);
 	}
 
+	// set a function to be called when this object continues a collision with another object.
+	// the function to be called takes 1 parameter, which is the BodyID of the other object
 	void SetOnCollisionPersist(function<void(BodyID)> callback)
 	{
-		Physics::GetInstance()->contactListener->SetOnCollisionPersistListener(m_id, callback);
+		Physics::GetInstance()->m_ContactListener->SetOnCollisionPersistListener(m_id, callback);
 	}
 
+	BodyID GetBodyID() 
+	{
+		return m_id;
+	}
+
+	Transform* GetTransform() 
+	{
+		return transform;
+	}
+	
+private: 
 	JPH::BodyID m_id;
 	Transform* transform;
-private: 
 };
