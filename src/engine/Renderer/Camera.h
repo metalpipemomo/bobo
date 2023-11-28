@@ -14,7 +14,7 @@ public:
 
 		// Set all the members
 		c->m_Position = glm::vec3{ 0, 0, 10 }; // Camera position
-		c->m_Target = glm::vec3{ 0, 0, 1 }; // What Camera is looking at
+		c->m_Target = glm::vec3{ 0, 0, -1 }; // What Camera is looking at
 		c->m_AspectRatio = aspectRatio;
 		c->m_NearClipping = 1.0f;
 		c->m_FarClipping = 1000.0f;
