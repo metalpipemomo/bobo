@@ -9,6 +9,9 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include "Physics/Physics.h"
+
+
 #include "Input.h"
 #include "Model/ModelLoader.h"
 #include "Audio/Audio.h"
@@ -56,9 +59,12 @@ public:
 		
 		SceneManager::Init();
 		SceneManager::AddOnSceneChanged("SetSceneHasChanged", [this]() { hasSceneChanged = true;});
+		hasSceneChanged = true;
 		
 		Audio::Init();
 		CoroutineScheduler::Init();
+
+		Physics::Init();
 	}
 
 	~Window()
@@ -104,6 +110,7 @@ public:
 			if (Time::DidFixedUpdate())
 			{
 				SceneManager::FixedUpdateActiveScene();
+				Physics::Update();
 			}
 
 			// Clear Screen
@@ -117,10 +124,52 @@ public:
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-			if (Input::GetKey(GLFW_KEY_W))
+			if (Input::GetKey(GLFW_KEY_W) && Input::GetKey(GLFW_KEY_LEFT_CONTROL))
 			{
-				Camera::MoveForward(2.0f * Time::DeltaTime());
+				Camera::MoveUp(10.0f * Time::DeltaTime());
+			} else if (Input::GetKey(GLFW_KEY_W))
+			{
+				Camera::MoveForward(10.0f * Time::DeltaTime());
 			}
+			if (Input::GetKey(GLFW_KEY_S) && Input::GetKey(GLFW_KEY_LEFT_CONTROL))
+			{
+				Camera::MoveUp(-10.0f * Time::DeltaTime());
+			} else if (Input::GetKey(GLFW_KEY_S))
+			{
+				Camera::MoveForward(-10.0f * Time::DeltaTime());
+			}
+
+			
+			if (Input::GetKey(GLFW_KEY_D))
+			{
+				Camera::MoveRight(10.0f * Time::DeltaTime());
+			}
+			if (Input::GetKey(GLFW_KEY_A))
+			{
+				Camera::MoveRight(-10.0f * Time::DeltaTime());
+			}
+
+			if(Input::GetKey(GLFW_KEY_UP)) {
+			
+				Camera::LookUp(50.0f * Time::DeltaTime());
+			}
+
+			if(Input::GetKey(GLFW_KEY_DOWN)) {
+			
+				Camera::LookUp(-50.0f * Time::DeltaTime());
+			}
+
+			if(Input::GetKey(GLFW_KEY_LEFT)) {
+			
+				Camera::LookRight(-50.0f * Time::DeltaTime());
+			}
+
+			if(Input::GetKey(GLFW_KEY_RIGHT)) {
+			
+				Camera::LookRight(50.0f * Time::DeltaTime());
+			}
+
+
 
 			if (Input::GetKeyDown(GLFW_KEY_X))
 			{
