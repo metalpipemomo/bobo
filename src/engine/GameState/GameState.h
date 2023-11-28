@@ -85,7 +85,11 @@ protected:
         float off = (avail - size) * .5;
         if (off > 0.0f)
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
         return ImGui::Button(text.c_str());
+    }
+
+    void LowerCursor(int lowerBy = 10)
+    {
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + lowerBy);
     }
 };
