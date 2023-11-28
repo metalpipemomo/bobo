@@ -58,6 +58,7 @@ public:
 		
 		SceneManager::Init();
 		SceneManager::AddOnSceneChanged("SetSceneHasChanged", [this]() { hasSceneChanged = true;});
+		hasSceneChanged = true;
 		
 		ModelLoader::Init();
 		Audio::Init();

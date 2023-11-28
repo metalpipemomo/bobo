@@ -15,6 +15,7 @@
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
 #include <iostream>
+#include "../EntityComponent/EntityManager.h"
 
 
 // Disable common warnings triggered by Jolt, you can use JPH_SUPPRESS_WARNING_PUSH / JPH_SUPPRESS_WARNING_POP to store and restore the warning state
@@ -157,17 +158,20 @@ class ActionableContactListener : public JPH::ContactListener
 {
 public:
 	// set a function to be called when some body starts a collision
-	void SetOnCollisionListener(BodyID bodyID, function<void(BodyID)> function) {
+	void SetOnCollisionListener(BodyID bodyID, function<void(BodyID)> function) 
+	{
 		onCollisionListeners[bodyID] = function;
 	}
 
 	// set a function to be called when some body finishes a collision
-	void SetOnCollisionEndListener(BodyID bodyID, function<void(BodyID)> function) {
+	void SetOnCollisionEndListener(BodyID bodyID, function<void(BodyID)> function) 
+	{
 		onCollisionEndListeners[bodyID] = function;
 	}
 
 	// set a function to be called while some body continues to be in a collision
-	void SetOnCollisionPersistListener(BodyID bodyID, function<void(BodyID)> function) {
+	void SetOnCollisionPersistListener(BodyID bodyID, function<void(BodyID)> function) 
+	{
 		onCollisionPersistListeners[bodyID] = function;
 	}
 
@@ -284,7 +288,16 @@ public:
 		Physics::PhysicsWorld->physics_system->Update((1.0/60.0), cCollisionSteps, &temp_allocator, &job_system);
 	}
 
-	ActionableContactListener *contactListener;
+	// use this function if you need to get the entity corresponding to some jolt rigidbody id
+	Entity GetEntityFromJoltRb(BodyID id) {
+		return ecsJoltBodyHolder.find(id)->second;
+	}
+
+	void SetJoltRbEntity(BodyID id, Entity entity) {
+		ecsJoltBodyHolder[id] = entity;
+	}
+
+	ActionableContactListener *m_ContactListener;
 
 private:
 	Physics() 
@@ -355,9 +368,10 @@ private:
 		// A contact listener gets notified when bodies (are about to) collide, and when they separate again.
 		// Note that this is called from a job so whatever you do here needs to be thread safe.
 		// Registering one is entirely optional.
-		//contact_listener = new MyContactListener{};
-		contactListener = new ActionableContactListener();
-		physics_system->SetContactListener(contactListener);
+
+		// this contact listener is what lets rigidbodies have their own collision-based events
+		m_ContactListener = new ActionableContactListener();
+		physics_system->SetContactListener(m_ContactListener);
 	}
 
 	inline static Physics* PhysicsWorld;
@@ -373,5 +387,6 @@ private:
 	// of your own job scheduler. JobSystemThreadPool is an example implementation.
 	//listeners for when things collide? These are apparently entirely optional 
 	MyBodyActivationListener *body_activation_listener;
-	MyContactListener *contact_listener;
+
+	std::map<BodyID, Entity> ecsJoltBodyHolder;
 };
