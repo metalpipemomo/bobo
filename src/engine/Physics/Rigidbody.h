@@ -26,10 +26,21 @@ public:
 		JPH::ObjectLayer inObjectLayer = Layers::MOVING, Transform* trnsfrm = nullptr, bool isTrigger = false)
 	{
 		JPH::BodyCreationSettings shape_settings(inShape, inPosition, inRotation, inMotionType, inObjectLayer);
+		
 		shape_settings.mIsSensor = isTrigger;
-		m_id = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().CreateAndAddBody(shape_settings, EActivation::Activate);
+		
+		auto body = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().CreateBody(shape_settings);
+		if(inMotionType == EMotionType::Static) {
+			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddBody(body->GetID(), EActivation::DontActivate);
+		} else {
+			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddBody(body->GetID(), EActivation::Activate);
+
+		}
+		m_id = body->GetID();
 		transform = trnsfrm;
 	}
+
+
 
 	void Awake() 
 	{
