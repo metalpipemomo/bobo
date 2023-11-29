@@ -41,7 +41,7 @@ public:
 
         if (ImGuiHelpers::MakeCenterButton("Resume"))
         {
-            GameStateManager::EnterGameState(GameStateLabel::IN_GAME);
+            GameStateManager::TogglePauseState();
         }
 
         ImGuiHelpers::LowerCursor();
