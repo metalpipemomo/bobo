@@ -35,3 +35,6 @@
 
 // Physics
 #include "Physics/Physics.h"
+
+// UI
+#include "Notifications/NotificationManager.h"

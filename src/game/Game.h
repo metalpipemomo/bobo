@@ -12,6 +12,8 @@
 #include "GameState/PauseMenuState.h"
 #include "GameState/InGameState.h"
 
+#include "../engine/Notifications/NotificationManager.h"
+
 class Game
 {
 public:
@@ -50,7 +52,6 @@ private:
 		solidOneBall->GetComponent<Transform>()->position = m_firstBallPos;
 		solidOneBall->GetComponent<Transform>()->scale = m_ballScale;
 		addRigidBodyToBall(solidOneBall, s);
-
 
 		// 2nd row
 		auto StripedNineBall = new GameObject();
@@ -142,7 +143,6 @@ private:
 		ball->GetComponent<Rigidbody>()->SetFriction(.4);
 	}
 
-
 	void TableRigidBodySetUp() 
 	{
 		// table creation
@@ -153,25 +153,23 @@ private:
 		table->AddComponent<Rigidbody>(new BoxShape(RVec3(4.2,.25,6.5)), tableTransform->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
 		table->GetComponent<Rigidbody>()->SetFriction(.4);
 		
-		
 		auto triggerBox = new GameObject();
 		triggerBox->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("8_ball"));
 		triggerBox->GetComponent<Transform>()->scale = glm::vec3{2,2,2};
 		triggerBox->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0,20,-.5);
-		triggerBox->AddComponent<Rigidbody>(new BoxShape(Vec3::sReplicate(2.0f)), triggerBox->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING, nullptr, true);
+		triggerBox->AddComponent<Rigidbody>(new BoxShape(Vec3::sReplicate(2.0f)), 
+			triggerBox->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING, nullptr, true);
 		auto triggerBoxRb = triggerBox->GetComponent<Rigidbody>();
 		triggerBoxRb->SetTransform(triggerBox->GetComponent<Transform>());
 		triggerBoxRb->SetOnCollision([](JPH::BodyID other) {
-			std::cout << "An object has entered this trigger box" << std::endl;
-			Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
-			printf("Object ID: %d\n", en);
+				Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
+				NotificationManager::SendNotification("The Ball has Fallen through the Box", NotificationTextColor::GREEN);
 			});
 	}
 
 	// Setting up the scene models
 	void SceneSetup() 
 	{
-
 		// cue creation
 		auto cue = new GameObject();
 		cue->AddComponent<Material>(ModelLoader::GetModel("pool_cue"), TextureLoader::GetTexture("cue"));
@@ -213,10 +211,6 @@ private:
 		// setup initial balls position and rigidbody
 		BallsSetup();
 		TableRigidBodySetUp();
-
-
-
-
 	}
 
 	void Setup()
@@ -235,8 +229,6 @@ private:
 
 		// Setting up initial scene
 		SceneSetup();
-
-
 
 		// Creating point lights
 		auto pointlight = new GameObject();

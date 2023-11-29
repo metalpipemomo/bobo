@@ -11,7 +11,6 @@
 
 #include "Physics/Physics.h"
 
-
 #include "Input.h"
 #include "Model/ModelLoader.h"
 #include "Audio/Audio.h"
@@ -22,6 +21,7 @@
 #include "Renderer/Camera.h"
 #include "Renderer/TextureLoader.h"
 #include "Renderer/Renderer.h"
+#include "Notifications/NotificationManager.h"
 
 struct WindowProperties
 {
@@ -29,9 +29,9 @@ struct WindowProperties
 	std::string name;
 
 	WindowProperties(
-		unsigned int width = 640,
-		unsigned int height = 480,
-		const std::string& name = "Default Window"
+		unsigned int width,
+		unsigned int height,
+		const std::string& name
 	)
 		: width(width), height(height), name(name) {}
 };
@@ -39,13 +39,8 @@ struct WindowProperties
 class Window
 {
 public:
-	static unsigned int const width = 640;
-	static unsigned int const height = 480;
-
-	Window(const WindowProperties& props = WindowProperties{})
+	Window() : m_Props(WindowProperties(WINDOW_WIDTH, WINDOW_HEIGHT, "Totally Accurate Pool Simulator"))
 	{
-		m_Props = props;
-
 		// Init stuff here, order matters
 		Log::Init();
 		Init();
@@ -98,6 +93,7 @@ public:
 			Audio::Update();
 			CoroutineScheduler::Update();
 			SceneManager::UpdateActiveScene();
+			NotificationManager::Update();
 
 			// Pause on pressing Escape
 			if (Input::GetKeyDown(GLFW_KEY_ESCAPE))
@@ -138,7 +134,6 @@ public:
 			{
 				Camera::MoveForward(-10.0f * Time::DeltaTime());
 			}
-
 			
 			if (Input::GetKey(GLFW_KEY_D))
 			{
@@ -168,8 +163,6 @@ public:
 			
 				Camera::LookRight(50.0f * Time::DeltaTime());
 			}
-
-
 
 			if (Input::GetKeyDown(GLFW_KEY_X))
 			{
