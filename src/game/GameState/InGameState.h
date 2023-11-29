@@ -15,6 +15,7 @@ public:
         // Set stuff
         m_SolidBallsRemaining = 8;
         m_StripedBallsRemaining = 8;
+        m_TurnPopupOpacity = 1;
 
         m_Turn = Turn::P1;
     }
@@ -73,6 +74,7 @@ public:
         {
             m_SolidBallsRemaining--;
             m_Turn = Turn::P2;
+            m_TurnPopupOpacity = 1;
         }
 
         ImGui::End();
@@ -102,15 +104,22 @@ public:
         {
             m_StripedBallsRemaining--;
             m_Turn = Turn::P1;
+            m_TurnPopupOpacity = 1;
         }
 
         ImGui::End();
 
         // Turn UI
-        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 25, main_viewport->WorkPos.y + Window::height - 50), 0);
-        ImGui::SetNextWindowSize(ImVec2(200, 25), 0);
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + Window::width / 2 - 75, main_viewport->WorkPos.y + 25), 0);
+        ImGui::SetNextWindowSize(ImVec2(150, 25), 0);
 
         ImGui::StyleColorsClassic();
+        ImGuiStyle& style = ImGui::GetStyle();
+        style.Colors[ImGuiCol_Text] = ImVec4(0.94f, 0.94f, 0.94f, m_TurnPopupOpacity);
+        style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, m_TurnPopupOpacity);
+        style.Colors[ImGuiCol_Border] = ImVec4(0.2f, 0.2f, 0.2f, m_TurnPopupOpacity);
+        if (m_TurnPopupOpacity > 0)
+            m_TurnPopupOpacity = m_TurnPopupOpacity - 0.01;
 
         ImGui::Begin("Turn", NULL, MakeFlags(true, true, true, true, true, true, true, false, false, false));
 
@@ -128,5 +137,6 @@ public:
 private:
         int m_StripedBallsRemaining;
         int m_SolidBallsRemaining;
+        float m_TurnPopupOpacity;
         Turn m_Turn;
 };
