@@ -9,7 +9,6 @@
 class Scene
 {
 public:
-
 	Scene(const std::string& name) : m_SceneName(name) {}
 
 	Entity CreateEntity()

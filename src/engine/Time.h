@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bpch.h"
+#include "../bpch.h"
 
 class Time
 {

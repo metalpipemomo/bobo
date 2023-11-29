@@ -26,16 +26,16 @@ public:
         // Render the game over screen to the display
         const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), 0);
-        ImGui::SetNextWindowSize(ImVec2(Window::width, Window::height), 0);
+        ImGui::SetNextWindowSize(ImVec2(WINDOW_WIDTH, WINDOW_HEIGHT), 0);
 
-        ImGui::Begin("Game Over", NULL, MakeFlags(true, true, true, true, true, true, true, false, false, false));
+        ImGui::Begin("Game Over", NULL, ImGuiHelpers::MakeFlags(true, true, true, true, true, true, true, false, false, false));
 
         // Center Text
-        MakeCenterText("Congratulations " + winner + "!", true, true);
+        ImGuiHelpers::MakeCenterText("Congratulations " + winner + "!", true, true);
 
-        LowerCursor();
+        ImGuiHelpers::LowerCursor();
 
-        if (MakeCenterButton("Return to Main Menu"))
+        if (ImGuiHelpers::MakeCenterButton("Return to Main Menu"))
         {
             GameStateManager::ResetGameStateStack();
             GameStateManager::EnterGameState(GameStateLabel::MAIN_MENU);
