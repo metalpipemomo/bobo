@@ -40,7 +40,7 @@ public:
             {
                 newTurn = "P2";
             }
-            NotificationManager::SendNotification(newTurn + " Turn Start", NotificationTextColor::WHITE, NotificationFontScale::NORMAL, 10);
+            NotificationManager::SendNotification(newTurn + " Turn Start", NotificationTextColor::WHITE);
         }
         m_TurnLastUpdate = m_Turn;
 
@@ -73,7 +73,7 @@ public:
         {
             ImGui::StyleColorsLight();
         }
-        else 
+        else
         {
             ImGui::StyleColorsDark();
         }
@@ -98,7 +98,7 @@ public:
         // Striped UI
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH - 225, main_viewport->WorkPos.y + 25), 0);
         ImGui::SetNextWindowSize(ImVec2(200, 80), 0);
-        
+
         if (m_Turn == Turn::P2)
         {
             ImGui::StyleColorsLight();
@@ -145,8 +145,8 @@ public:
         ImGui::End();
     }
 private:
-        int m_StripedBallsRemaining;
-        int m_SolidBallsRemaining;
-        Turn m_Turn;
-        Turn m_TurnLastUpdate;
+    int m_StripedBallsRemaining;
+    int m_SolidBallsRemaining;
+    Turn m_Turn;
+    Turn m_TurnLastUpdate;
 };

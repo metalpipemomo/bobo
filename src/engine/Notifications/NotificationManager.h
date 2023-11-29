@@ -3,10 +3,12 @@
 #include "../../bpch.h"
 
 #include "../UI/ImGuiHelpers.h"
+#include "../Coroutine/Waits/WaitForSeconds.h"
 
 enum NotificationTextColor { RED, BLUE, GREEN, BLACK, WHITE };
 
-enum NotificationFontScale{ SMALL, NORMAL, LARGE };
+// Fonts look really blurry when scaled so just ignoring for the moment
+enum NotificationFontScale { SMALL, NORMAL, LARGE };
 
 struct NotificationInfo
 {
@@ -15,27 +17,30 @@ struct NotificationInfo
     float m_FontScale;
     float m_Duration;
     float m_StartDuration;
-    float m_FadeAfter;
 
-    NotificationInfo(const std::string& text, const ImVec4 textColor, const float fontScale, const float duration, const float fadeAfter) : 
-        m_Text(text), m_TextColor(textColor), m_FontScale(fontScale), m_Duration(duration), m_StartDuration(duration) {};
+    NotificationInfo(const std::string& text, const ImVec4 textColor, const float fontScale, const float duration) :
+        m_Text(text),
+        m_TextColor(textColor),
+        m_FontScale(fontScale),
+        m_Duration(duration),
+        m_StartDuration(duration) {};
 };
 
 class NotificationManager
 {
 public:
-    static void SendNotification(const std::string& text, const NotificationTextColor textColor, 
-        const NotificationFontScale fontScale = NotificationFontScale::NORMAL, const float duration = 5)
+    bool m_ReverseOrder = true;
+
+    static void SendNotification(const std::string& text, const NotificationTextColor textColor, const float duration = 5)
     {
         auto n = GetInstance();
-        SendNotification(text, n->m_NotificationColorLookup[textColor], fontScale, duration);
+        SendNotification(text, n->m_NotificationColorLookup[textColor], duration);
     }
 
-    static void SendNotification(const std::string& text, const ImVec4 textColor, 
-        const NotificationFontScale fontScale = NotificationFontScale::NORMAL, const float duration = 5)
+    static void SendNotification(const std::string& text, const ImVec4 textColor, const float duration = 5)
     {
         auto n = GetInstance();
-        NotificationInfo* info = new NotificationInfo(text, textColor, fontScale, duration, n->m_NotifFadeAfter);
+        NotificationInfo* info = new NotificationInfo(text, textColor, 1, duration);
         n->m_ActiveNotifications.push_back(info);
     }
 
@@ -45,7 +50,6 @@ public:
         n->UpdateMap();
         n->Render();
     }
-
 private:
     static NotificationManager* GetInstance()
     {
@@ -66,9 +70,9 @@ private:
         m_NotificationColorLookup.insert(
             std::pair<NotificationTextColor, ImVec4>(NotificationTextColor::WHITE, ImVec4(1, 1, 1, 1)));
 
-        m_NotificationFontScaleLookup.insert(std::pair<NotificationFontScale, float>(NotificationFontScale::SMALL, .95));
+        m_NotificationFontScaleLookup.insert(std::pair<NotificationFontScale, float>(NotificationFontScale::SMALL, .75));
         m_NotificationFontScaleLookup.insert(std::pair<NotificationFontScale, float>(NotificationFontScale::NORMAL, 1));
-        m_NotificationFontScaleLookup.insert(std::pair<NotificationFontScale, float>(NotificationFontScale::LARGE, 1.05));
+        m_NotificationFontScaleLookup.insert(std::pair<NotificationFontScale, float>(NotificationFontScale::LARGE, 1.25));
     };
 
     void UpdateMap()
@@ -76,24 +80,11 @@ private:
         for (int i = 0; i < m_ActiveNotifications.size();)
         {
             auto item = m_ActiveNotifications[i];
-
-            if (item->m_FadeAfter > 0)
-            {
-                item->m_FadeAfter -= Time::DeltaTime();
-                continue;
-            }
-
-            item->m_Duration -= Time::DeltaTime();
-
+            item->m_Duration -= Time::DeltaTime() * m_NotificationFadeRate;
             if (item->m_Duration <= 0)
-            {
-                // remove from data structures
                 m_ActiveNotifications.erase(m_ActiveNotifications.begin() + i);
-            }
             else
-            {
                 i++;
-            }
         }
     }
 
@@ -105,38 +96,36 @@ private:
     const int m_NotifHeight = 30;
     const int m_NotifWindowXOffset = 10;
     const int m_NotifWindowYOffset = 10;
-    const float m_NotifFadeAfter = 5;
+    const float m_NotificationFadeRate = .5;
 
     void Render()
     {
         const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + m_NotifWindowXOffset, 
-            main_viewport->WorkPos.y + WINDOW_HEIGHT - m_NotifWindowHeight / 2 - m_NotifWindowYOffset), 0);
+            main_viewport->WorkPos.y + WINDOW_HEIGHT / 2 - m_NotifWindowHeight / 2 - m_NotifWindowYOffset), 0);
         ImGui::SetNextWindowSize(ImVec2(m_NotifWindowWidth, m_NotifWindowHeight), 0);
 
         ImGui::Begin("Notifications", NULL,
-            ImGuiHelpers::MakeFlags(true, false, true, true, true, false, true, true, false, false));
+            ImGuiHelpers::MakeFlags(true, true, true, true, true, true, true, true, false, false));
 
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + m_NotifWindowHeight / 2 - m_NotifHeight);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + m_NotifWindowHeight - m_NotifHeight);
 
         ImGuiStyle& style = ImGui::GetStyle();
         ImVec4 prevColors = style.Colors[ImGuiCol_Text];
 
-        for (int i = 0; i < m_ActiveNotifications.size(); i++)
+        if (!m_ReverseOrder)
         {
-            // Set Text Color
-            auto item = m_ActiveNotifications[i];
-            ImVec4 color = item->m_TextColor;
-            color.w = item->m_Duration / item->m_StartDuration;
-            style.Colors[ImGuiCol_Text] = color;
-           
-            // Set Font Scale
-            ImGui::SetWindowFontScale(item->m_FontScale);
-
-            // Show Text
-            ImGui::Text(item->m_Text.c_str());
-
-            ImGuiHelpers::HeightenCursor(m_NotifHeight * 2);
+            for (int i = 0; i < m_ActiveNotifications.size(); i++)
+            {
+                RenderNotification(m_ActiveNotifications[i], style);
+            }
+        }
+        else if (m_ActiveNotifications.size() > 0)
+        {
+            for (int i = m_ActiveNotifications.size() - 1; i >= 0; i--)
+            {
+                RenderNotification(m_ActiveNotifications[i], style);
+            }
         }
 
         // reset
@@ -144,5 +133,26 @@ private:
         ImGui::SetWindowFontScale(1);
 
         ImGui::End();
+    }
+
+    void RenderNotification(NotificationInfo* info, ImGuiStyle& style)
+    {
+        // Set font scale
+        float oldFontSize = ImGui::GetFont()->Scale;
+        ImGui::GetFont()->Scale *= info->m_FontScale;
+        ImGui::PushFont(ImGui::GetFont());
+
+        // Set Text Color
+        ImVec4 color = info->m_TextColor;
+        color.w = info->m_Duration / info->m_StartDuration;
+        style.Colors[ImGuiCol_Text] = color;
+
+        // Show Text
+        ImGui::Text(info->m_Text.c_str());
+
+        ImGuiHelpers::HeightenCursor(m_NotifHeight * 2);
+
+        ImGui::GetFont()->Scale = oldFontSize;
+        ImGui::PopFont();
     }
 };
