@@ -3,6 +3,7 @@
 #include "../../engine/Notifications/NotificationManager.h"
 
 #include <string>
+#include "../../engine/Time.h"
 
 enum Turn { P1, P2 };
 
@@ -17,6 +18,9 @@ public:
         // Set stuff
         m_SolidBallsRemaining = 8;
         m_StripedBallsRemaining = 8;
+        m_ShotPower = 0.0f;
+        m_BannerAlpha = 0.0f;
+        m_BannerTimer = 0.0f;
 
         m_Turn = Turn::P1;
     }
@@ -91,6 +95,7 @@ public:
             m_SolidBallsRemaining--;
             NotificationManager::SendNotification("A Solid Ball has been Sunk", NotificationTextColor::BLUE);
             m_Turn = Turn::P2;
+            m_BannerTimer = 7.5f;
         }
 
         ImGui::End();
@@ -121,6 +126,7 @@ public:
             m_StripedBallsRemaining--;
             NotificationManager::SendNotification("A Striped Ball has been Sunk", NotificationTextColor::RED);
             m_Turn = Turn::P1;
+            m_BannerTimer = 7.5f;
         }
 
         ImGui::End();
@@ -143,10 +149,74 @@ public:
         ImGui::Text(turnLabel.c_str());
 
         ImGui::End();
+
+        // Banner Notification
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y + WINDOW_HEIGHT / 2 - 200), 0);
+        ImGui::SetNextWindowSize(ImVec2(WINDOW_WIDTH, 100), 0);
+
+        ImGui::StyleColorsClassic();
+        ImGuiStyle& style = ImGui::GetStyle();
+        m_BannerTimer -= 1.0f  * Time::DeltaTime();
+        if (m_BannerTimer >= 5.0f) {
+            m_BannerAlpha += 0.4f * Time::DeltaTime();
+        } else if (m_BannerTimer > 0) {
+            m_BannerAlpha -= 0.2f * Time::DeltaTime();
+        }
+        BOBO_INFO("Timer: {}", m_BannerTimer);
+        BOBO_INFO("Alpha: {}", m_BannerAlpha);
+        style.Colors[ImGuiCol_Text] = ImVec4(0.90f, 0.90f, 0.90f, m_BannerAlpha);
+        style.Colors[ImGuiCol_WindowBg] = ImVec4(0.09f, 0.09f, 0.15f, m_BannerAlpha);
+        style.Colors[ImGuiCol_Border] = ImVec4(0.70f, 0.70f, 0.70f, m_BannerAlpha);
+
+        ImGui::Begin("Banner", NULL, ImGuiHelpers::MakeFlags(true, true, true, true, true, true, true, false, false, false));
+        ImGui::SetWindowFontScale(4);
+
+        // Construct banner label
+        std::string bannerLabel;
+        if (m_Turn == Turn::P1)
+            bannerLabel = "PLAYER 1'S TURN";
+        else
+            bannerLabel = "PLAYER 2'S TURN";
+
+        auto textWidth = ImGui::CalcTextSize(bannerLabel.c_str()).x;
+        ImGui::SetCursorPosX((WINDOW_WIDTH - textWidth) * 0.5f);
+        ImGui::Text(bannerLabel.c_str());
+
+        ImGui::End();
+
+        // Power Bar
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH / 2 - 131, main_viewport->WorkPos.y + WINDOW_HEIGHT - 200), 0);
+        ImGui::SetNextWindowSize(ImVec2(262, 60), 0);
+
+        style.WindowRounding = 5.3f;
+        style.WindowPadding = ImVec2(3.0f, 3.0f);
+
+        // Increase the progress bar if space is being held down
+        if (Input::GetKey(GLFW_KEY_SPACE))
+        {
+            style.Colors[ImGuiCol_WindowBg] = ImVec4(0.09f, 0.09f, 0.15f, 1.00f);
+            if (m_ShotPower < 100.0f)
+                m_ShotPower += 1.0f  * Time::DeltaTime();
+        }
+        else
+        {
+            style.Colors[ImGuiCol_WindowBg] = ImVec4(0.89f, 0.89f, 0.95f, 1.00f);
+            m_ShotPower = 0.0f;
+        }
+
+        ImGui::Begin("Test", NULL, ImGuiHelpers::MakeFlags(true, true, true, true, true, true, true, false, false, false));
+
+        // Construct the progress bar
+        ImGui::ProgressBar(m_ShotPower, ImVec2(256.0f, 54.0f));
+
+        ImGui::End();
     }
 private:
     int m_StripedBallsRemaining;
     int m_SolidBallsRemaining;
     Turn m_Turn;
     Turn m_TurnLastUpdate;
+    float m_ShotPower;
+    float m_BannerAlpha;
+    float m_BannerTimer;
 };
