@@ -8,7 +8,7 @@ public:
         // Initialize game over resources
         BOBO_INFO("Entered Game Over State");
 
-        // Check who won
+        NotificationManager::ClearPendingBannerNotifications();
     }
 
     void Exit()

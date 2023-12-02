@@ -19,6 +19,7 @@ public:
         m_SolidBallsRemaining = 8;
         m_StripedBallsRemaining = 8;
         m_ShotPower = 0.0f;
+        m_ShotPowerDirection = 1;
 
         m_Turn = Turn::P1;
     }
@@ -42,7 +43,7 @@ public:
             {
                 newTurn = "P2";
             }
-            NotificationManager::SendBannerNotification(newTurn + " Turn Start", NotificationTextColor::WHITE);
+            NotificationManager::SendSlidingBannerNotification(newTurn + " Turn Start", NotificationTextColor::WHITE);
         }
         m_TurnLastUpdate = m_Turn;
 
@@ -145,33 +146,69 @@ public:
 
         ImGui::End();
 
+        // if space is held or we are still resolving a shot, the bar must be rendered
         // Power Bar
-        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH / 2 - 131, main_viewport->WorkPos.y + WINDOW_HEIGHT - 200), 0);
-        ImGui::SetNextWindowSize(ImVec2(262, 60), 0);
+        m_ShootKeyHeld = Input::GetKey(GLFW_KEY_SPACE);
 
-        ImGuiStyle& style = ImGui::GetStyle();
-        style.WindowRounding = 5.3f;
-        style.WindowPadding = ImVec2(3.0f, 3.0f);
-
-        // Increase the progress bar if space is being held down
-        if (Input::GetKey(GLFW_KEY_SPACE))
+        // set the resolving shot timer upon releasing a shot
+        if (!m_ShootKeyHeld && m_ShootKeyHeldLastFrame && m_ResolvingShot <= 0)
         {
-            style.Colors[ImGuiCol_WindowBg] = ImVec4(0.09f, 0.09f, 0.15f, 1.00f);
-            if (m_ShotPower < 100.0f)
-                m_ShotPower += 1.0f  * Time::DeltaTime();
-        }
-        else
-        {
-            style.Colors[ImGuiCol_WindowBg] = ImVec4(0.89f, 0.89f, 0.95f, 1.00f);
-            m_ShotPower = 0.0f;
+            // Has released shot, must resolve shot
+            m_ResolvingShot = 1;
         }
 
-        ImGui::Begin("Test", NULL, ImGuiHelpers::MakeFlags(true, true, true, true, true, true, true, false, false, false));
+        if (m_ShootKeyHeld || m_ResolvingShot > 0)
+        {
+            ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH / 2 - m_ProgressBarWidth / 2, 
+                main_viewport->WorkPos.y + WINDOW_HEIGHT - m_ProgressBarHeight - 25), 0);
+            ImGui::SetNextWindowSize(ImVec2(m_ProgressBarWidth + m_ProgressBarPadding, m_ProgressBarHeight + m_ProgressBarPadding), 0);
 
-        // Construct the progress bar
-        ImGui::ProgressBar(m_ShotPower, ImVec2(256.0f, 54.0f));
+            ImGuiStyle& style = ImGui::GetStyle();
+            ImVec2 oldWindowPadding = style.WindowPadding;
+            style.WindowPadding = ImVec2(m_ProgressBarPadding, m_ProgressBarPadding);
 
-        ImGui::End();
+            ImVec4 oldPlotHistogramColor = style.Colors[ImGuiCol_PlotHistogram];
+            if (m_ResolvingShot > 0)
+                style.Colors[ImGuiCol_PlotHistogram] = ImVec4(1, 1, 0, 1);
+            else
+                style.Colors[ImGuiCol_PlotHistogram] = ImVec4(m_ShotPower, 0, 0, 1);
+
+            // only increase the power bar if a shot is not currently being resolved
+            if (m_ShootKeyHeld && m_ResolvingShot <= 0)
+            {
+                m_ShotPower += m_ShotPowerDirection * Time::DeltaTime();
+                if (m_ShotPower >= 1)
+                    m_ShotPowerDirection = -1;
+                if (m_ShotPower <= 0)
+                    m_ShotPowerDirection = 1;
+            }
+        
+            ImGui::Begin("Progress Bar", NULL, ImGuiHelpers::MakeFlags(true, true, true, true, true, true, true, false, false, false));
+
+            // Construct the progress bar
+            ImGui::ProgressBar(m_ShotPower, ImVec2(m_ProgressBarWidth - m_ProgressBarPadding, 
+                m_ProgressBarHeight - m_ProgressBarPadding));
+
+            // Reset
+            style.WindowPadding = oldWindowPadding;
+            style.Colors[ImGuiCol_PlotHistogram] = oldPlotHistogramColor;
+
+            ImGui::End();
+        }
+
+        // set the shot power to 0 upon the current shot being resolved
+        if (m_ResolvingShot > 0)
+        {
+            float oldResolvingShot = m_ResolvingShot;
+            m_ResolvingShot -= Time::DeltaTime();
+            if (m_ResolvingShot <= 0 && oldResolvingShot > 0)
+            {
+                // Has resolved shot
+                m_ShotPower = 0;
+            }
+        }
+
+        m_ShootKeyHeldLastFrame = m_ShootKeyHeld;
     }
 private:
     int m_StripedBallsRemaining;
@@ -179,4 +216,13 @@ private:
     Turn m_Turn;
     Turn m_TurnLastUpdate;
     float m_ShotPower;
+    int m_ShotPowerDirection;
+
+    int m_ProgressBarWidth = 300;
+    int m_ProgressBarHeight = 50;
+    int m_ProgressBarPadding = 3;
+
+    float m_ResolvingShot;
+    bool m_ShootKeyHeld;
+    bool m_ShootKeyHeldLastFrame;
 };

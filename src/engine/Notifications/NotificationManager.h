@@ -37,8 +37,78 @@ struct DefaultNotificationInfo : NotificationInfo
 
 struct BannerNotificationInfo : NotificationInfo
 {
-    BannerNotificationInfo(const std::string& text, const ImVec4 textColor, const float fontScale, const float duration) :
-        NotificationInfo(text, textColor, fontScale, duration) {};
+    float m_Alpha;
+    float m_YOffset;
+
+    BannerNotificationInfo(const std::string& text, const ImVec4 textColor, const float fontScale, const float duration,
+        const float startAlpha, const float yOffset) :
+        NotificationInfo(text, textColor, fontScale, duration), m_Alpha(startAlpha), m_YOffset(yOffset) {};
+
+    virtual bool In() = 0;
+    virtual bool Out() = 0;
+};
+
+struct AlphaBannerNotificationInfo : BannerNotificationInfo
+{
+    float m_FadeRate;
+    float m_MaxAlpha;
+
+    AlphaBannerNotificationInfo(const std::string& text, const ImVec4 textColor, const float fontScale, const float duration,
+        const float fadeRate, const float alphaTarget) :
+        BannerNotificationInfo(text, textColor, fontScale, duration, 0, 0), m_FadeRate(fadeRate), m_MaxAlpha(alphaTarget) {};
+
+    bool In() 
+    {
+        m_Alpha += Time::DeltaTime() * m_FadeRate;
+        if (m_Alpha >= m_MaxAlpha)
+        {
+            m_Alpha = m_MaxAlpha;
+            return true;
+        }
+        return false;
+    }
+
+    bool Out()
+    {
+        m_Alpha -= Time::DeltaTime() * m_FadeRate;
+        if (m_Alpha <= 0)
+        {
+            m_Alpha = 0;
+            return true;
+        }
+        return false;
+    }
+};
+
+struct SlideBannerNotificationInfo : BannerNotificationInfo
+{
+    float m_SlideSpeed;
+
+    SlideBannerNotificationInfo(const std::string& text, const ImVec4 textColor, const float fontScale, const float duration,
+        const float slideSpeed) :
+        BannerNotificationInfo(text, textColor, fontScale, duration, .75, -WINDOW_HEIGHT / 2), m_SlideSpeed(slideSpeed) {};
+
+    bool In()
+    {
+        m_YOffset += Time::DeltaTime() * m_SlideSpeed;
+        if (m_YOffset >= 0)
+        {
+            m_YOffset = 0;
+            return true;
+        }
+        return false;
+    }
+
+    bool Out()
+    {
+        m_YOffset += Time::DeltaTime() * m_SlideSpeed;
+        if (m_YOffset >= WINDOW_HEIGHT / 2)
+        {
+            m_YOffset = WINDOW_HEIGHT / 2;
+            return true;
+        }
+        return false;
+    }
 };
 
 class NotificationManager
@@ -62,16 +132,33 @@ public:
     }
 
     /* Banner */
-    static void SendBannerNotification(const std::string& text, const NotificationTextColor textColor, const float duration = 1)
+    static void SendAlphaBannerNotification(const std::string& text, const NotificationTextColor textColor, const float duration = 1, 
+        const float speed = 5, const float targetAlpha = .75)
     {
         auto n = GetInstance();
-        SendBannerNotification(text, n->m_NotificationColorLookup[textColor], duration);
+        SendAlphaBannerNotification(text, n->m_NotificationColorLookup[textColor], duration, speed, targetAlpha);
     }
 
-    static void SendBannerNotification(const std::string& text, const ImVec4 textColor, const float duration = 1)
+    static void SendAlphaBannerNotification(const std::string& text, const ImVec4 textColor, const float duration = 1,
+        const float speed = 5, const float targetAlpha = .75)
     {
         auto n = GetInstance();
-        BannerNotificationInfo* info = new BannerNotificationInfo(text, textColor, 1, duration);
+        BannerNotificationInfo* info = new AlphaBannerNotificationInfo(text, textColor, 1, duration, speed, targetAlpha);
+        n->m_PendingBannerNotifications.push(info);
+    }
+
+    static void SendSlidingBannerNotification(const std::string& text, const NotificationTextColor textColor, const float duration = 1,
+        const float speed = 750)
+    {
+        auto n = GetInstance();
+        SendSlidingBannerNotification(text, n->m_NotificationColorLookup[textColor], duration, speed);
+    }
+
+    static void SendSlidingBannerNotification(const std::string& text, const ImVec4 textColor, const float duration = 1,
+        const float speed = 750)
+    {
+        auto n = GetInstance();
+        BannerNotificationInfo* info = new SlideBannerNotificationInfo(text, textColor, 1, duration, speed);
         n->m_PendingBannerNotifications.push(info);
     }
 
@@ -81,6 +168,12 @@ public:
         n->UpdateMap();
         n->UpdateBanner();
         n->Render();
+    }
+
+    static void ClearPendingBannerNotifications()
+    {
+        auto n = GetInstance();
+        n->m_PendingBannerNotifications = {};
     }
 
 private:
@@ -132,7 +225,6 @@ private:
                 // Set new notif
                 m_CurrentBannerNotif = m_PendingBannerNotifications.front();
                 m_PendingBannerNotifications.pop();
-                m_BannerAlpha = 0;
                 m_BannerNotifStage = 0;
             }
         }
@@ -141,20 +233,14 @@ private:
             switch (m_BannerNotifStage)
             {
                 case 0:
-                    m_BannerAlpha += Time::DeltaTime() * m_BannerWindowFadeRate;
-                    if (m_BannerAlpha >= m_BannerMaxAlpha)
-                    {
-                        m_BannerAlpha = m_BannerMaxAlpha;
-                        m_BannerNotifStage++;
-                    }
+                    if (m_CurrentBannerNotif->In()) m_BannerNotifStage++;
                     break;
                 case 1:
                     m_CurrentBannerNotif->m_Duration -= Time::DeltaTime();
                     if (m_CurrentBannerNotif->m_Duration <= 0) m_BannerNotifStage++;
                     break;
                 case 2:
-                    m_BannerAlpha -= Time::DeltaTime() * m_BannerWindowFadeRate;
-                    if (m_BannerAlpha <= 0) m_BannerNotifStage++;
+                    if (m_CurrentBannerNotif->Out()) m_BannerNotifStage++;
                     break;
                 case 3:
                     m_CurrentBannerNotif = nullptr;
@@ -166,11 +252,8 @@ private:
     // Banner Notifications
     std::queue<BannerNotificationInfo*> m_PendingBannerNotifications;
     BannerNotificationInfo* m_CurrentBannerNotif;
-    float m_BannerAlpha;
     unsigned int m_BannerNotifStage;
     unsigned int m_BannerWindowHeight = 75;
-    const float m_BannerWindowFadeRate = 5;
-    const float m_BannerMaxAlpha = .75;
 
     // Default Notifications
     std::vector<DefaultNotificationInfo*> m_ActiveNotifications;
@@ -198,6 +281,8 @@ private:
 
         ImGuiStyle& style = ImGui::GetStyle();
         ImVec4 prevTextColors = style.Colors[ImGuiCol_Text];
+        ImVec4 prevWindowBgColor = style.Colors[ImGuiCol_WindowBg];
+        ImVec4 prevBorderColor = style.Colors[ImGuiCol_Border];
 
         if (!m_ReverseOrder)
         {
@@ -223,17 +308,15 @@ private:
         /* Banner Notification */
         if (m_CurrentBannerNotif != nullptr)
         {
-            ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x - 25, main_viewport->WorkPos.y + WINDOW_HEIGHT / 2 - m_BannerWindowHeight / 2), 0);
+            ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x - 25, 
+                main_viewport->WorkPos.y + WINDOW_HEIGHT / 2 - m_BannerWindowHeight / 2 + m_CurrentBannerNotif->m_YOffset), 0);
             ImGui::SetNextWindowSize(ImVec2(WINDOW_WIDTH + 50, m_BannerWindowHeight), 0);
 
-            ImVec4 prevWindowBgColor = style.Colors[ImGuiCol_WindowBg];
-            ImVec4 prevBorderColor = style.Colors[ImGuiCol_Border];
-
-            style.Colors[ImGuiCol_WindowBg] = ImVec4(0.09f, 0.09f, 0.15f, m_BannerAlpha);
+            style.Colors[ImGuiCol_WindowBg] = ImVec4(0.05, 0.05, 0.05, m_CurrentBannerNotif->m_Alpha);
             style.Colors[ImGuiCol_Border] = ImVec4(
                 m_CurrentBannerNotif->m_TextColor.x,
                 m_CurrentBannerNotif->m_TextColor.y,
-                m_CurrentBannerNotif->m_TextColor.z, m_BannerAlpha);
+                m_CurrentBannerNotif->m_TextColor.z, m_CurrentBannerNotif->m_Alpha);
 
             ImGui::Begin("Banner", NULL, ImGuiHelpers::MakeFlags(true, true, true, true, true, true, true, false, false, false));
 
@@ -287,7 +370,7 @@ private:
         float oldFontSize = SetFontSize(info);
 
         ImVec4 color = info->m_TextColor;
-        color.w = m_BannerAlpha;
+        color.w = m_CurrentBannerNotif->m_Alpha;
         style.Colors[ImGuiCol_Text] = color;
 
         // Show Text
