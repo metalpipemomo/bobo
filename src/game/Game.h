@@ -163,7 +163,7 @@ private:
 		triggerBoxRb->SetTransform(triggerBox->GetComponent<Transform>());
 		triggerBoxRb->SetOnCollision([](JPH::BodyID other) {
 				Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
-				NotificationManager::SendNotification("The Ball has Fallen through the Box", NotificationTextColor::GREEN);
+				NotificationManager::SendBannerNotification("The Ball has Fallen through the Box", NotificationTextColor::GREEN, 2);
 			});
 	}
 
