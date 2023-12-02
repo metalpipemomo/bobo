@@ -24,9 +24,12 @@ public:
         // Render main menu to the screen
         const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + (WINDOW_WIDTH / 2) - 200, main_viewport->WorkPos.y + 25), 0);
-        ImGui::SetNextWindowSize(ImVec2(400, 125), 0);
+        ImGui::SetNextWindowSize(ImVec2(400, 135), 0);
 
+        ImGui::StyleColorsClassic();
         ImGui::Begin("Main Menu", NULL, ImGuiHelpers::MakeFlags(false, true, true, true, true, true, true, false, false, false));
+
+        ImGuiHelpers::LowerCursor();
 
         ImGuiHelpers::MakeCenterText("Totally Accurate Pool Simulator (Main Menu)");
        
