@@ -34,6 +34,8 @@ public:
 			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddBody(body->GetID(), EActivation::DontActivate);
 		} else {
 			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddBody(body->GetID(), EActivation::Activate);
+			body->GetMotionProperties()->SetLinearDamping(.5);
+			body->GetMotionProperties()->SetAngularDamping(.6);
 
 		}
 		m_id = body->GetID();
@@ -83,18 +85,29 @@ public:
 	void SetPositionHard(JPH::Vec3 position) 
 	{
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetPosition(m_id, position, EActivation::Activate);
-		SetVelocity(JPH::Vec3::sZero());
+		SetVelocity(0,0,0);
 	}
 	
-	JPH::Vec3 GetVelocity() 
+	glm::vec3 GetVelocity() 
 	{
-		return Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetLinearVelocity(m_id);
+		auto temp = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetLinearVelocity(m_id); 
+		return glm::vec3(temp.GetX(), temp.GetY(), temp.GetZ());
 	}
 
-	void SetVelocity(JPH::Vec3 velocity) 
+	void SetVelocity(glm::vec3 velocity) 
 	{
-		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetLinearVelocity(m_id, velocity);
+		auto temp = JPH::Vec3(velocity.x, velocity.y, velocity.z);
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetLinearVelocity(m_id, temp);
+		
 	}
+
+
+	void SetVelocity(float VelocityX, float VelocityY, float VelocityZ) 
+	{
+		auto temp = JPH::Vec3(VelocityX, VelocityY, VelocityZ);
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetLinearVelocity(m_id, temp);
+	}
+
 
 	float GetFriction() 
 	{

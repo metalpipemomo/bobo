@@ -3,6 +3,7 @@
 #include "engine/Bobo.h"
 
 #include "../engine/Physics/Rigidbody.h"
+#include "GameComponents/PoolBallRigidbodyControl.h"
 
 #include "GameComponents/FunnyMove.h"
 
@@ -26,8 +27,8 @@ private:
 
 	// Constants for objects position / rotation / scale
 	const glm::vec3 m_tablePosition = glm::vec3{ 0, -1.5, -4.5 };
-	const glm::vec3 m_ballScale = glm::vec3{ 0.2, 0.2, 0.2 };
-	const glm::vec3 m_firstBallPos = glm::vec3{ m_tablePosition.x, m_tablePosition.y + 1, m_tablePosition.z + 3 };
+	const glm::vec3 m_ballScale = glm::vec3{ 0.23, 0.23, 0.23 };
+	const glm::vec3 m_firstBallPos = glm::vec3{ m_tablePosition.x, m_tablePosition.y+.5f, m_tablePosition.z -1};
 	const float m_ballDistance = .42;
 
 	void SetBallPos(GameObject* ball, float xOffset, float zOffset)
@@ -43,95 +44,112 @@ private:
 	// setting up balls initial positions
 	void BallsSetup()
 	{
-		Ref<SphereShape> s = new SphereShape(0.2);
-		s->SetDensity(2000);
+		float minimumSpeed = .165f;
+		Ref<SphereShape> s = new SphereShape(0.23);
+		s->SetDensity(5000);
 
-		// 1st row
 		auto solidOneBall = new GameObject();
 		solidOneBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_1"));
 		solidOneBall->GetComponent<Transform>()->position = m_firstBallPos;
 		solidOneBall->GetComponent<Transform>()->scale = m_ballScale;
 		addRigidBodyToBall(solidOneBall, s);
+		addPoolBallComponent(solidOneBall, minimumSpeed);
+	
 
 		// 2nd row
 		auto StripedNineBall = new GameObject();
 		StripedNineBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_9"));
 		SetBallPos(StripedNineBall, -0.5*m_ballDistance, -m_ballDistance);
-
 		addRigidBodyToBall(StripedNineBall, s);
+		addPoolBallComponent(StripedNineBall, minimumSpeed);
+	
 		//
 		auto SolidTwoBall = new GameObject();
 		SolidTwoBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_2"));
 		SetBallPos(SolidTwoBall, 0.5*m_ballDistance, -m_ballDistance);
 		addRigidBodyToBall(SolidTwoBall, s);
+		addPoolBallComponent(SolidTwoBall, minimumSpeed);
 		// 3rd row
 		auto StripedTenBall = new GameObject();
 		StripedTenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_10"));
 		SetBallPos(StripedTenBall, -m_ballDistance, -2*m_ballDistance);
 		addRigidBodyToBall(StripedTenBall, s);
+		addPoolBallComponent(StripedTenBall, minimumSpeed);
 		//
 		auto SolidEightBall = new GameObject();
 		SolidEightBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("8_ball"));
 		SetBallPos(SolidEightBall, 0, -2*m_ballDistance);
 		addRigidBodyToBall(SolidEightBall, s);
+		addPoolBallComponent(SolidEightBall, minimumSpeed);
 		//
 		auto SolidThreeBall = new GameObject();
 		SolidThreeBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_3"));
 		SetBallPos(SolidThreeBall, m_ballDistance, -2*m_ballDistance);
 		addRigidBodyToBall(SolidThreeBall, s);
+		addPoolBallComponent(SolidThreeBall, minimumSpeed);
 		// 4th row 
 		auto StripedElevenBall = new GameObject();
 		StripedElevenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_11"));
 		SetBallPos(StripedElevenBall, -1.5*m_ballDistance, -3 * m_ballDistance);
 		addRigidBodyToBall(StripedElevenBall, s);
+		addPoolBallComponent(StripedElevenBall, minimumSpeed);
 		//
 		auto SolidSevenBall = new GameObject();
 		SolidSevenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_7"));
 		SetBallPos(SolidSevenBall, -0.5*m_ballDistance, -3 * m_ballDistance);
 		addRigidBodyToBall(SolidSevenBall, s);
+		addPoolBallComponent(SolidSevenBall, minimumSpeed);
 		//
 		auto StripedFourteenBall = new GameObject();
 		StripedFourteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_14"));
 		SetBallPos(StripedFourteenBall, 0.5*m_ballDistance, -3 * m_ballDistance);
 		addRigidBodyToBall(StripedFourteenBall, s);
+		addPoolBallComponent(StripedFourteenBall, minimumSpeed);
 		//
 		auto SolidFourBall = new GameObject();
 		SolidFourBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_4"));
 		SetBallPos(SolidFourBall, 1.5*m_ballDistance, -3 * m_ballDistance);
 		addRigidBodyToBall(SolidFourBall, s);
+		addPoolBallComponent(SolidFourBall, minimumSpeed);
 		// 5th row
 		auto SolidFiveBall = new GameObject();
 		SolidFiveBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_5"));
 		SetBallPos(SolidFiveBall, -2*m_ballDistance, -4 * m_ballDistance);
 		addRigidBodyToBall(SolidFiveBall, s);
+		addPoolBallComponent(SolidFiveBall, minimumSpeed);
 		//
 		auto StripedThirteenBall = new GameObject();
 		StripedThirteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_13"));
 		SetBallPos(StripedThirteenBall, -1 * m_ballDistance, -4 * m_ballDistance);
 		addRigidBodyToBall(StripedThirteenBall, s);
+		addPoolBallComponent(StripedThirteenBall, minimumSpeed);
 		//
 		auto StripedFifteenBall = new GameObject();
 		StripedFifteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_15"));
 		SetBallPos(StripedFifteenBall, 0, -4 * m_ballDistance);
 		addRigidBodyToBall(StripedFifteenBall, s);
+		addPoolBallComponent(StripedFifteenBall, minimumSpeed);
 		//
 		auto SolidSixBall = new GameObject();
 		SolidSixBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_6"));
 		SetBallPos(SolidSixBall, m_ballDistance, -4 * m_ballDistance);
 		addRigidBodyToBall(SolidSixBall, s);
+		addPoolBallComponent(SolidSixBall, minimumSpeed);
 		//
 		auto StripedTwelveBall = new GameObject();
 		StripedTwelveBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_12"));
 		SetBallPos(StripedTwelveBall, 2*m_ballDistance, -4 * m_ballDistance);
 		addRigidBodyToBall(StripedTwelveBall, s);
+		addPoolBallComponent(StripedTwelveBall, minimumSpeed);
 
 		auto cueball = new GameObject();
 		cueball->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("white"));
-		cueball->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0,50,-.5);
-		cueball->GetComponent<Transform>()->scale = glm::vec3(.4,.4,.4);
-		Ref<SphereShape> s2 = new SphereShape(0.4);
+		cueball->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0,0,7);
+		cueball->GetComponent<Transform>()->scale = glm::vec3(.23,.23,.23);
+		Ref<SphereShape> s2 = new SphereShape(0.23);
 		s2->SetDensity(5000);
 		addRigidBodyToBall(cueball, s2);
+		cueball->GetComponent<Rigidbody>()->AddLinearVelocity(JPH::Vec3(0,0,-80));
 	}
 
 	void addRigidBodyToBall(GameObject *ball, Ref<SphereShape> s) 
@@ -140,7 +158,12 @@ private:
 		ball->AddComponent<Rigidbody>(s, transform->position, Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
 		ball->GetComponent<Rigidbody>()->SetTransform(transform);
 		ball->GetComponent<Rigidbody>()->SetBounce(0.4);
-		ball->GetComponent<Rigidbody>()->SetFriction(.4);
+		ball->GetComponent<Rigidbody>()->SetFriction(.3);
+	}
+
+	void addPoolBallComponent(GameObject *ball, float minimumSpeed) 
+	{
+		//ball->AddComponent<PoolBallRigidbodyControl>(ball->GetComponent<Rigidbody>(), minimumSpeed);
 	}
 
 	void TableRigidBodySetUp() 
@@ -151,7 +174,32 @@ private:
 		auto tableTransform = table->GetComponent<Transform>();
 		tableTransform->position = m_tablePosition;
 		table->AddComponent<Rigidbody>(new BoxShape(RVec3(4.2,.25,6.5)), tableTransform->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
-		table->GetComponent<Rigidbody>()->SetFriction(.4);
+		table->GetComponent<Rigidbody>()->SetFriction(1);
+
+
+		auto leftwall = new GameObject();
+		leftwall->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("Table_Top"));
+		auto leftwallTransform = leftwall->GetComponent<Transform>();
+		leftwallTransform->position =  glm::vec3{ -5, 1, -2.5 };
+		leftwall->AddComponent<Rigidbody>(new BoxShape(RVec3(1,10,10)), leftwallTransform->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		///
+		auto rightwall = new GameObject();
+		rightwall->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("Table_Top"));
+		auto rightwallTransform = rightwall->GetComponent<Transform>();
+		rightwallTransform->position = glm::vec3{ 5, 1, -2.5};
+		rightwall->AddComponent<Rigidbody>(new BoxShape(RVec3(1,10,10)), rightwallTransform->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		///
+		auto frontwall = new GameObject();
+		frontwall->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("Table_Top"));
+		auto frontwallTransform = frontwall->GetComponent<Transform>();
+		frontwallTransform->position = glm::vec3{ 0, 1, 2.5 };
+		frontwall->AddComponent<Rigidbody>(new BoxShape(RVec3(10,10,1)), frontwallTransform->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		///
+		auto backwall = new GameObject();
+		backwall->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("Table_Top"));
+		auto backwallTransform = backwall->GetComponent<Transform>();
+		backwallTransform->position = glm::vec3{ 0, 1, -11.5 };
+		backwall->AddComponent<Rigidbody>(new BoxShape(RVec3(10,10,1)), backwallTransform->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
 		
 		auto triggerBox = new GameObject();
 		triggerBox->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("8_ball"));
