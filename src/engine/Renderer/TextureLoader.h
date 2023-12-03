@@ -14,12 +14,12 @@ public:
 		auto tl = GetInstance();
 		tl->LoadAllTextures("../assets/Textures");
 		std::vector<std::string> faces{
-			"../assets/SkyBox_Textures/crt/Side_001.png",
-			"../assets/SkyBox_Textures/crt/Side_003.png",
-			"../assets/SkyBox_Textures/crt/Side_005.png",
-			"../assets/SkyBox_Textures/crt/Side_006.png",
-			"../assets/SkyBox_Textures/crt/Side_004.png",
-			"../assets/SkyBox_Textures/crt/Side_002.png"
+			"../assets/SkyBox_Textures/alt/Side_001.png",
+			"../assets/SkyBox_Textures/alt/Side_003.png",
+			"../assets/SkyBox_Textures/alt/Side_005.png",
+			"../assets/SkyBox_Textures/alt/Side_006.png",
+			"../assets/SkyBox_Textures/alt/Side_004.png",
+			"../assets/SkyBox_Textures/alt/Side_002.png"
 		};
 		tl->LoadCubeMap(faces);
 	}
