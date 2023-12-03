@@ -33,10 +33,10 @@ public:
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), 0);
         ImGui::SetNextWindowSize(ImVec2(WINDOW_WIDTH, WINDOW_HEIGHT), 0);
 
+        ImGui::StyleColorsClassic();
         ImGui::Begin("Pause Menu", NULL, ImGuiHelpers::MakeFlags(true, true, true, true, true, true, true, false, false, false));
 
-        ImGuiHelpers::MakeCenterText("Game Paused");
-
+        ImGuiHelpers::MakeCenterText("Game Paused", true, true);
         ImGuiHelpers::LowerCursor();
 
         if (ImGuiHelpers::MakeCenterButton("Resume"))
@@ -52,5 +52,6 @@ public:
         }
 
         ImGui::End();
+        
     }
 };
