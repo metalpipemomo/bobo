@@ -40,6 +40,12 @@ public:
 		transform = trnsfrm;
 	}
 
+	~Rigidbody() 
+	{
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().RemoveBody(m_id);
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().DestroyBody(m_id);
+	}
+
 
 
 	void Awake() 
@@ -146,6 +152,8 @@ public:
 	{
 		return transform;
 	}
+
+
 	
 private: 
 	JPH::BodyID m_id;
