@@ -365,18 +365,18 @@ private:
     {
         switch (color)
         {
-        case NotificationTextColor::BLUE:
-            return ImVec4(0, 0, 1, 1);
-        case NotificationTextColor::RED:
-            return ImVec4(1, 0, 0, 1);
-        case NotificationTextColor::GREEN:
-            return ImVec4(0, 1, 0, 1);
-        case NotificationTextColor::BLACK:
-            return ImVec4(0, 0, 0, 1);
-        case NotificationTextColor::WHITE:
-            return ImVec4(1, 1, 1, 1);
-        default:
-            return ImVec4(0, 0, 0, 1);
+            case NotificationTextColor::BLUE:
+                return ImVec4(0, 0, 1, 1);
+            case NotificationTextColor::RED:
+                return ImVec4(1, 0, 0, 1);
+            case NotificationTextColor::GREEN:
+                return ImVec4(0, 1, 0, 1);
+            case NotificationTextColor::BLACK:
+                return ImVec4(0, 0, 0, 1);
+            case NotificationTextColor::WHITE:
+                return ImVec4(1, 1, 1, 1);
+            default:
+                return ImVec4(0, 0, 0, 1);
         }
     }
 
@@ -384,14 +384,14 @@ private:
     {
         switch (scale)
         {
-        case NotificationFontScale::SMALL:
-            return .75;
-        case NotificationFontScale::NORMAL:
-            return 1;
-        case NotificationFontScale::LARGE:
-            return 1.25;
-        default:
-            return 1;
+            case NotificationFontScale::SMALL:
+                return .75;
+            case NotificationFontScale::NORMAL:
+                return 1;
+            case NotificationFontScale::LARGE:
+                return 1.25;
+            default:
+                return 1;
         }
     }
 };
