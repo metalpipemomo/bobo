@@ -5,6 +5,8 @@
 #include "../engine/Physics/Rigidbody.h"
 
 #include "GameComponents/FunnyMove.h"
+#include "GameComponents/ObjectTag.h"
+#include "GameComponents/GameManager.h"
 
 #include "../engine/GameState/GameStateManager.h"
 #include "GameState/GameOverState.h"
@@ -28,8 +30,10 @@ private:
 	// Constants for objects position / rotation / scale
 	const glm::vec3 m_tablePosition = glm::vec3{ 0, -1.5, -4.5 };
 	const glm::vec3 m_ballScale = glm::vec3{ 0.2, 0.2, 0.2 };
-	const glm::vec3 m_firstBallPos = glm::vec3{ m_tablePosition.x, m_tablePosition.y + 1, m_tablePosition.z + 3 };
+	const glm::vec3 m_firstBallPos = glm::vec3{ m_tablePosition.x, m_tablePosition.y + 0.1, m_tablePosition.z - 1 };
 	const float m_ballDistance = .42;
+	// other game objects
+	GameObject* cueball;
 
 	void SetBallPos(GameObject* ball, float xOffset, float zOffset)
 	{
@@ -45,93 +49,107 @@ private:
 	void BallsSetup()
 	{
 		Ref<SphereShape> s = new SphereShape(0.2);
-		s->SetDensity(2000);
+		s->SetDensity(400);
 
 		// 1st row
 		auto solidOneBall = new GameObject();
 		solidOneBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_1"));
 		solidOneBall->GetComponent<Transform>()->position = m_firstBallPos;
 		solidOneBall->GetComponent<Transform>()->scale = m_ballScale;
+		solidOneBall->AddComponent<ObjectTag>("solid");
 		addRigidBodyToBall(solidOneBall, s);
-
 		// 2nd row
 		auto StripedNineBall = new GameObject();
 		StripedNineBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_9"));
-		SetBallPos(StripedNineBall, -0.5*m_ballDistance, -m_ballDistance);
-
+		StripedNineBall->AddComponent<ObjectTag>("striped");
+		SetBallPos(StripedNineBall, -0.5 * m_ballDistance, -m_ballDistance);
 		addRigidBodyToBall(StripedNineBall, s);
 		//
 		auto SolidTwoBall = new GameObject();
 		SolidTwoBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_2"));
-		SetBallPos(SolidTwoBall, 0.5*m_ballDistance, -m_ballDistance);
+		SolidTwoBall->AddComponent<ObjectTag>("solid");
+		SetBallPos(SolidTwoBall, 0.5 * m_ballDistance, -m_ballDistance);
 		addRigidBodyToBall(SolidTwoBall, s);
 		// 3rd row
 		auto StripedTenBall = new GameObject();
 		StripedTenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_10"));
-		SetBallPos(StripedTenBall, -m_ballDistance, -2*m_ballDistance);
+		StripedTenBall->AddComponent<ObjectTag>("striped");
+		SetBallPos(StripedTenBall, -m_ballDistance, -2 * m_ballDistance);
 		addRigidBodyToBall(StripedTenBall, s);
 		//
 		auto SolidEightBall = new GameObject();
 		SolidEightBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("8_ball"));
-		SetBallPos(SolidEightBall, 0, -2*m_ballDistance);
+		SolidEightBall->AddComponent<ObjectTag>("8ball");
+		SetBallPos(SolidEightBall, 0, -2 * m_ballDistance);
 		addRigidBodyToBall(SolidEightBall, s);
 		//
 		auto SolidThreeBall = new GameObject();
 		SolidThreeBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_3"));
-		SetBallPos(SolidThreeBall, m_ballDistance, -2*m_ballDistance);
+		SolidThreeBall->AddComponent<ObjectTag>("solid");
+		SetBallPos(SolidThreeBall, m_ballDistance, -2 * m_ballDistance);
 		addRigidBodyToBall(SolidThreeBall, s);
 		// 4th row 
 		auto StripedElevenBall = new GameObject();
 		StripedElevenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_11"));
-		SetBallPos(StripedElevenBall, -1.5*m_ballDistance, -3 * m_ballDistance);
+		StripedElevenBall->AddComponent<ObjectTag>("striped");
+		SetBallPos(StripedElevenBall, -1.5 * m_ballDistance, -3 * m_ballDistance);
 		addRigidBodyToBall(StripedElevenBall, s);
 		//
 		auto SolidSevenBall = new GameObject();
 		SolidSevenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_7"));
-		SetBallPos(SolidSevenBall, -0.5*m_ballDistance, -3 * m_ballDistance);
+		SolidSevenBall->AddComponent<ObjectTag>("solid");
+		SetBallPos(SolidSevenBall, -0.5 * m_ballDistance, -3 * m_ballDistance);
 		addRigidBodyToBall(SolidSevenBall, s);
 		//
 		auto StripedFourteenBall = new GameObject();
 		StripedFourteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_14"));
-		SetBallPos(StripedFourteenBall, 0.5*m_ballDistance, -3 * m_ballDistance);
+		StripedFourteenBall->AddComponent<ObjectTag>("striped");
+		SetBallPos(StripedFourteenBall, 0.5 * m_ballDistance, -3 * m_ballDistance);
 		addRigidBodyToBall(StripedFourteenBall, s);
 		//
 		auto SolidFourBall = new GameObject();
 		SolidFourBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_4"));
-		SetBallPos(SolidFourBall, 1.5*m_ballDistance, -3 * m_ballDistance);
+		SolidFourBall->AddComponent<ObjectTag>("solid");
+		SetBallPos(SolidFourBall, 1.5 * m_ballDistance, -3 * m_ballDistance);
 		addRigidBodyToBall(SolidFourBall, s);
 		// 5th row
 		auto SolidFiveBall = new GameObject();
 		SolidFiveBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_5"));
-		SetBallPos(SolidFiveBall, -2*m_ballDistance, -4 * m_ballDistance);
+		SolidFiveBall->AddComponent<ObjectTag>("solid");
+		SetBallPos(SolidFiveBall, -2 * m_ballDistance, -4 * m_ballDistance);
 		addRigidBodyToBall(SolidFiveBall, s);
 		//
 		auto StripedThirteenBall = new GameObject();
 		StripedThirteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_13"));
+		StripedThirteenBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedThirteenBall, -1 * m_ballDistance, -4 * m_ballDistance);
 		addRigidBodyToBall(StripedThirteenBall, s);
 		//
 		auto StripedFifteenBall = new GameObject();
 		StripedFifteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_15"));
+		StripedFifteenBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedFifteenBall, 0, -4 * m_ballDistance);
 		addRigidBodyToBall(StripedFifteenBall, s);
 		//
 		auto SolidSixBall = new GameObject();
 		SolidSixBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_6"));
+		SolidSixBall->AddComponent<ObjectTag>("solid");
 		SetBallPos(SolidSixBall, m_ballDistance, -4 * m_ballDistance);
 		addRigidBodyToBall(SolidSixBall, s);
 		//
 		auto StripedTwelveBall = new GameObject();
 		StripedTwelveBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_12"));
-		SetBallPos(StripedTwelveBall, 2*m_ballDistance, -4 * m_ballDistance);
+		StripedTwelveBall->AddComponent<ObjectTag>("striped");
+		SetBallPos(StripedTwelveBall, 2 * m_ballDistance, -4 * m_ballDistance);
 		addRigidBodyToBall(StripedTwelveBall, s);
-
-		auto cueball = new GameObject();
+		// cue ball
+		cueball = new GameObject();
 		cueball->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("white"));
-		cueball->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0,50,-.5);
-		cueball->GetComponent<Transform>()->scale = glm::vec3(.4,.4,.4);
-		Ref<SphereShape> s2 = new SphereShape(0.4);
-		s2->SetDensity(5000);
+		cueball->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0, 0, 3);
+		cueball->GetComponent<Transform>()->scale = glm::vec3(.2, .2, .2);
+		cueball->AddComponent<ObjectTag>("cueBall");
+		Ref<SphereShape> s2 = new SphereShape(0.2);
+		s2->SetDensity(600);
 		addRigidBodyToBall(cueball, s2);
 	}
 
@@ -144,39 +162,96 @@ private:
 		ball->GetComponent<Rigidbody>()->SetFriction(.4);
 	}
 
-	void TableRigidBodySetUp() 
+	void CreateHoleTriggers(float xOffset, float zOffset)
+	{
+		// create and set the trigger box for a hole
+		auto triggerBox = new GameObject();
+		triggerBox->GetComponent<Transform>()->scale = glm::vec3{ 0.15,.2, 0.15 };
+		triggerBox->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(xOffset, 0, zOffset);
+		triggerBox->AddComponent<Rigidbody>(new BoxShape(RVec3{ 0.15,.25, 0.15 }),
+			triggerBox->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING, nullptr, true);
+		auto triggerBoxRb = triggerBox->GetComponent<Rigidbody>();
+		triggerBoxRb->SetTransform(triggerBox->GetComponent<Transform>());
+		triggerBoxRb->SetOnCollision([](JPH::BodyID other) {
+			Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
+			NotificationManager::SendAlphaBannerNotification("The Ball has Fallen through the Box", NotificationTextColor::GREEN);
+			auto scene = SceneManager::GetActiveScene();
+			auto objects = scene->GetComponentsOfType<GameManager>();
+			string balltag;
+			// get balls tag whis is either "striped" or "solid" 
+			if (scene->GetComponent<ObjectTag>(en)) {
+				balltag = scene->GetComponent<ObjectTag>(en)->tag;
+			}
+			for (auto& object : objects)
+			{
+				// decrease striped or solid ball amount when it is sunk
+				if (balltag == "striped")
+				{
+					object->stripesAmount -= 1;
+					scene->DestroyEntity(en);
+				}
+				else if (balltag == "solid")
+				{
+					object->solidsAmount -= 1;
+					scene->DestroyEntity(en);
+				}
+			}
+
+			});
+	}
+
+	void TableRigidBodySetUp()
 	{
 		// table creation
 		auto table = new GameObject();
 		table->AddComponent<Material>(ModelLoader::GetModel("Pool_Table"), TextureLoader::GetTexture("Table_Top"));
 		auto tableTransform = table->GetComponent<Transform>();
 		tableTransform->position = m_tablePosition;
-		table->AddComponent<Rigidbody>(new BoxShape(RVec3(4.2,.25,6.5)), tableTransform->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		table->AddComponent<Rigidbody>(new BoxShape(RVec3(4.2, .25, 6.5)), tableTransform->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
 		table->GetComponent<Rigidbody>()->SetFriction(.4);
-		
-		auto triggerBox = new GameObject();
-		triggerBox->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("8_ball"));
-		triggerBox->GetComponent<Transform>()->scale = glm::vec3{2,2,2};
-		triggerBox->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0,20,-.5);
-		triggerBox->AddComponent<Rigidbody>(new BoxShape(Vec3::sReplicate(2.0f)), 
-			triggerBox->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING, nullptr, true);
-		auto triggerBoxRb = triggerBox->GetComponent<Rigidbody>();
-		triggerBoxRb->SetTransform(triggerBox->GetComponent<Transform>());
-		triggerBoxRb->SetOnCollision([](JPH::BodyID other) {
-				Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
-				NotificationManager::SendAlphaBannerNotification("The Ball has Fallen through the Box", NotificationTextColor::GREEN, 2);
-			});
+
+		// adding table sides
+		auto tableSide1 = new GameObject();
+		auto tableSide2 = new GameObject();
+		auto tableSide3 = new GameObject();
+		auto tableSide4 = new GameObject();
+		tableSide1->AddComponent<Rigidbody>(new BoxShape(RVec3(.5, 10, 6.5)), tableTransform->position + glm::vec3(4.6, 0, 0), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		tableSide2->AddComponent<Rigidbody>(new BoxShape(RVec3(.5, 10, 6.5)), tableTransform->position + glm::vec3(-4.6, 0, 0), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		tableSide3->AddComponent<Rigidbody>(new BoxShape(RVec3(4.2, 10, .5)), tableTransform->position + glm::vec3(0, 0, 6.5), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		tableSide4->AddComponent<Rigidbody>(new BoxShape(RVec3(4.2, 10, .5)), tableTransform->position + glm::vec3(0, 0, -6.5), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		tableSide1->GetComponent<Rigidbody>()->SetFriction(0);
+		tableSide1->GetComponent<Rigidbody>()->SetBounce(1);
+		tableSide2->GetComponent<Rigidbody>()->SetFriction(0);
+		tableSide2->GetComponent<Rigidbody>()->SetBounce(1);
+		tableSide3->GetComponent<Rigidbody>()->SetFriction(0);
+		tableSide3->GetComponent<Rigidbody>()->SetBounce(1);
+		tableSide4->GetComponent<Rigidbody>()->SetFriction(0);
+		tableSide4->GetComponent<Rigidbody>()->SetBounce(1);
+
+		// adding hole trigger areas at (x, z) positions
+		CreateHoleTriggers(4.01, 1);
+		CreateHoleTriggers(-4.01, 1);
+		CreateHoleTriggers(4.01, 6.9);
+		CreateHoleTriggers(-4.01, 6.9);
+		CreateHoleTriggers(4.01, -4.9);
+		CreateHoleTriggers(-4.01, -4.9);
 	}
 
 	// Setting up the scene models
 	void SceneSetup() 
 	{
+		// display line creation
+		auto shotIndicator = new GameObject();
+		shotIndicator->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("8_ball"));
+		shotIndicator->GetComponent<Transform>()->scale = glm::vec3{ 0.05,0.05,1 };
+		shotIndicator->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0, 0.35, 3) + glm::vec3(0, 0, -1);
+		shotIndicator->GetComponent<Transform>()->rotation = glm::vec3(0, 0, 0);
+		shotIndicator->AddComponent<ObjectTag>("cue");
 		// cue creation
 		auto cue = new GameObject();
 		cue->AddComponent<Material>(ModelLoader::GetModel("pool_cue"), TextureLoader::GetTexture("cue"));
-		cue->GetComponent<Transform>()->position = m_firstBallPos;
-		cue->GetComponent<Transform>()->position += glm::vec3{ 2, 1, 2 };
-		cue->GetComponent<Transform>()->rotation = glm::vec3{-0.5, glm::pi<float>()/4, 0};
+		cue->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0, 1.3, 6);;
+		cue->GetComponent<Transform>()->rotation = glm::vec3{ -0.3, 0, 0 };
 		cue->GetComponent<Transform>()->scale = glm::vec3{ 0.7, 0.7, 0.7 };
 
 		// lamp creation
@@ -190,7 +265,7 @@ private:
 		shelf1->AddComponent<Material>(ModelLoader::GetModel("book_shelf"), TextureLoader::GetTexture("wood"));
 		shelf1->GetComponent<Transform>()->position = m_tablePosition;
 		shelf1->GetComponent<Transform>()->position += glm::vec3{ -7, 3, -20 };
-		shelf1->GetComponent<Transform>()->rotation = glm::vec3{ 0, -glm::pi<float>()/2, 0 };
+		shelf1->GetComponent<Transform>()->rotation = glm::vec3{ 0, -glm::pi<float>() / 2, 0 };
 		auto shelf2 = new GameObject();
 		shelf2->AddComponent<Material>(ModelLoader::GetModel("book_shelf"), TextureLoader::GetTexture("wood"));
 		shelf2->GetComponent<Transform>()->position = m_tablePosition;
@@ -227,6 +302,11 @@ private:
 
 		// Create Scene
 		SceneManager::CreateScene("Scene1");
+
+		// setup the game manager for holding game info like striped and solid balls remaining
+		auto gameManager = new GameObject();
+		gameManager->AddComponent<GameManager>();
+		gameManager->AddComponent<ObjectTag>("gamemanager");
 
 		// Setting up initial scene
 		SceneSetup();

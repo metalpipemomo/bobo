@@ -33,11 +33,17 @@ public:
 		if(inMotionType == EMotionType::Static) {
 			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddBody(body->GetID(), EActivation::DontActivate);
 		} else {
+			body->GetMotionProperties()->SetAngularDamping(0.75);
 			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddBody(body->GetID(), EActivation::Activate);
 
 		}
 		m_id = body->GetID();
 		transform = trnsfrm;
+
+		// setting physics settings
+		PhysicsSettings settings = PhysicsSettings();
+		settings.mMinVelocityForRestitution = 0;
+		Physics::GetInstance()->GetPhysicsSystem()->SetPhysicsSettings(settings);
 	}
 
 	~Rigidbody() 
@@ -141,6 +147,11 @@ public:
 	void SetOnCollisionPersist(function<void(BodyID)> callback)
 	{
 		Physics::GetInstance()->m_ContactListener->SetOnCollisionPersistListener(m_id, callback);
+	}
+
+	void addForce(JPH::Vec3 force)
+	{
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddImpulse(m_id, force);
 	}
 
 	BodyID GetBodyID() 
