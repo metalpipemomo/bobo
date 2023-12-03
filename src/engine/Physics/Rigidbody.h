@@ -16,6 +16,8 @@
 #include <Jolt/Physics/Body/BodyActivationListener.h>
 #include <iostream>
 #include "Physics.h"
+#include <GLFW/glfw3.h>
+#define M_PI 3.14159265358979323846
 
 // STL includes
 class Rigidbody : public Component
@@ -52,10 +54,14 @@ public:
 		if(transform != nullptr) 
 		{
 			auto tempPosition = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetPosition(m_id);
-			auto tempRotation = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetRotation(m_id);
+			auto tempRotation = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetRotation(m_id).GetEulerAngles();
+			
+			if (Input::GetKey(GLFW_KEY_P)) {
+				printf("%f %f %f\n", tempRotation.GetX(), tempRotation.GetY(), tempRotation.GetZ());
+			}
+
 			transform->position = glm::vec3(tempPosition.GetX(), tempPosition.GetY(), tempPosition.GetZ());
 			transform->rotation = glm::vec3(tempRotation.GetX(), tempRotation.GetY(), tempRotation.GetZ());
-
 		}
 	}
 
