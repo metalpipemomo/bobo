@@ -22,6 +22,19 @@ public:
         m_ShotPowerDirection = 1;
 
         m_Turn = Turn::P1;
+
+        PopupManager::MakePopup(
+            "How to Use your Cue",
+            std::vector<PerPopupInformation>
+            {
+                PerPopupInformation("Hold Space to Charge your Shot.The Power will\nbounce back and forth between full and empty.",
+                    ImVec2(400, 117.5)),
+                PerPopupInformation("Adjust the Cue's angle using...?", ImVec2(400, 105)),
+                PerPopupInformation("Happy Pooling Gamer!", ImVec2(400, 105))
+            },
+            AnchorPos::TOP_CENTER,
+            ImVec2(0, 25)
+        );
     }
 
     void Exit()
@@ -70,7 +83,7 @@ public:
 
         // Solids UI
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 25, main_viewport->WorkPos.y + 25), 0);
-        ImGui::SetNextWindowSize(ImVec2(225, 80), 0);
+        ImGui::SetNextWindowSize(ImVec2(225, 90), 0);
 
         if (m_Turn == Turn::P1)
         {
@@ -86,8 +99,7 @@ public:
         std::string solidLabel = "Solid Balls Remaining " + std::to_string(m_SolidBallsRemaining);
         ImGuiHelpers::MakeCenterText(solidLabel);
 
-        // Move Cursor down some
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+        ImGuiHelpers::LowerCursor();
 
         if (ImGuiHelpers::MakeCenterButton("Sink Solid") && m_Turn == Turn::P1)
         {
@@ -100,7 +112,7 @@ public:
 
         // Striped UI
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH - 250, main_viewport->WorkPos.y + 25), 0);
-        ImGui::SetNextWindowSize(ImVec2(225, 80), 0);
+        ImGui::SetNextWindowSize(ImVec2(225, 90), 0);
 
         if (m_Turn == Turn::P2)
         {
@@ -116,8 +128,7 @@ public:
         std::string stripedLabel = "Striped Balls Remaining " + std::to_string(m_StripedBallsRemaining);
         ImGuiHelpers::MakeCenterText(stripedLabel);
 
-        // Move Cursor down some
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+        ImGuiHelpers::LowerCursor();
 
         if (ImGuiHelpers::MakeCenterButton("Sink Striped") && m_Turn == Turn::P2)
         {

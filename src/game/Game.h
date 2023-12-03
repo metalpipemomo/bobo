@@ -13,6 +13,7 @@
 #include "GameState/InGameState.h"
 
 #include "../engine/Notifications/NotificationManager.h"
+#include "../engine/Popups/PopupManager.h"
 
 class Game
 {
@@ -245,6 +246,13 @@ private:
 		sl.direction = { 0.0f, -1.0f, 0.0f }; // Direction of the light
 		sl.position = { 0.0f, 5.0f, 0.0f }; // X, Y, Z
 		spotlight->AddComponent<SpotlightComponent>(sl);
+
+		PopupManager::MakePopup(
+			"Welcome",
+			"Hey there Gamer! (Derogatory)",
+			ImVec2(250, 85),
+			AnchorPos::CENTER_CENTER,
+			ImVec2(0, 0));
 
 		/*------ AUDIO ------*/
 
