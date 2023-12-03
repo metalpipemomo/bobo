@@ -22,6 +22,7 @@
 #include "Renderer/TextureLoader.h"
 #include "Renderer/Renderer.h"
 #include "Notifications/NotificationManager.h"
+#include "Popups/PopupManager.h"
 
 struct WindowProperties
 {
@@ -94,6 +95,7 @@ public:
 			CoroutineScheduler::Update();
 			SceneManager::UpdateActiveScene();
 			NotificationManager::Update();
+			PopupManager::Update();
 
 			// Pause on pressing Escape
 			if (Input::GetKeyDown(GLFW_KEY_ESCAPE))

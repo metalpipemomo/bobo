@@ -121,7 +121,7 @@ public:
         const NotificationTextColor textColor, const float duration = 3)
     {
         auto n = GetInstance();
-        SendDefaultNotification(text, n->m_NotificationColorLookup[textColor], duration);
+        SendDefaultNotification(text, n->GetNotificationColor(textColor), duration);
     }
 
     static void SendDefaultNotification(const std::string& text, const ImVec4 textColor, const float duration = 3)
@@ -136,7 +136,7 @@ public:
         const float speed = 5, const float targetAlpha = .75)
     {
         auto n = GetInstance();
-        SendAlphaBannerNotification(text, n->m_NotificationColorLookup[textColor], duration, speed, targetAlpha);
+        SendAlphaBannerNotification(text, n->GetNotificationColor(textColor), duration, speed, targetAlpha);
     }
 
     static void SendAlphaBannerNotification(const std::string& text, const ImVec4 textColor, const float duration = 1,
@@ -151,7 +151,7 @@ public:
         const float speed = 750)
     {
         auto n = GetInstance();
-        SendSlidingBannerNotification(text, n->m_NotificationColorLookup[textColor], duration, speed);
+        SendSlidingBannerNotification(text, n->GetNotificationColor(textColor), duration, speed);
     }
 
     static void SendSlidingBannerNotification(const std::string& text, const ImVec4 textColor, const float duration = 1,
@@ -183,25 +183,22 @@ private:
         return instance;
     }
 
-    NotificationManager() 
-    {
-        m_NotificationColorLookup.insert(
-            std::pair<NotificationTextColor, ImVec4>(NotificationTextColor::BLUE, ImVec4(0, 0, 1, 1)));
-        m_NotificationColorLookup.insert(
-            std::pair<NotificationTextColor, ImVec4>(NotificationTextColor::RED, ImVec4(1, 0, 0, 1)));
-        m_NotificationColorLookup.insert(
-            std::pair<NotificationTextColor, ImVec4>(NotificationTextColor::GREEN, ImVec4(0, 1, 0, 1)));
-        m_NotificationColorLookup.insert(
-            std::pair<NotificationTextColor, ImVec4>(NotificationTextColor::BLACK, ImVec4(0, 0, 0, 1)));
-        m_NotificationColorLookup.insert(
-            std::pair<NotificationTextColor, ImVec4>(NotificationTextColor::WHITE, ImVec4(1, 1, 1, 1)));
+    NotificationManager() {};
 
-        m_NotificationFontScaleLookup.insert(std::pair<NotificationFontScale, float>(NotificationFontScale::SMALL, .75));
-        m_NotificationFontScaleLookup.insert(std::pair<NotificationFontScale, float>(NotificationFontScale::NORMAL, 1));
-        m_NotificationFontScaleLookup.insert(std::pair<NotificationFontScale, float>(NotificationFontScale::LARGE, 1.25));
+    // Banner Notifications
+    std::queue<BannerNotificationInfo*> m_PendingBannerNotifications;
+    BannerNotificationInfo* m_CurrentBannerNotif = nullptr;
+    unsigned int m_BannerNotifStage;
+    unsigned int m_BannerWindowHeight = 75;
 
-        m_CurrentBannerNotif = nullptr;
-    };
+    // Default Notifications
+    std::vector<DefaultNotificationInfo*> m_ActiveNotifications;
+    const int m_NotifWindowWidth = 500;
+    const int m_NotifWindowHeight = WINDOW_HEIGHT;
+    const int m_NotifHeight = 30;
+    const int m_NotifWindowXOffset = 10;
+    const int m_NotifWindowYOffset = 10;
+    const float m_NotificationFadeRate = .5;
 
     void UpdateMap()
     {
@@ -248,23 +245,6 @@ private:
             }
         }
     }
-
-    // Banner Notifications
-    std::queue<BannerNotificationInfo*> m_PendingBannerNotifications;
-    BannerNotificationInfo* m_CurrentBannerNotif;
-    unsigned int m_BannerNotifStage;
-    unsigned int m_BannerWindowHeight = 75;
-
-    // Default Notifications
-    std::vector<DefaultNotificationInfo*> m_ActiveNotifications;
-    std::unordered_map<NotificationTextColor, ImVec4> m_NotificationColorLookup;
-    std::unordered_map<NotificationFontScale, float> m_NotificationFontScaleLookup;
-    const int m_NotifWindowWidth = 500;
-    const int m_NotifWindowHeight = WINDOW_HEIGHT;
-    const int m_NotifHeight = 30;
-    const int m_NotifWindowXOffset = 10;
-    const int m_NotifWindowYOffset = 10;
-    const float m_NotificationFadeRate = .5;
 
     void Render()
     {
@@ -379,5 +359,39 @@ private:
         ImGuiHelpers::HeightenCursor(m_NotifHeight * 2);
 
         ResetFontSize(oldFontSize);
+    }
+
+    ImVec4 GetNotificationColor(NotificationTextColor color)
+    {
+        switch (color)
+        {
+        case NotificationTextColor::BLUE:
+            return ImVec4(0, 0, 1, 1);
+        case NotificationTextColor::RED:
+            return ImVec4(1, 0, 0, 1);
+        case NotificationTextColor::GREEN:
+            return ImVec4(0, 1, 0, 1);
+        case NotificationTextColor::BLACK:
+            return ImVec4(0, 0, 0, 1);
+        case NotificationTextColor::WHITE:
+            return ImVec4(1, 1, 1, 1);
+        default:
+            return ImVec4(0, 0, 0, 1);
+        }
+    }
+
+    int GetNotificationScale(NotificationFontScale scale)
+    {
+        switch (scale)
+        {
+        case NotificationFontScale::SMALL:
+            return .75;
+        case NotificationFontScale::NORMAL:
+            return 1;
+        case NotificationFontScale::LARGE:
+            return 1.25;
+        default:
+            return 1;
+        }
     }
 };

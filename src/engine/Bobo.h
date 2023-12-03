@@ -38,3 +38,4 @@
 
 // UI
 #include "Notifications/NotificationManager.h"
+#include "Popups/PopupManager.h"
