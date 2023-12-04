@@ -174,11 +174,10 @@ private:
 		triggerBoxRb->SetTransform(triggerBox->GetComponent<Transform>());
 		triggerBoxRb->SetOnCollision([](JPH::BodyID other) {
 			Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
-			NotificationManager::SendAlphaBannerNotification("The Ball has Fallen through the Box", NotificationTextColor::GREEN);
 			auto scene = SceneManager::GetActiveScene();
 			auto objects = scene->GetComponentsOfType<GameManager>();
 			string balltag;
-			// get balls tag whis is either "striped" or "solid" 
+			// get balls tag that is either "striped" or "solid" 
 			if (scene->GetComponent<ObjectTag>(en)) {
 				balltag = scene->GetComponent<ObjectTag>(en)->tag;
 			}
@@ -188,12 +187,22 @@ private:
 				if (balltag == "striped")
 				{
 					object->stripesAmount -= 1;
-					scene->DestroyEntity(en);
+					auto rb = scene->GetComponent<Rigidbody>(en);
+					auto transform = scene->GetComponent<Transform>(en);
+					transform->position = glm::vec3{ 100,100,100 };
+					rb->DisableBody();
+					//scene->DestroyEntity(en);
+					NotificationManager::SendAlphaBannerNotification("A striped ball was sunk!", NotificationTextColor::GREEN);
 				}
 				else if (balltag == "solid")
 				{
 					object->solidsAmount -= 1;
-					scene->DestroyEntity(en);
+					auto rb = scene->GetComponent<Rigidbody>(en);
+					auto transform = scene->GetComponent<Transform>(en);
+					transform->position = glm::vec3{ 100,100,100 };
+					rb->DisableBody();
+					//scene->DestroyEntity(en);
+					NotificationManager::SendAlphaBannerNotification("A solid ball was sunk!", NotificationTextColor::GREEN);
 				}
 			}
 

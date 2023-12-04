@@ -309,5 +309,5 @@ private:
     glm::vec3 m_cueBallPos;
     float m_shotAngle;
     int m_maxShotPower = 400;
-    float m_rotateSpeed = 1.3;
+    float m_rotateSpeed = 1.1;
 };
