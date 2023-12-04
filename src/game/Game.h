@@ -249,13 +249,13 @@ private:
 	// Setting up the scene models
 	void SceneSetup() 
 	{
-		// display line creation
-		auto shotIndicator = new GameObject();
-		shotIndicator->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("8_ball"));
-		shotIndicator->GetComponent<Transform>()->scale = glm::vec3{ 0.05,0.05,1 };
-		shotIndicator->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0, 0.35, 3) + glm::vec3(0, 0, -1);
-		shotIndicator->GetComponent<Transform>()->rotation = glm::vec3(0, 0, 0);
-		shotIndicator->AddComponent<ObjectTag>("cue");
+		//// display line creation
+		//auto shotIndicator = new GameObject();
+		//shotIndicator->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("8_ball"));
+		//shotIndicator->GetComponent<Transform>()->scale = glm::vec3{ 0.05,0.05,1 };
+		//shotIndicator->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0, 0.35, 3) + glm::vec3(0, 0, -1);
+		//shotIndicator->GetComponent<Transform>()->rotation = glm::vec3(0, 0, 0);
+		//shotIndicator->AddComponent<ObjectTag>("cue");
 		// cue creation
 		auto cue = new GameObject();
 		cue->AddComponent<Material>(ModelLoader::GetModel("pool_cue"), TextureLoader::GetTexture("cue"));
@@ -301,10 +301,25 @@ private:
 		chair2->GetComponent<Transform>()->position += glm::vec3{ -7, 0, 0 };
 		chair2->GetComponent<Transform>()->rotation = glm::vec3{ 0, glm::pi<float>(), 0 };
 
+
+
+		auto floatingIsland = new GameObject();
+		floatingIsland->AddComponent<Material>(ModelLoader::GetModel("floatingisland"), TextureLoader::GetTexture("floatingislandtexture"));
+		floatingIsland->GetComponent<Transform>()->position = m_tablePosition;
+		floatingIsland->GetComponent<Transform>()->position += glm::vec3{ 0, -7.5, -5 };
+
+		auto floor = new GameObject();
+		floor->AddComponent<Material>(ModelLoader::GetModel("floor"), TextureLoader::GetTexture("floor"));
+		floor->GetComponent<Transform>()->position = m_tablePosition;
+		floor->GetComponent<Transform>()->position += glm::vec3{ 0, -7.5, -5 };
+		
+
 		// setup initial balls position and rigidbody
-		BallsSetup();
+		//BallsSetup();
 		TableRigidBodySetUp();
 	}
+
+	
 
 	void Setup()
 	{
