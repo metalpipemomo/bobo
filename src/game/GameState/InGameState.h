@@ -16,10 +16,12 @@ public:
         BOBO_INFO("Entered In-Game State");
 
         // Set stuff
-        m_SolidBallsRemaining = 8;
-        m_StripedBallsRemaining = 8;
+        m_SolidBallsRemaining = 7;
+        m_StripedBallsRemaining = 7;
         m_ShotPower = 0.0f;
         m_ShotPowerDirection = 1;
+        m_shotAllowedFlag = true;
+
 
         m_Turn = Turn::P1;
 
@@ -29,7 +31,7 @@ public:
             {
                 PerPopupInformation("Hold Space to Charge your Shot.The Power will\nbounce back and forth between full and empty.",
                     ImVec2(400, 117.5)),
-                PerPopupInformation("Adjust the Cue's angle using...?", ImVec2(400, 105)),
+                PerPopupInformation("Adjust the Cue's angle using 1 and 2", ImVec2(400, 105)),
                 PerPopupInformation("Happy Pooling Gamer!", ImVec2(400, 105))
             },
             AnchorPos::TOP_CENTER,
@@ -43,8 +45,72 @@ public:
         BOBO_INFO("Exited In-Game State");
     }
 
+    void UpdateGame()
+    {
+        auto scene = SceneManager::GetActiveScene();
+        auto objects = scene->GetComponentsOfType<ObjectTag>();
+        Rigidbody* ballRb;
+        Transform* cueTransform;
+        Transform* cueBallTransform;
+
+        // getting game object components needed
+        for (auto& object : objects)
+        {
+            if (object->tag == "cue")
+            {
+                cueTransform = scene->GetComponent<Transform>(object->m_OwnerId);
+                cueTransform->rotation = glm::vec3(0, m_shotAngle, 0);
+            }
+            if (object->tag == "cueBall")
+            {
+                ballRb = scene->GetComponent<Rigidbody>(object->m_OwnerId);
+                cueBallTransform = scene->GetComponent<Transform>(object->m_OwnerId);
+                auto transform = scene->GetComponent<Transform>(object->m_OwnerId);
+                m_cueBallPos = transform->position;
+            }
+            if (object->tag == "gamemanager")
+            {
+                auto manager = scene->GetComponent<GameManager>(object->m_OwnerId);
+                m_StripedBallsRemaining = manager->stripesAmount;
+                m_SolidBallsRemaining = manager->solidsAmount;
+            }
+        }
+
+        // 1 and 2 keys for rotating shot angle
+        if (Input::GetKey(GLFW_KEY_1))
+        {
+            m_shotAngle += m_rotateSpeed * Time::DeltaTime();
+        }
+        if (Input::GetKey(GLFW_KEY_2))
+        {
+            m_shotAngle -= m_rotateSpeed * Time::DeltaTime();
+        }
+
+        // if cue ball almost stopped, stop it
+        if (ballRb->GetVelocity().Length() < 0.3)
+        {
+            ballRb->SetVelocity(JPH::Vec3{ 0,0,0 });
+            // set cue shot indicator and set flag to true
+            m_shotAllowedFlag = true;
+            cueTransform->position = cueBallTransform->position + glm::vec3(Sin(m_shotAngle) * -1, 0, Cos(m_shotAngle) * -1);
+        }
+
+        // shoot cue ball with space and swap turns
+        if (m_shotactivated && m_shotAllowedFlag)
+        {
+            // make cue shot indicator dissapear and set flag to false
+            m_shotAllowedFlag = false;
+            m_shotactivated = false;
+            cueTransform->position = glm::vec3{ 100,100,100 };
+            ballRb->addForce(JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower*m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower*m_maxShotPower));
+        }
+    }
+
     void Update()
     {
+        // do game updating stuff
+        UpdateGame();
+
         if (m_Turn != m_TurnLastUpdate)
         {
             std::string newTurn;
@@ -168,7 +234,7 @@ public:
             m_ResolvingShot = 1;
         }
 
-        if (m_ShootKeyHeld || m_ResolvingShot > 0)
+        if (m_shotAllowedFlag && m_ShootKeyHeld || m_ResolvingShot > 0)
         {
             ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH / 2 - m_ProgressBarWidth / 2, 
                 main_viewport->WorkPos.y + WINDOW_HEIGHT - m_ProgressBarHeight - 25), 0);
@@ -210,6 +276,7 @@ public:
         // set the shot power to 0 upon the current shot being resolved
         if (m_ResolvingShot > 0)
         {
+            m_shotactivated = true;
             float oldResolvingShot = m_ResolvingShot;
             m_ResolvingShot -= Time::DeltaTime();
             if (m_ResolvingShot <= 0 && oldResolvingShot > 0)
@@ -236,4 +303,11 @@ private:
     float m_ResolvingShot;
     bool m_ShootKeyHeld;
     bool m_ShootKeyHeldLastFrame;
+
+    bool m_shotAllowedFlag;
+    bool m_shotactivated;
+    glm::vec3 m_cueBallPos;
+    float m_shotAngle;
+    int m_maxShotPower = 400;
+    float m_rotateSpeed = 1.1;
 };

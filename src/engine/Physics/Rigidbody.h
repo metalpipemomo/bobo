@@ -33,17 +33,22 @@ public:
 		if(inMotionType == EMotionType::Static) {
 			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddBody(body->GetID(), EActivation::DontActivate);
 		} else {
+			body->GetMotionProperties()->SetAngularDamping(0.75);
 			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddBody(body->GetID(), EActivation::Activate);
 
 		}
 		m_id = body->GetID();
 		transform = trnsfrm;
+		// setting physics settings
+		PhysicsSettings settings = PhysicsSettings();
+		settings.mMinVelocityForRestitution = 0;
+		Physics::GetInstance()->GetPhysicsSystem()->SetPhysicsSettings(settings);
 	}
 
 	~Rigidbody() 
 	{
-		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().RemoveBody(m_id);
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().DestroyBody(m_id);
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().RemoveBody(m_id);
 	}
 
 
@@ -55,14 +60,21 @@ public:
 
 	void Update() 
 	{
-		if(transform != nullptr) 
+		if(transform != nullptr && !disabled) 
 		{
 			auto tempPosition = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetPosition(m_id);
 			auto tempRotation = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetRotation(m_id);
 			transform->position = glm::vec3(tempPosition.GetX(), tempPosition.GetY(), tempPosition.GetZ());
 			transform->rotation = glm::vec3(tempRotation.GetX(), tempRotation.GetY(), tempRotation.GetZ());
-
 		}
+		if (transform != nullptr && disabled) {
+			SetPosition(JPH::Vec3{ 100,100,100 });
+		}
+	}
+
+	void DisableBody() 
+	{
+		disabled = true;
 	}
 
 	void SetTransform(Transform* t) 
@@ -143,6 +155,11 @@ public:
 		Physics::GetInstance()->m_ContactListener->SetOnCollisionPersistListener(m_id, callback);
 	}
 
+	void addForce(JPH::Vec3 force)
+	{
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddImpulse(m_id, force);
+	}
+
 	BodyID GetBodyID() 
 	{
 		return m_id;
@@ -158,4 +175,5 @@ public:
 private: 
 	JPH::BodyID m_id;
 	Transform* transform;
+	bool disabled = false;
 };
