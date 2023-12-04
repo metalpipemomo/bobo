@@ -269,6 +269,14 @@ private:
 		lamp->GetComponent<Transform>()->position = m_tablePosition;
 		lamp->GetComponent<Transform>()->position += glm::vec3{ 0, 5, 0 };
 
+		auto spotlight = new GameObject();
+		Spotlight sl;
+		sl.baseColor = { 0.7, 0.7, 0.7 }; // RGB, same as before
+		sl.cutoffAngle = 50.0f; // The radius of the cone
+		sl.direction = { 0.0f, -1.0f, 0.0f }; // Direction of the light
+		sl.position = lamp->GetComponent<Transform>()->position; // X, Y, Z
+		spotlight->AddComponent<SpotlightComponent>(sl);
+
 		// bookshelves creation
 		auto shelf1 = new GameObject();
 		shelf1->AddComponent<Material>(ModelLoader::GetModel("book_shelf"), TextureLoader::GetTexture("wood"));
@@ -327,14 +335,6 @@ private:
 		pl.position = { -5.0f, -5.0f, 5.0f }; // X, Y, Z (Positive Z is closer to camera)
 		pl.intensity = 250.0f;
 		pointlight->AddComponent<PointlightComponent>(pl);
-
-		auto spotlight = new GameObject();
-		Spotlight sl;
-		sl.baseColor = { 0.7, 0.7, 0.7 }; // RGB, same as before
-		sl.cutoffAngle = 45.0f; // The radius of the cone
-		sl.direction = { 0.0f, -1.0f, 0.0f }; // Direction of the light
-		sl.position = { 0.0f, 5.0f, 0.0f }; // X, Y, Z
-		spotlight->AddComponent<SpotlightComponent>(sl);
 
 		PopupManager::MakePopup(
 			"Welcome",
