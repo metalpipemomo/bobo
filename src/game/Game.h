@@ -7,6 +7,7 @@
 #include "GameComponents/FunnyMove.h"
 #include "GameComponents/ObjectTag.h"
 #include "GameComponents/GameManager.h"
+#include "GameComponents/CueBallGhost.h"
 
 #include "../engine/GameState/GameStateManager.h"
 #include "GameState/GameOverState.h"
@@ -203,6 +204,16 @@ private:
 					rb->DisableBody();
 					//scene->DestroyEntity(en);
 					NotificationManager::SendAlphaBannerNotification("A solid ball was sunk!", NotificationTextColor::GREEN);
+				}
+				else if (balltag == "cueBall") {
+					NotificationManager::SendAlphaBannerNotification("The cue ball has been sunk.", NotificationTextColor::RED);
+					auto rb = scene->GetComponent<Rigidbody>(en);
+					auto transform = scene->GetComponent<Transform>(en);
+					transform->position = glm::vec3{ 100,100,100 };
+					rb->DisableBody();
+
+					auto inGameState = GameStateManager::FetchGameState(GameStateLabel::IN_GAME);
+					
 				}
 			}
 

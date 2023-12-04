@@ -39,10 +39,7 @@ public:
 		}
 		m_id = body->GetID();
 		transform = trnsfrm;
-		// setting physics settings
-		PhysicsSettings settings = PhysicsSettings();
-		settings.mMinVelocityForRestitution = 0;
-		Physics::GetInstance()->GetPhysicsSystem()->SetPhysicsSettings(settings);
+		
 	}
 
 	~Rigidbody() 
