@@ -229,7 +229,7 @@ private:
 					auto transform = scene->GetComponent<Transform>(en);
 					transform->position = glm::vec3{ 100,100,100 };
 					rb->DisableBody();
-
+					Camera::GetTarget();
 					auto inGameState = GameStateManager::FetchGameState(GameStateLabel::IN_GAME);
 					cbg->Enable();
 				}

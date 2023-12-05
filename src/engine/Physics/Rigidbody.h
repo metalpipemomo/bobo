@@ -189,7 +189,9 @@ public:
 		return transform;
 	}
 
-
+	bool IsDisabled() {
+		return disabled;
+	}
 	
 private: 
 	JPH::BodyID m_id;

@@ -2,6 +2,7 @@
 
 #include "../../bpch.h"
 #include "../../Game/GameComponents/ObjectTag.h"
+#include "../Physics/RigidBody.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -163,12 +164,14 @@ public:
 		auto objects = scene->GetComponentsOfType<ObjectTag>();
 		auto c = GetInstance();
 		for (auto object : objects) { // Search thuogh all objects to find the tag of the cueBall
-			if (object->tag == "cueBall")
+			if (object->tag == "cueBall" && !scene->GetComponent<Rigidbody>(object->m_OwnerId)->IsDisabled())
 			{
 				c->m_trackObjectCords = &(scene->GetComponent<Transform>(object->m_OwnerId))->position; // Get the position pointer.
 				return true;
 			}
 		}
+		if (c->m_mode == 2)
+			c->m_mode = 1;
 		return false;
 	}
 
