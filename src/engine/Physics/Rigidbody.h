@@ -72,6 +72,11 @@ public:
 		}
 	}
 
+	void EnableBody()
+	{
+		disabled = false;
+	}
+
 	void DisableBody() 
 	{
 		disabled = true;
@@ -146,6 +151,17 @@ public:
 	void SetOnCollisionEnd(function<void(BodyID)> callback)
 	{
 		Physics::GetInstance()->m_ContactListener->SetOnCollisionEndListener(m_id, callback);
+	}
+
+	void SetMotionType(bool isStatic) 
+	{
+		if(isStatic) 
+		{
+			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetMotionType(m_id, EMotionType::Static, EActivation::Activate);
+		} else 
+		{
+			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetMotionType(m_id, EMotionType::Dynamic, EActivation::Activate);
+		}
 	}
 
 	// set a function to be called when this object continues a collision with another object.
