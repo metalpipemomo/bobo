@@ -71,10 +71,16 @@ public:
 	}
 
 	static short SwitchMode() {
-		auto c = GetInstance(); // Increase the mode by 1. Rollover at 3.
-		c->m_mode = (c->m_mode + 1) % 3;
-		if (c->m_mode == 2 && !GetTarget()) {
-			return SwitchMode();
+		auto c = GetInstance(); // Change the mode
+		if (Input::GetKey(GLFW_KEY_LEFT_CONTROL)) // Have to hold CTRL and TAB in order to get freecam
+			c->m_mode = 0;
+		else if (c->m_mode == 1 && GetTarget()) { // Only switch to mode 2 if we found target
+			c->m_mode = 2;
+			c->m_distance = 5.0f;
+		}
+		else {
+			c->m_mode = 1;
+			c->m_distance = 15.0f;
 		}
 		return c->m_mode;
 	}
@@ -133,13 +139,22 @@ public:
 	}
 
 	static void SlideControls() {
+		auto c = GetInstance();
 		if (Input::GetKey(GLFW_KEY_D))
 		{
-			MoveRight(10.0f * Time::DeltaTime());
+			MoveRight(c->m_distance * Time::DeltaTime()); // Scale left/right amount by distance away. Allows precision up close.
 		}
 		if (Input::GetKey(GLFW_KEY_A))
 		{
-			MoveRight(-10.0f * Time::DeltaTime());
+			MoveRight(-c->m_distance * Time::DeltaTime()); // Scale left/right amount by distance away. Allows precision up close.
+		}
+		if (Input::GetKey(GLFW_KEY_W))
+		{
+			c->m_distance += -10.0f * Time::DeltaTime(); // Goes in.
+		}
+		if (Input::GetKey(GLFW_KEY_S))
+		{
+			c->m_distance += 10.0f * Time::DeltaTime(); // Goes out.
 		}
 	}
 
@@ -147,10 +162,10 @@ public:
 		auto scene = SceneManager::GetActiveScene();
 		auto objects = scene->GetComponentsOfType<ObjectTag>();
 		auto c = GetInstance();
-		for (auto object : objects) {
+		for (auto object : objects) { // Search thuogh all objects to find the tag of the cueBall
 			if (object->tag == "cueBall")
 			{
-				c->m_trackObjectCords = &(scene->GetComponent<Transform>(object->m_OwnerId))->position;
+				c->m_trackObjectCords = &(scene->GetComponent<Transform>(object->m_OwnerId))->position; // Get the position pointer.
 				return true;
 			}
 		}
@@ -163,18 +178,17 @@ public:
 		c->cameraFront = glm::normalize(targetPos - c->m_Position);
 		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront, { 0.0f, 1.0f, 0.0f });
 	}
-	static void HoriSphereNormalizeDistance(const glm::vec3 targetObject, const float distance) {
+	static void HoriSphereNormalizeDistance(const glm::vec3 targetObject) {
 		auto c = GetInstance();
 		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-		glm::vec3 switcher = c->m_Position;
-		c->m_Position = targetObject + glm::normalize(glm::vec3( c->m_Position.x - targetObject.x,0.0,c->m_Position.z - targetObject.z ))* distance;
-		c->m_Position.y += distance / 4.0f;
-		switcher = c->m_Position - switcher;
+		// Normalize based on radius on X and Z away from the object based on m_distance
+		c->m_Position = targetObject + glm::normalize(glm::vec3( c->m_Position.x - targetObject.x,0.0,c->m_Position.z - targetObject.z ))* c->m_distance;
+		c->m_Position.y += c->m_distance / 4.0f; // Create an angel looking down at the object, pushing up based on distance.
 	}
 
 	static void HandleCameraEvents() {
 		auto c = GetInstance(); // Return the mode number.
-		if (Input::GetKeyDown(GLFW_KEY_TAB)) { // Get Key down so that we're not going through toggles at extreme speed
+		if (Input::GetKeyDown(GLFW_KEY_TAB)) { // Use Key down so that we're not going through toggles at extreme speed
 			SwitchMode(); // Switch mode of the camera.
 		}
 		if (!c->m_mode) { // If 0, essentially.
@@ -182,13 +196,25 @@ public:
 		}
 		else if (c->m_mode == 1) { // If 1, table view
 			SlideControls();
-			SetCameraPositionAndLookAt(c->m_Position, { 0.0,0.0,-4.5f });
-			HoriSphereNormalizeDistance({ 0.0,0.0,-4.5f }, 15.0f);
+			if (c->m_distance < 10.0f) { // Clamp the distance values
+				c->m_distance = 10.0f;
+			}
+			else if (c->m_distance > 20.0f) {
+				c->m_distance = 20.0f;
+			}
+			SetCameraPositionAndLookAt(c->m_Position, { 0.0,0.0,-4.5f }); // We are assuming that the table won't move.
+			HoriSphereNormalizeDistance({ 0.0,0.0,-4.5f });
 		}
 		else {
 			SlideControls();
+			if (c->m_distance < 2.0f) { // Clamp the distance values
+				c->m_distance = 2.0f;
+			}
+			else if (c->m_distance > 10.0f) {
+				c->m_distance = 10.0f;
+			}
 			SetCameraPositionAndLookAt(c->m_Position,(*(c->m_trackObjectCords)));
-			HoriSphereNormalizeDistance((*(c->m_trackObjectCords)), 5.0f);
+			HoriSphereNormalizeDistance((*(c->m_trackObjectCords)));
 		}
 	}
 
@@ -275,8 +301,9 @@ private:
 
 	// mode //
 
-	short m_mode = 0; // 0 = Freecam, 1 = Table, 2 = Ball
-	glm::vec3* m_trackObjectCords;
+	short m_mode = 1; // 0 = Freecam, 1 = Table, 2 = Ball
+	glm::vec3* m_trackObjectCords; // Coordinates pointer of what we're tracking.
+	float m_distance = 10.0f; // Distance from orbit.
 
 	// johnny variables//
 
