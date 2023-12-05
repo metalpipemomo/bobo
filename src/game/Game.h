@@ -228,7 +228,8 @@ private:
 					//scene->DestroyEntity(en);
 					NotificationManager::SendAlphaBannerNotification("A solid ball was sunk!", NotificationTextColor::GREEN);
 				}
-				else if (balltag == "cueBall") {
+				else if (balltag == "cueBall") 
+				{
 					NotificationManager::SendAlphaBannerNotification("The cue ball has been sunk.", NotificationTextColor::RED);
 					auto rb = scene->GetComponent<Rigidbody>(en);
 					auto transform = scene->GetComponent<Transform>(en);
@@ -236,6 +237,14 @@ private:
 					rb->DisableBody();
 					gameState->SinkCueBall();
 					cbg->Enable();
+				}
+				else if (balltag == "8ball") 
+				{
+					auto rb = scene->GetComponent<Rigidbody>(en);
+					auto transform = scene->GetComponent<Transform>(en);
+					transform->position = glm::vec3{ 100,100,100 };
+					rb->DisableBody();
+					gameState->Sink8Ball();
 				}
 			}
 

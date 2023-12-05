@@ -129,21 +129,6 @@ public:
         }
         m_TurnLastUpdate = m_Turn;
 
-        // Update game over logic, such as checking for restart or exit
-        if (m_SolidBallsRemaining <= 0)
-        {
-            GameOverState* gameOverState = (GameOverState*)GameStateManager::FetchGameState(GameStateLabel::GAME_OVER);
-            gameOverState->SetWinner("Solids");
-            GameStateManager::EnterGameState(GameStateLabel::GAME_OVER);
-        }
-
-        if (m_StripedBallsRemaining <= 0)
-        {
-            GameOverState* gameOverState = (GameOverState*)GameStateManager::FetchGameState(GameStateLabel::GAME_OVER);
-            gameOverState->SetWinner("Stripes");
-            GameStateManager::EnterGameState(GameStateLabel::GAME_OVER);
-        }
-
         if (!m_ShotWasAllowed && m_shotAllowedFlag) {
             m_Turn = m_NextTurn;
             m_HasSunkBadly = false;
@@ -181,14 +166,34 @@ public:
         }
     }
 
+    void SetWinner(std::string winner) 
+    {
+        GameOverState* gameOverState = (GameOverState*)GameStateManager::FetchGameState(GameStateLabel::GAME_OVER);
+        gameOverState->SetWinner(winner);
+        GameStateManager::EnterGameState(GameStateLabel::GAME_OVER);
+    }
+
     void Sink8Ball()
     {
+        if (m_SolidBallsRemaining > 0 && m_StripedBallsRemaining > 0) {
+            if (m_Turn == Turn::P1)
+                SetWinner("Stripes");
+            else
+                SetWinner("Solids");
 
+            return;
+        }
+
+        if (m_SolidBallsRemaining <= 0)
+            SetWinner("Solids");
+        else
+            SetWinner("Stripes");
     }
 
     void SinkCueBall()
     {
-        //m_Turn = m_Turn == Turn::P1 ? Turn::P2 : Turn::P1;
+        // unneeded maybe? this is called in game.h but idk if we actually need this
+        // if you remove this then remember to remove its call in game.h
     }
 
     void Render()
