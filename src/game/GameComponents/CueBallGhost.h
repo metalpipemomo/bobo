@@ -46,6 +46,7 @@ public:
 
 		if (!wasEnabled) {
 			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().ActivateBody(rb->GetBodyID());
+			cueball->SetVelocity({ 0,0,0 });
 			rb->SetPositionHard(resetPos);
 			wasEnabled = true;
 		}

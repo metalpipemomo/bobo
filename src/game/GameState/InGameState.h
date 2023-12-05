@@ -88,7 +88,7 @@ public:
         }
 
         // if cue ball almost stopped, stop it
-        if (m_BallRb->GetVelocity().Length() < 0.3)
+        if (m_BallRb->GetVelocity().Length() < 0.3 || !m_BallRb->IsEnabled())
         {
             m_BallRb->SetVelocity(JPH::Vec3{ 0,0,0 });
             // set cue shot indicator and set flag to true
@@ -102,6 +102,8 @@ public:
             // make cue shot indicator dissapear and set flag to false
             m_shotAllowedFlag = false;
             m_shotactivated = false;
+            m_ShotWasAllowed = false;
+            m_HasSunkBadly = false;
             m_CueTransform->position = glm::vec3{ 100,100,100 };
             m_BallRb->addForce(JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower*m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower*m_maxShotPower));
         }
@@ -141,6 +143,52 @@ public:
             gameOverState->SetWinner("Stripes");
             GameStateManager::EnterGameState(GameStateLabel::GAME_OVER);
         }
+
+        if (!m_ShotWasAllowed && m_shotAllowedFlag) {
+            m_Turn = m_NextTurn;
+            m_HasSunkBadly = false;
+            m_ShotWasAllowed = true;
+        }
+    }
+
+    void SinkSolid() 
+    {
+        NotificationManager::SendDefaultNotification("A Solid Ball has been Sunk", NotificationTextColor::BLUE);
+        
+        if (m_Turn == Turn::P1 && !m_HasSunkBadly)
+        {
+            m_NextTurn = Turn::P1;
+        }
+        if (m_Turn == Turn::P2) 
+        {
+            m_NextTurn = Turn::P1;
+            m_HasSunkBadly = true;
+        }
+    }
+
+    void SinkStriped() 
+    {
+        NotificationManager::SendDefaultNotification("A Striped Ball has been Sunk", NotificationTextColor::RED);
+        
+        if (m_Turn == Turn::P1)
+        {
+            m_NextTurn = Turn::P2;
+            m_HasSunkBadly = true;
+        }
+        if (m_Turn == Turn::P2 && !m_HasSunkBadly)
+        {
+            m_NextTurn = Turn::P2;
+        }
+    }
+
+    void Sink8Ball()
+    {
+
+    }
+
+    void SinkCueBall()
+    {
+        //m_Turn = m_Turn == Turn::P1 ? Turn::P2 : Turn::P1;
     }
 
     void Render()
@@ -168,12 +216,7 @@ public:
 
         ImGuiHelpers::LowerCursor();
 
-        if (ImGuiHelpers::MakeCenterButton("Sink Solid") && m_Turn == Turn::P1)
-        {
-            m_SolidBallsRemaining--;
-            NotificationManager::SendDefaultNotification("A Solid Ball has been Sunk", NotificationTextColor::BLUE);
-            m_Turn = Turn::P2;
-        }
+        
 
         ImGui::End();
 
@@ -197,12 +240,7 @@ public:
 
         ImGuiHelpers::LowerCursor();
 
-        if (ImGuiHelpers::MakeCenterButton("Sink Striped") && m_Turn == Turn::P2)
-        {
-            m_StripedBallsRemaining--;
-            NotificationManager::SendDefaultNotification("A Striped Ball has been Sunk", NotificationTextColor::RED);
-            m_Turn = Turn::P1;
-        }
+        
 
         ImGui::End();
 
@@ -227,7 +265,7 @@ public:
         // if space is held or we are still resolving a shot, the bar must be rendered
         // Power Bar
 
-        m_ShootKeyHeld = Input::GetKey(GLFW_KEY_SPACE);
+        m_ShootKeyHeld = Input::GetKey(GLFW_KEY_SPACE) && m_BallRb->IsEnabled();
 
         // set the resolving shot timer upon releasing a shot
         if (!m_ShootKeyHeld && m_ShootKeyHeldLastFrame && m_ResolvingShot <= 0)
@@ -286,6 +324,8 @@ public:
                 // Has resolved shot
                 m_ShotPower = 0;
             }
+
+            m_NextTurn = m_Turn == Turn::P1 ? Turn::P2 : Turn::P1;
         }
 
         m_ShootKeyHeldLastFrame = m_ShootKeyHeld;
@@ -295,6 +335,8 @@ private:
     int m_SolidBallsRemaining;
     Turn m_Turn;
     Turn m_TurnLastUpdate;
+    Turn m_NextTurn;
+    bool m_HasSunkBadly = false;
     float m_ShotPower;
     int m_ShotPowerDirection;
 
@@ -307,6 +349,7 @@ private:
     bool m_ShootKeyHeldLastFrame;
 
     bool m_shotAllowedFlag;
+    bool m_ShotWasAllowed = false;
     bool m_shotactivated;
     glm::vec3 m_cueBallPos;
     float m_shotAngle;
