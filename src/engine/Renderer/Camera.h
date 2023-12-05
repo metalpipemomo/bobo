@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../bpch.h"
-
+#include "../../Game/GameComponents/ObjectTag.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -72,13 +72,16 @@ public:
 
 	static short SwitchMode() {
 		auto c = GetInstance(); // Increase the mode by 1. Rollover at 3.
-		c->mode = (c->mode + 1) % 3;
-		return c->mode;
+		c->m_mode = (c->m_mode + 1) % 3;
+		if (c->m_mode == 2 && !GetTarget()) {
+			return SwitchMode();
+		}
+		return c->m_mode;
 	}
 
 	static short GetMode() {
 		auto c = GetInstance(); // Return the mode number.
-		return c->mode;
+		return c->m_mode;
 	}
 
 	static void FreeCamControls() {
@@ -140,8 +143,21 @@ public:
 		}
 	}
 
+	static bool GetTarget() {
+		auto scene = SceneManager::GetActiveScene();
+		auto objects = scene->GetComponentsOfType<ObjectTag>();
+		auto c = GetInstance();
+		for (auto object : objects) {
+			if (object->tag == "cueBall")
+			{
+				c->m_trackObjectCords = &(scene->GetComponent<Transform>(object->m_OwnerId))->position;
+				return true;
+			}
+		}
+		return false;
+	}
 
-	static void setCameraPositionAndLookAt(const glm::vec3 newCameraPos, const glm::vec3 targetPos) {
+	static void SetCameraPositionAndLookAt(const glm::vec3 newCameraPos, const glm::vec3 targetPos) {
 		auto c = GetInstance();
 		c->m_Position = newCameraPos;
 		c->cameraFront = glm::normalize(targetPos - c->m_Position);
@@ -161,16 +177,18 @@ public:
 		if (Input::GetKeyDown(GLFW_KEY_TAB)) { // Get Key down so that we're not going through toggles at extreme speed
 			SwitchMode(); // Switch mode of the camera.
 		}
-		if (!c->mode) { // If 0, essentially.
+		if (!c->m_mode) { // If 0, essentially.
 			FreeCamControls();
 		}
-		else if (c->mode == 1) { // If 1, table view
+		else if (c->m_mode == 1) { // If 1, table view
 			SlideControls();
-			setCameraPositionAndLookAt(c->m_Position, { 0.0,0.0,-4.5f });
+			SetCameraPositionAndLookAt(c->m_Position, { 0.0,0.0,-4.5f });
 			HoriSphereNormalizeDistance({ 0.0,0.0,-4.5f }, 15.0f);
 		}
 		else {
 			SlideControls();
+			SetCameraPositionAndLookAt(c->m_Position,(*(c->m_trackObjectCords)));
+			HoriSphereNormalizeDistance((*(c->m_trackObjectCords)), 5.0f);
 		}
 	}
 
@@ -257,7 +275,8 @@ private:
 
 	// mode //
 
-	short mode = 0; // 0 = Freecam, 1 = Table, 2 = Ball
+	short m_mode = 0; // 0 = Freecam, 1 = Table, 2 = Ball
+	glm::vec3* m_trackObjectCords;
 
 	// johnny variables//
 
