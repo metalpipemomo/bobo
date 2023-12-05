@@ -148,6 +148,17 @@ public:
 		Physics::GetInstance()->m_ContactListener->SetOnCollisionEndListener(m_id, callback);
 	}
 
+	void SetMotionType(bool isStatic) 
+	{
+		if(isStatic) 
+		{
+			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetMotionType(m_id, EMotionType::Static, EActivation::Activate);
+		} else 
+		{
+			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetMotionType(m_id, EMotionType::Dynamic, EActivation::Activate);
+		}
+	}
+
 	// set a function to be called when this object continues a collision with another object.
 	// the function to be called takes 1 parameter, which is the BodyID of the other object
 	void SetOnCollisionPersist(function<void(BodyID)> callback)
