@@ -70,6 +70,109 @@ public:
 		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront, {0.0f, 1.0f, 0.0f});
 	}
 
+	static short SwitchMode() {
+		auto c = GetInstance(); // Increase the mode by 1. Rollover at 3.
+		c->mode = (c->mode + 1) % 3;
+		return c->mode;
+	}
+
+	static short GetMode() {
+		auto c = GetInstance(); // Return the mode number.
+		return c->mode;
+	}
+
+	static void FreeCamControls() {
+		if (Input::GetKey(GLFW_KEY_W) && Input::GetKey(GLFW_KEY_LEFT_CONTROL))
+		{
+			MoveUp(10.0f * Time::DeltaTime());
+		}
+		else if (Input::GetKey(GLFW_KEY_W))
+		{
+			MoveForward(10.0f * Time::DeltaTime());
+		}
+		if (Input::GetKey(GLFW_KEY_S) && Input::GetKey(GLFW_KEY_LEFT_CONTROL))
+		{
+			MoveUp(-10.0f * Time::DeltaTime());
+		}
+		else if (Input::GetKey(GLFW_KEY_S))
+		{
+			MoveForward(-10.0f * Time::DeltaTime());
+		}
+
+		if (Input::GetKey(GLFW_KEY_D))
+		{
+			MoveRight(10.0f * Time::DeltaTime());
+		}
+		if (Input::GetKey(GLFW_KEY_A))
+		{
+			MoveRight(-10.0f * Time::DeltaTime());
+		}
+
+		if (Input::GetKey(GLFW_KEY_UP)) {
+
+			LookUp(50.0f * Time::DeltaTime());
+		}
+
+		if (Input::GetKey(GLFW_KEY_DOWN)) {
+
+			LookUp(-50.0f * Time::DeltaTime());
+		}
+
+		if (Input::GetKey(GLFW_KEY_LEFT)) {
+
+			LookRight(-50.0f * Time::DeltaTime());
+		}
+
+		if (Input::GetKey(GLFW_KEY_RIGHT)) {
+
+			LookRight(50.0f * Time::DeltaTime());
+		}
+	}
+
+	static void SlideControls() {
+		if (Input::GetKey(GLFW_KEY_D))
+		{
+			MoveRight(10.0f * Time::DeltaTime());
+		}
+		if (Input::GetKey(GLFW_KEY_A))
+		{
+			MoveRight(-10.0f * Time::DeltaTime());
+		}
+	}
+
+
+	static void setCameraPositionAndLookAt(const glm::vec3 newCameraPos, const glm::vec3 targetPos) {
+		auto c = GetInstance();
+		c->m_Position = newCameraPos;
+		c->cameraFront = glm::normalize(targetPos - c->m_Position);
+		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront, { 0.0f, 1.0f, 0.0f });
+	}
+	static void HoriSphereNormalizeDistance(const glm::vec3 targetObject, const float distance) {
+		auto c = GetInstance();
+		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+		glm::vec3 switcher = c->m_Position;
+		c->m_Position = targetObject + glm::normalize(glm::vec3( c->m_Position.x - targetObject.x,0.0,c->m_Position.z - targetObject.z ))* distance;
+		c->m_Position.y += distance / 4.0f;
+		switcher = c->m_Position - switcher;
+	}
+
+	static void HandleCameraEvents() {
+		auto c = GetInstance(); // Return the mode number.
+		if (Input::GetKeyDown(GLFW_KEY_TAB)) { // Get Key down so that we're not going through toggles at extreme speed
+			SwitchMode(); // Switch mode of the camera.
+		}
+		if (!c->mode) { // If 0, essentially.
+			FreeCamControls();
+		}
+		else if (c->mode == 1) { // If 1, table view
+			SlideControls();
+			setCameraPositionAndLookAt(c->m_Position, { 0.0,0.0,-4.5f });
+			HoriSphereNormalizeDistance({ 0.0,0.0,-4.5f }, 15.0f);
+		}
+		else {
+			SlideControls();
+		}
+	}
 
 	static void MoveForward(float speed)
 	{
@@ -102,7 +205,6 @@ public:
 		front.z = sin(glm::radians(c->m_Yaw)) * cos(glm::radians(c->m_Pitch));
 		c->cameraFront = glm::normalize(front);
 		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront,  {0.0f, 1.0f, 0.0f});
-	
 	}
 
 	static void LookRight(float speed){
@@ -152,6 +254,10 @@ private:
 	float m_AspectRatio;
 	float m_NearClipping;
 	float m_FarClipping;
+
+	// mode //
+
+	short mode = 0; // 0 = Freecam, 1 = Table, 2 = Ball
 
 	// johnny variables//
 
