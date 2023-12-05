@@ -333,7 +333,6 @@ private:
 		rightball->GetComponent<Transform>()->scale = glm::vec3(2,2,2);
 		rightball->AddComponent<ObjectTag>("solid");
 		addRigidBodyToBall(rightball, s);
-		rightball->AddComponent<ObjectTag>("push");
 		rightball->GetComponent<Rigidbody>()->AddLinearVelocity(JPH::Vec3(80,0,0));
 		
 		
@@ -342,15 +341,13 @@ private:
 		leftBall->GetComponent<Transform>()->scale = glm::vec3(2,2,2);
 		leftBall->AddComponent<ObjectTag>("solid");
 		addRigidBodyToBall(leftBall, s);
-		leftBall->AddComponent<ObjectTag>("push");
 		leftBall->GetComponent<Rigidbody>()->AddLinearVelocity(JPH::Vec3(-80,0,0));
 
 		auto backBall = new GameObject();
-		backBall->GetComponent<Transform>()->position = glm::vec3(7,5,-14);
+		backBall->GetComponent<Transform>()->position = glm::vec3(0,5,-14);
 		backBall->GetComponent<Transform>()->scale = glm::vec3(2,2,2);
 		backBall->AddComponent<ObjectTag>("solid");
 		addRigidBodyToBall(backBall, s);
-		backBall->AddComponent<ObjectTag>("push");
 		backBall->GetComponent<Rigidbody>()->AddLinearVelocity(JPH::Vec3(0,0,-80));
 
 
@@ -457,31 +454,16 @@ private:
 		wallB4->GetComponent<Transform>()->position += backwallpos + glm::vec3(-10,16,0);;
 		addRigidbodyToWall(wallB4, b2);
 
-
-
 	}
 
 
 
-		void addRigidbodyToWall(GameObject *wall, Ref<BoxShape> b) 
+	void addRigidbodyToWall(GameObject *wall, Ref<BoxShape> b) 
 	{
 		auto transform = wall->GetComponent<Transform>();
-		wall->AddComponent<Rigidbody>(b, transform->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		wall->AddComponent<Rigidbody>(b, transform->position, Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
 		wall->GetComponent<Rigidbody>()->SetTransform(transform);
 		auto wallRb = wall->GetComponent<Rigidbody>();
-		wallRb->SetOnCollision([wallRb](JPH::BodyID other) {
-			auto en = Physics::GetInstance()->GetEntityFromJoltRb(other);
-			auto scene = SceneManager::GetActiveScene();
-			string balltag = "";
-			JPH::BodyID wallBodyID = wallRb->GetBodyID();
-			BOBO_INFO(wallBodyID);
-			if (scene->GetComponent<ObjectTag>(en)) {
-				balltag = scene->GetComponent<ObjectTag>(en)->tag;
-			}
-			if(balltag == "push") {
-				
-			}
-});
 	}
 
 	
