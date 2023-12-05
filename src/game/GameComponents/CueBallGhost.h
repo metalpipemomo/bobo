@@ -82,7 +82,7 @@ public:
 
 		rb->SetPositionHard(Vec3(xMove, -1.05f, zMove));
 
-		if (Input::GetKey(GLFW_KEY_SPACE) && collisions.size() < 2) 
+		if (Input::GetKey(GLFW_KEY_P) && collisions.size() < 2) 
 		{
 			printf("hi\n");
 			cueball->SetPositionHard(rb->GetPosition());

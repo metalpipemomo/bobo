@@ -37,6 +37,30 @@ public:
             AnchorPos::TOP_CENTER,
             ImVec2(0, 25)
         );
+
+        m_Scene = SceneManager::GetActiveScene();
+        auto objects = m_Scene->GetComponentsOfType<ObjectTag>();
+
+        // getting game object components needed
+        for (auto& object : objects)
+        {
+            if (object->tag == "cue")
+            {
+                m_CueTransform = m_Scene->GetComponent<Transform>(object->m_OwnerId);
+                
+            }
+            if (object->tag == "cueBall")
+            {
+                m_BallRb = m_Scene->GetComponent<Rigidbody>(object->m_OwnerId);
+                m_CueBallTransform = m_Scene->GetComponent<Transform>(object->m_OwnerId);
+                
+            }
+            if (object->tag == "gamemanager")
+            {
+                m_Manager = m_Scene->GetComponent<GameManager>(object->m_OwnerId);
+                
+            }
+        }
     }
 
     void Exit()
@@ -47,34 +71,11 @@ public:
 
     void UpdateGame()
     {
-        auto scene = SceneManager::GetActiveScene();
-        auto objects = scene->GetComponentsOfType<ObjectTag>();
-        Rigidbody* ballRb;
-        Transform* cueTransform;
-        Transform* cueBallTransform;
-
-        // getting game object components needed
-        for (auto& object : objects)
-        {
-            if (object->tag == "cue")
-            {
-                cueTransform = scene->GetComponent<Transform>(object->m_OwnerId);
-                cueTransform->rotation = glm::vec3(0, m_shotAngle, 0);
-            }
-            if (object->tag == "cueBall")
-            {
-                ballRb = scene->GetComponent<Rigidbody>(object->m_OwnerId);
-                cueBallTransform = scene->GetComponent<Transform>(object->m_OwnerId);
-                auto transform = scene->GetComponent<Transform>(object->m_OwnerId);
-                m_cueBallPos = transform->position;
-            }
-            if (object->tag == "gamemanager")
-            {
-                auto manager = scene->GetComponent<GameManager>(object->m_OwnerId);
-                m_StripedBallsRemaining = manager->stripesAmount;
-                m_SolidBallsRemaining = manager->solidsAmount;
-            }
-        }
+        m_StripedBallsRemaining = m_Manager->stripesAmount;
+        m_SolidBallsRemaining = m_Manager->solidsAmount;
+        auto transform = m_BallRb->GetTransform();
+        m_cueBallPos = transform->position;
+        m_CueTransform->rotation = glm::vec3(0, m_shotAngle, 0);
 
         // 1 and 2 keys for rotating shot angle
         if (Input::GetKey(GLFW_KEY_1))
@@ -87,12 +88,12 @@ public:
         }
 
         // if cue ball almost stopped, stop it
-        if (ballRb->GetVelocity().Length() < 0.3)
+        if (m_BallRb->GetVelocity().Length() < 0.3)
         {
-            ballRb->SetVelocity(JPH::Vec3{ 0,0,0 });
+            m_BallRb->SetVelocity(JPH::Vec3{ 0,0,0 });
             // set cue shot indicator and set flag to true
             m_shotAllowedFlag = true;
-            cueTransform->position = cueBallTransform->position + glm::vec3(Sin(m_shotAngle) * -1, 0, Cos(m_shotAngle) * -1);
+            m_CueTransform->position = m_CueBallTransform->position + glm::vec3(Sin(m_shotAngle) * -1, 0, Cos(m_shotAngle) * -1);
         }
 
         // shoot cue ball with space and swap turns
@@ -101,8 +102,8 @@ public:
             // make cue shot indicator dissapear and set flag to false
             m_shotAllowedFlag = false;
             m_shotactivated = false;
-            cueTransform->position = glm::vec3{ 100,100,100 };
-            ballRb->addForce(JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower*m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower*m_maxShotPower));
+            m_CueTransform->position = glm::vec3{ 100,100,100 };
+            m_BallRb->addForce(JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower*m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower*m_maxShotPower));
         }
     }
 
@@ -225,6 +226,7 @@ public:
 
         // if space is held or we are still resolving a shot, the bar must be rendered
         // Power Bar
+
         m_ShootKeyHeld = Input::GetKey(GLFW_KEY_SPACE);
 
         // set the resolving shot timer upon releasing a shot
@@ -310,4 +312,10 @@ private:
     float m_shotAngle;
     int m_maxShotPower = 400;
     float m_rotateSpeed = 1.1;
+
+    Rigidbody* m_BallRb;
+    Transform* m_CueTransform;
+    Transform* m_CueBallTransform;
+    GameManager* m_Manager;
+    Scene* m_Scene;
 };
