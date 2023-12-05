@@ -164,14 +164,16 @@ public:
 		auto objects = scene->GetComponentsOfType<ObjectTag>();
 		auto c = GetInstance();
 		for (auto object : objects) { // Search thuogh all objects to find the tag of the cueBall
-			if (object->tag == "cueBall" && !scene->GetComponent<Rigidbody>(object->m_OwnerId)->IsDisabled())
+			if ((object->tag == "cueBall" || object->tag == "cueBallGhost") && !scene->GetComponent<Rigidbody>(object->m_OwnerId)->IsDisabled())
 			{
 				c->m_trackObjectCords = &(scene->GetComponent<Transform>(object->m_OwnerId))->position; // Get the position pointer.
 				return true;
 			}
 		}
-		if (c->m_mode == 2)
+		if (c->m_mode == 2) {
 			c->m_mode = 1;
+			c->m_distance = 15.0f;
+		}
 		return false;
 	}
 
