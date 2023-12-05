@@ -128,6 +128,20 @@ public:
 			LookRight(50.0f * Time::DeltaTime());
 		}
 	}
+	static void setCameraPositionAndLookAt(const glm::vec3 newCameraPos, const glm::vec3 targetPos) {
+		auto c = GetInstance();
+		c->m_Position = newCameraPos;
+		c->cameraFront = glm::normalize(targetPos - c->m_Position);
+		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront, { 0.0f, 1.0f, 0.0f });
+	}
+	static void HoriSphereNormalizeDistance(const glm::vec3 targetObject, const float distance) {
+		auto c = GetInstance();
+		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+		glm::vec3 switcher = c->m_Position;
+		c->m_Position = targetObject + glm::normalize(glm::vec3( c->m_Position.x - targetObject.x,0.0,c->m_Position.z - targetObject.z ))* distance;
+		c->m_Position.y += distance / 4.0f;
+		switcher = c->m_Position - switcher;
+	}
 
 	static void HandleCameraEvents() {
 		auto c = GetInstance(); // Return the mode number.
@@ -136,6 +150,11 @@ public:
 		}
 		if (!c->mode) { // If 0, essentially.
 			FreeCamControls();
+		}
+		else if (c->mode == 1) {
+			FreeCamControls();
+			setCameraPositionAndLookAt(c->m_Position, { 0.0,0.0,-4.5f });
+			HoriSphereNormalizeDistance({ 0.0,0.0,-4.5f }, 15.0f);
 		}
 	}
 
@@ -170,7 +189,6 @@ public:
 		front.z = sin(glm::radians(c->m_Yaw)) * cos(glm::radians(c->m_Pitch));
 		c->cameraFront = glm::normalize(front);
 		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront,  {0.0f, 1.0f, 0.0f});
-	
 	}
 
 	static void LookRight(float speed){
