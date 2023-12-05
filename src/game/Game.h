@@ -35,6 +35,7 @@ private:
 	const float m_ballDistance = .42;
 	// other game objects
 	GameObject* cueball;
+	GameObject* cueballGhost;
 
 	void SetBallPos(GameObject* ball, float xOffset, float zOffset)
 	{
@@ -152,6 +153,21 @@ private:
 		Ref<SphereShape> s2 = new SphereShape(0.2);
 		s2->SetDensity(600);
 		addRigidBodyToBall(cueball, s2);
+
+		CreateGhostBall();
+	}
+
+	void CreateGhostBall() 
+	{
+		cueballGhost = new GameObject();
+		cueballGhost->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("white"));
+		cueballGhost->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0, .35, 1);
+		cueballGhost->GetComponent<Transform>()->scale = glm::vec3(.2, .2, .2);
+		cueballGhost->AddComponent<ObjectTag>("cueBallGhost");
+
+		auto transform = cueballGhost->GetComponent<Transform>();
+		cueballGhost->AddComponent<Rigidbody>(new SphereShape(0.2), transform->position, Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING, transform, true);
+		cueballGhost->AddComponent<CueBallGhost>(cueballGhost->GetComponent<Rigidbody>(), cueball->GetComponent<Rigidbody>());
 	}
 
 	void addRigidBodyToBall(GameObject *ball, Ref<SphereShape> s) 
@@ -177,7 +193,9 @@ private:
 			Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
 			auto scene = SceneManager::GetActiveScene();
 			auto objects = scene->GetComponentsOfType<GameManager>();
+			auto cbg = scene->GetComponentsOfType<CueBallGhost>()[0];
 			string balltag;
+			printf("%f\n", scene->GetComponent<Transform>(en)->position.y);
 			// get balls tag that is either "striped" or "solid" 
 			if (scene->GetComponent<ObjectTag>(en)) {
 				balltag = scene->GetComponent<ObjectTag>(en)->tag;
@@ -213,7 +231,7 @@ private:
 					rb->DisableBody();
 
 					auto inGameState = GameStateManager::FetchGameState(GameStateLabel::IN_GAME);
-					
+					cbg->Enable();
 				}
 			}
 

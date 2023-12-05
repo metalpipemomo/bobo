@@ -39,7 +39,10 @@ public:
 		}
 		m_id = body->GetID();
 		transform = trnsfrm;
-		
+		// setting physics settings
+		PhysicsSettings settings = PhysicsSettings();
+		settings.mMinVelocityForRestitution = 0;
+		Physics::GetInstance()->GetPhysicsSystem()->SetPhysicsSettings(settings);
 	}
 
 	~Rigidbody() 
@@ -67,6 +70,11 @@ public:
 		if (transform != nullptr && disabled) {
 			SetPosition(JPH::Vec3{ 100,100,100 });
 		}
+	}
+
+	void EnableBody()
+	{
+		disabled = false;
 	}
 
 	void DisableBody() 
@@ -143,6 +151,17 @@ public:
 	void SetOnCollisionEnd(function<void(BodyID)> callback)
 	{
 		Physics::GetInstance()->m_ContactListener->SetOnCollisionEndListener(m_id, callback);
+	}
+
+	void SetMotionType(bool isStatic) 
+	{
+		if(isStatic) 
+		{
+			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetMotionType(m_id, EMotionType::Static, EActivation::Activate);
+		} else 
+		{
+			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetMotionType(m_id, EMotionType::Dynamic, EActivation::Activate);
+		}
 	}
 
 	// set a function to be called when this object continues a collision with another object.
