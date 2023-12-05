@@ -128,6 +128,19 @@ public:
 			LookRight(50.0f * Time::DeltaTime());
 		}
 	}
+
+	static void SlideControls() {
+		if (Input::GetKey(GLFW_KEY_D))
+		{
+			MoveRight(10.0f * Time::DeltaTime());
+		}
+		if (Input::GetKey(GLFW_KEY_A))
+		{
+			MoveRight(-10.0f * Time::DeltaTime());
+		}
+	}
+
+
 	static void setCameraPositionAndLookAt(const glm::vec3 newCameraPos, const glm::vec3 targetPos) {
 		auto c = GetInstance();
 		c->m_Position = newCameraPos;
@@ -151,10 +164,13 @@ public:
 		if (!c->mode) { // If 0, essentially.
 			FreeCamControls();
 		}
-		else if (c->mode == 1) {
-			FreeCamControls();
+		else if (c->mode == 1) { // If 1, table view
+			SlideControls();
 			setCameraPositionAndLookAt(c->m_Position, { 0.0,0.0,-4.5f });
 			HoriSphereNormalizeDistance({ 0.0,0.0,-4.5f }, 15.0f);
+		}
+		else {
+			SlideControls();
 		}
 	}
 
