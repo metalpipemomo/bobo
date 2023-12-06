@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../engine/EntityComponent/Component.h"
-#include "../../engine/EntityComponent/BaseComponents/Transform.h"
+#include "../../../engine/EntityComponent/Component.h"
+#include "../../../engine/EntityComponent/BaseComponents/Transform.h"
 
 #define PI 3.14159265
 
