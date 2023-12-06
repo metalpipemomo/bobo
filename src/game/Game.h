@@ -8,6 +8,8 @@
 #include "GameComponents/ObjectTag.h"
 #include "GameComponents/GameManager.h"
 #include "GameComponents/CueBallGhost.h"
+#include "GameComponents/IntroSequenceComponents/RoofMove.h";
+#include "GameComponents/IntroSequenceComponents/DestroyAfterFall.h"
 
 #include "../engine/GameState/GameStateManager.h"
 #include "GameState/GameOverState.h"
@@ -59,91 +61,91 @@ private:
 		solidOneBall->GetComponent<Transform>()->position = m_firstBallPos;
 		solidOneBall->GetComponent<Transform>()->scale = m_ballScale;
 		solidOneBall->AddComponent<ObjectTag>("solid");
-		addRigidBodyToBall(solidOneBall, s);
+		AddRigidBodyToBall(solidOneBall, s);
 		// 2nd row
 		auto StripedNineBall = new GameObject();
 		StripedNineBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_9"));
 		StripedNineBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedNineBall, -0.5 * m_ballDistance, -m_ballDistance);
-		addRigidBodyToBall(StripedNineBall, s);
+		AddRigidBodyToBall(StripedNineBall, s);
 		//
 		auto SolidTwoBall = new GameObject();
 		SolidTwoBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_2"));
 		SolidTwoBall->AddComponent<ObjectTag>("solid");
 		SetBallPos(SolidTwoBall, 0.5 * m_ballDistance, -m_ballDistance);
-		addRigidBodyToBall(SolidTwoBall, s);
+		AddRigidBodyToBall(SolidTwoBall, s);
 		// 3rd row
 		auto StripedTenBall = new GameObject();
 		StripedTenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_10"));
 		StripedTenBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedTenBall, -m_ballDistance, -2 * m_ballDistance);
-		addRigidBodyToBall(StripedTenBall, s);
+		AddRigidBodyToBall(StripedTenBall, s);
 		//
 		auto SolidEightBall = new GameObject();
 		SolidEightBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("8_ball"));
 		SolidEightBall->AddComponent<ObjectTag>("8ball");
 		SetBallPos(SolidEightBall, 0, -2 * m_ballDistance);
-		addRigidBodyToBall(SolidEightBall, s);
+		AddRigidBodyToBall(SolidEightBall, s);
 		//
 		auto SolidThreeBall = new GameObject();
 		SolidThreeBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_3"));
 		SolidThreeBall->AddComponent<ObjectTag>("solid");
 		SetBallPos(SolidThreeBall, m_ballDistance, -2 * m_ballDistance);
-		addRigidBodyToBall(SolidThreeBall, s);
+		AddRigidBodyToBall(SolidThreeBall, s);
 		// 4th row 
 		auto StripedElevenBall = new GameObject();
 		StripedElevenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_11"));
 		StripedElevenBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedElevenBall, -1.5 * m_ballDistance, -3 * m_ballDistance);
-		addRigidBodyToBall(StripedElevenBall, s);
+		AddRigidBodyToBall(StripedElevenBall, s);
 		//
 		auto SolidSevenBall = new GameObject();
 		SolidSevenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_7"));
 		SolidSevenBall->AddComponent<ObjectTag>("solid");
 		SetBallPos(SolidSevenBall, -0.5 * m_ballDistance, -3 * m_ballDistance);
-		addRigidBodyToBall(SolidSevenBall, s);
+		AddRigidBodyToBall(SolidSevenBall, s);
 		//
 		auto StripedFourteenBall = new GameObject();
 		StripedFourteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_14"));
 		StripedFourteenBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedFourteenBall, 0.5 * m_ballDistance, -3 * m_ballDistance);
-		addRigidBodyToBall(StripedFourteenBall, s);
+		AddRigidBodyToBall(StripedFourteenBall, s);
 		//
 		auto SolidFourBall = new GameObject();
 		SolidFourBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_4"));
 		SolidFourBall->AddComponent<ObjectTag>("solid");
 		SetBallPos(SolidFourBall, 1.5 * m_ballDistance, -3 * m_ballDistance);
-		addRigidBodyToBall(SolidFourBall, s);
+		AddRigidBodyToBall(SolidFourBall, s);
 		// 5th row
 		auto SolidFiveBall = new GameObject();
 		SolidFiveBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_5"));
 		SolidFiveBall->AddComponent<ObjectTag>("solid");
 		SetBallPos(SolidFiveBall, -2 * m_ballDistance, -4 * m_ballDistance);
-		addRigidBodyToBall(SolidFiveBall, s);
+		AddRigidBodyToBall(SolidFiveBall, s);
 		//
 		auto StripedThirteenBall = new GameObject();
 		StripedThirteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_13"));
 		StripedThirteenBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedThirteenBall, -1 * m_ballDistance, -4 * m_ballDistance);
-		addRigidBodyToBall(StripedThirteenBall, s);
+		AddRigidBodyToBall(StripedThirteenBall, s);
 		//
 		auto StripedFifteenBall = new GameObject();
 		StripedFifteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_15"));
 		StripedFifteenBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedFifteenBall, 0, -4 * m_ballDistance);
-		addRigidBodyToBall(StripedFifteenBall, s);
+		AddRigidBodyToBall(StripedFifteenBall, s);
 		//
 		auto SolidSixBall = new GameObject();
 		SolidSixBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_6"));
 		SolidSixBall->AddComponent<ObjectTag>("solid");
 		SetBallPos(SolidSixBall, m_ballDistance, -4 * m_ballDistance);
-		addRigidBodyToBall(SolidSixBall, s);
+		AddRigidBodyToBall(SolidSixBall, s);
 		//
 		auto StripedTwelveBall = new GameObject();
 		StripedTwelveBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_12"));
 		StripedTwelveBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedTwelveBall, 2 * m_ballDistance, -4 * m_ballDistance);
-		addRigidBodyToBall(StripedTwelveBall, s);
+		AddRigidBodyToBall(StripedTwelveBall, s);
 		// cue ball
 		cueball = new GameObject();
 		cueball->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("white"));
@@ -152,7 +154,7 @@ private:
 		cueball->AddComponent<ObjectTag>("cueBall");
 		Ref<SphereShape> s2 = new SphereShape(0.2);
 		s2->SetDensity(600);
-		addRigidBodyToBall(cueball, s2);
+		AddRigidBodyToBall(cueball, s2);
 
 		CreateGhostBall();
 	}
@@ -170,7 +172,7 @@ private:
 		cueballGhost->AddComponent<CueBallGhost>(cueballGhost->GetComponent<Rigidbody>(), cueball->GetComponent<Rigidbody>());
 	}
 
-	void addRigidBodyToBall(GameObject *ball, Ref<SphereShape> s) 
+	void AddRigidBodyToBall(GameObject *ball, Ref<SphereShape> s) 
 	{
 		auto transform = ball->GetComponent<Transform>();
 		ball->AddComponent<Rigidbody>(s, transform->position, Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
@@ -291,7 +293,7 @@ private:
 	// Setting up the scene models
 	void SceneSetup() 
 	{
-		// display line creation
+		//// display line creation
 		auto shotIndicator = new GameObject();
 		shotIndicator->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("8_ball"));
 		shotIndicator->GetComponent<Transform>()->scale = glm::vec3{ 0.05,0.05,1 };
@@ -343,10 +345,196 @@ private:
 		chair2->GetComponent<Transform>()->position += glm::vec3{ -7, 0, 0 };
 		chair2->GetComponent<Transform>()->rotation = glm::vec3{ 0, glm::pi<float>(), 0 };
 
+
+
+		auto floatingIsland = new GameObject();
+		floatingIsland->AddComponent<Material>(ModelLoader::GetModel("floatingisland"), TextureLoader::GetTexture("floatingislandtexture"));
+		floatingIsland->GetComponent<Transform>()->position = m_tablePosition;
+		floatingIsland->GetComponent<Transform>()->position += glm::vec3{ 0, -7.5, -5 };
+
+
 		// setup initial balls position and rigidbody
 		BallsSetup();
+		SetUpWalls();
+		SpawnWallMovers();
 		TableRigidBodySetUp();
 	}
+
+
+	void SetUpWalls() 
+	{
+		Ref<BoxShape> b = new BoxShape(JPH::Vec3(1,5,10));
+		b->SetDensity(400);
+		
+		Ref<BoxShape> floorB = new BoxShape(JPH::Vec3(25, 1, 25));
+
+
+		auto floor = new GameObject();
+		floor->AddComponent<Material>(ModelLoader::GetModel("floor"), TextureLoader::GetTexture("floor"));
+		floor->GetComponent<Transform>()->position = m_tablePosition;
+		floor->GetComponent<Transform>()->position += glm::vec3{ 0, -7.5, -5 };
+
+		auto groundbox = new GameObject();
+		//groundbox->AddComponent<Material>(ModelLoader::GetModel("cube2"), TextureLoader::GetTexture("brick"));
+		groundbox->GetComponent<Transform>()->position = m_tablePosition;
+		groundbox->GetComponent<Transform>()->position += glm::vec3{ 0, -6, -5 };
+		auto transform = groundbox->GetComponent<Transform>();
+		groundbox->AddComponent<Rigidbody>(floorB, transform->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		groundbox->GetComponent<Rigidbody>()->SetTransform(transform);
+
+		
+		auto rightwallPos = glm::vec3{20,-6,-5};
+
+		auto wallR1 = new GameObject();
+		wallR1->AddComponent<Material>(ModelLoader::GetModel("wallpiece"), TextureLoader::GetTexture("brick"));
+		wallR1->GetComponent<Transform>()->position = m_tablePosition;
+		wallR1->GetComponent<Transform>()->position += rightwallPos + glm::vec3(0,6,-10);
+		wallR1->AddComponent<DestroyAfterFall>(wallR1->GetComponent<Transform>());
+		AddRigidbodyToWall(wallR1, b);
+
+		auto wallR2 = new GameObject();
+		wallR2->AddComponent<Material>(ModelLoader::GetModel("wallpiece"), TextureLoader::GetTexture("brick"));
+		wallR2->GetComponent<Transform>()->position = m_tablePosition;
+		wallR2->GetComponent<Transform>()->position += rightwallPos + glm::vec3(0,6,10);
+		wallR2->AddComponent<DestroyAfterFall>(wallR2->GetComponent<Transform>());
+		AddRigidbodyToWall(wallR2, b);
+
+
+		auto wallR3 = new GameObject();
+		wallR3->AddComponent<Material>(ModelLoader::GetModel("wallpiece"), TextureLoader::GetTexture("brick"));
+		wallR3->GetComponent<Transform>()->position = m_tablePosition;
+		wallR3->GetComponent<Transform>()->position += rightwallPos + glm::vec3(0,16,10);
+		wallR3->AddComponent<DestroyAfterFall>(wallR3->GetComponent<Transform>());
+		AddRigidbodyToWall(wallR3, b);
+
+
+		auto wallR4 = new GameObject();
+		wallR4->AddComponent<Material>(ModelLoader::GetModel("wallpiece"), TextureLoader::GetTexture("brick"));
+		wallR4->GetComponent<Transform>()->position = m_tablePosition;
+		wallR4->GetComponent<Transform>()->position += rightwallPos + glm::vec3(0,16,-10);
+		wallR4->AddComponent<DestroyAfterFall>(wallR4->GetComponent<Transform>());
+		AddRigidbodyToWall(wallR4, b);
+
+
+		auto leftwallPos = glm::vec3{-20,-6,-5};
+
+		auto wallL1 = new GameObject();
+		wallL1->AddComponent<Material>(ModelLoader::GetModel("wallpiece"), TextureLoader::GetTexture("brick"));
+		wallL1->GetComponent<Transform>()->position = m_tablePosition;
+		wallL1->GetComponent<Transform>()->position += leftwallPos + glm::vec3(0,6,-10);
+		AddRigidbodyToWall(wallL1, b);
+
+		auto wallL2 = new GameObject();
+		wallL2->AddComponent<Material>(ModelLoader::GetModel("wallpiece"), TextureLoader::GetTexture("brick"));
+		wallL2->GetComponent<Transform>()->position = m_tablePosition;
+		wallL2->GetComponent<Transform>()->position += leftwallPos + glm::vec3(0,6,10);
+		wallL1->AddComponent<DestroyAfterFall>(wallL1->GetComponent<Transform>());
+		AddRigidbodyToWall(wallL2, b);
+
+
+		auto wallL3 = new GameObject();
+		wallL3->AddComponent<Material>(ModelLoader::GetModel("wallpiece"), TextureLoader::GetTexture("brick"));
+		wallL3->GetComponent<Transform>()->position = m_tablePosition;
+		wallL3->GetComponent<Transform>()->position += leftwallPos + glm::vec3(0,16,10);
+		wallL3->AddComponent<DestroyAfterFall>(wallL3->GetComponent<Transform>());
+		AddRigidbodyToWall(wallL3, b);
+
+
+		auto wallL4 = new GameObject();
+		wallL4->AddComponent<Material>(ModelLoader::GetModel("wallpiece"), TextureLoader::GetTexture("brick"));
+		wallL4->GetComponent<Transform>()->position = m_tablePosition;
+		wallL4->GetComponent<Transform>()->position += leftwallPos + glm::vec3(0,16,-10);
+		wallL4->AddComponent<DestroyAfterFall>(wallL4->GetComponent<Transform>());
+		AddRigidbodyToWall(wallL4, b);
+
+
+
+		auto backwallpos = glm::vec3{0,-6,-24};
+		Ref<BoxShape> b2 = new BoxShape(JPH::Vec3(10,5,1));
+		b2->SetDensity(400);
+
+		auto wallB1 = new GameObject();
+		wallB1->AddComponent<Material>(ModelLoader::GetModel("backwallpiece"), TextureLoader::GetTexture("brick"));
+		wallB1->GetComponent<Transform>()->position = m_tablePosition;
+		wallB1->GetComponent<Transform>()->position += backwallpos + glm::vec3(-10,6,0);
+		wallB1->AddComponent<DestroyAfterFall>(wallB1->GetComponent<Transform>());
+		AddRigidbodyToWall(wallB1, b2);
+
+		auto wallB2 = new GameObject();
+		wallB2->AddComponent<Material>(ModelLoader::GetModel("backwallpiece"), TextureLoader::GetTexture("brick"));
+		wallB2->GetComponent<Transform>()->position = m_tablePosition;
+		wallB2->GetComponent<Transform>()->position += backwallpos + glm::vec3(10,6,0);
+		wallB2->AddComponent<DestroyAfterFall>(wallB2->GetComponent<Transform>());
+		AddRigidbodyToWall(wallB2, b2);
+
+
+		auto wallB3 = new GameObject();
+		wallB3->AddComponent<Material>(ModelLoader::GetModel("backwallpiece"), TextureLoader::GetTexture("brick"));
+		wallB3->GetComponent<Transform>()->position = m_tablePosition;
+		wallB3->GetComponent<Transform>()->position += backwallpos + glm::vec3(10,16,0);
+		wallB3->AddComponent<DestroyAfterFall>(wallB3->GetComponent<Transform>());
+		AddRigidbodyToWall(wallB3, b2);
+
+
+		auto wallB4 = new GameObject();
+		wallB4->AddComponent<Material>(ModelLoader::GetModel("backwallpiece"), TextureLoader::GetTexture("brick"));
+		wallB4->GetComponent<Transform>()->position = m_tablePosition;
+		wallB4->GetComponent<Transform>()->position += backwallpos + glm::vec3(-10,16,0);
+		wallB4->AddComponent<DestroyAfterFall>(wallB4->GetComponent<Transform>());
+		AddRigidbodyToWall(wallB4, b2);
+
+		auto ceiling = new GameObject();
+		ceiling->AddComponent<Material>(ModelLoader::GetModel("floor"), TextureLoader::GetTexture("ceiling"));
+		ceiling->AddComponent<ObjectTag>("ceiling");
+		ceiling->GetComponent<Transform>()->position = m_tablePosition;
+		ceiling->GetComponent<Transform>()->position += glm::vec3{ 0, 13, -5 };
+		ceiling->AddComponent<RoofMove>(ceiling->GetComponent<Transform>(), 5);
+
+	}
+
+	void SpawnWallMovers(){
+	
+		Ref<SphereShape> s = new SphereShape(2);
+		s->SetDensity(5000);
+
+		auto rightball = new GameObject();
+		rightball->GetComponent<Transform>()->position = glm::vec3(7,5,-9);
+		rightball->GetComponent<Transform>()->scale = glm::vec3(2,2,2);
+		rightball->AddComponent<DestroyAfterFall>(rightball->GetComponent<Transform>());
+		rightball->AddComponent<ObjectTag>("rightWallMover");
+		AddRigidBodyToBall(rightball, s);
+		rightball->GetComponent<Rigidbody>()->SetMotionType(true);
+		
+		
+		auto leftBall = new GameObject();
+		leftBall->GetComponent<Transform>()->position = glm::vec3(-7,5,-9);
+		leftBall->GetComponent<Transform>()->scale = glm::vec3(2,2,2);
+		leftBall->AddComponent<DestroyAfterFall>(leftBall->GetComponent<Transform>());
+		leftBall->AddComponent<ObjectTag>("leftWallMover");
+		AddRigidBodyToBall(leftBall, s);
+		leftBall->GetComponent<Rigidbody>()->SetMotionType(true);
+
+		auto backBall = new GameObject();
+		backBall->GetComponent<Transform>()->position = glm::vec3(0,5,-14);
+		backBall->GetComponent<Transform>()->scale = glm::vec3(2,2,2);
+		backBall->AddComponent<DestroyAfterFall>(backBall->GetComponent<Transform>());
+		backBall->AddComponent<ObjectTag>("backWallMover");
+		AddRigidBodyToBall(backBall, s);
+		backBall->GetComponent<Rigidbody>()->SetMotionType(true);
+
+	}
+
+
+
+	void AddRigidbodyToWall(GameObject *wall, Ref<BoxShape> b) 
+	{
+		auto transform = wall->GetComponent<Transform>();
+		wall->AddComponent<Rigidbody>(b, transform->position, Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
+		wall->GetComponent<Rigidbody>()->SetTransform(transform);
+		auto wallRb = wall->GetComponent<Rigidbody>();
+	}
+
+	
 
 	void Setup()
 	{

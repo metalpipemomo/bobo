@@ -60,6 +60,27 @@ public:
                 m_Manager = m_Scene->GetComponent<GameManager>(object->m_OwnerId);
                 
             }
+
+            //Blast off walls on InGameStateEnter
+            if (object->tag == "ceiling")
+            {
+                m_Scene->GetComponent<RoofMove>(object->m_OwnerId)->StartMove();
+            }
+            if (object->tag == "leftWallMover")
+            {
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->AddLinearVelocity(JPH::Vec3(80,0,0));
+            }
+            if (object->tag == "rightWallMover")
+            {
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->AddLinearVelocity(JPH::Vec3(-80,0,0));
+            }
+            if (object->tag == "backWallMover")
+            {
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->AddLinearVelocity(JPH::Vec3(0,0,-80));
+            }
         }
     }
 
