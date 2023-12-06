@@ -7,6 +7,7 @@
 #include "GameComponents/FunnyMove.h"
 #include "GameComponents/ObjectTag.h"
 #include "GameComponents/GameManager.h"
+#include "GameComponents/RoofMove.h";
 
 #include "../engine/GameState/GameStateManager.h"
 #include "GameState/GameOverState.h"
@@ -250,12 +251,12 @@ private:
 	void SceneSetup() 
 	{
 		//// display line creation
-		//auto shotIndicator = new GameObject();
-		//shotIndicator->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("8_ball"));
-		//shotIndicator->GetComponent<Transform>()->scale = glm::vec3{ 0.05,0.05,1 };
-		//shotIndicator->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0, 0.35, 3) + glm::vec3(0, 0, -1);
-		//shotIndicator->GetComponent<Transform>()->rotation = glm::vec3(0, 0, 0);
-		//shotIndicator->AddComponent<ObjectTag>("cue");
+		auto shotIndicator = new GameObject();
+		shotIndicator->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("8_ball"));
+		shotIndicator->GetComponent<Transform>()->scale = glm::vec3{ 0.05,0.05,1 };
+		shotIndicator->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0, 0.35, 3) + glm::vec3(0, 0, -1);
+		shotIndicator->GetComponent<Transform>()->rotation = glm::vec3(0, 0, 0);
+		shotIndicator->AddComponent<ObjectTag>("cue");
 		// cue creation
 		auto cue = new GameObject();
 		cue->AddComponent<Material>(ModelLoader::GetModel("pool_cue"), TextureLoader::GetTexture("cue"));
@@ -310,7 +311,7 @@ private:
 
 
 		// setup initial balls position and rigidbody
-		//BallsSetup();
+		BallsSetup();
 		SetUpWalls();
 		TableRigidBodySetUp();
 	}
@@ -322,33 +323,6 @@ private:
 		b->SetDensity(400);
 		
 		Ref<BoxShape> floorB = new BoxShape(JPH::Vec3(25, 1, 25));
-
-
-		Ref<SphereShape> s = new SphereShape(2);
-		s->SetDensity(5000);
-
-		// 1st row
-		auto rightball = new GameObject();
-		rightball->GetComponent<Transform>()->position = glm::vec3(7,5,-9);
-		rightball->GetComponent<Transform>()->scale = glm::vec3(2,2,2);
-		rightball->AddComponent<ObjectTag>("solid");
-		addRigidBodyToBall(rightball, s);
-		rightball->GetComponent<Rigidbody>()->AddLinearVelocity(JPH::Vec3(80,0,0));
-		
-		
-		auto leftBall = new GameObject();
-		leftBall->GetComponent<Transform>()->position = glm::vec3(-7,5,-9);
-		leftBall->GetComponent<Transform>()->scale = glm::vec3(2,2,2);
-		leftBall->AddComponent<ObjectTag>("solid");
-		addRigidBodyToBall(leftBall, s);
-		leftBall->GetComponent<Rigidbody>()->AddLinearVelocity(JPH::Vec3(-80,0,0));
-
-		auto backBall = new GameObject();
-		backBall->GetComponent<Transform>()->position = glm::vec3(0,5,-14);
-		backBall->GetComponent<Transform>()->scale = glm::vec3(2,2,2);
-		backBall->AddComponent<ObjectTag>("solid");
-		addRigidBodyToBall(backBall, s);
-		backBall->GetComponent<Rigidbody>()->AddLinearVelocity(JPH::Vec3(0,0,-80));
 
 
 		auto floor = new GameObject();
@@ -453,6 +427,42 @@ private:
 		wallB4->GetComponent<Transform>()->position = m_tablePosition;
 		wallB4->GetComponent<Transform>()->position += backwallpos + glm::vec3(-10,16,0);;
 		addRigidbodyToWall(wallB4, b2);
+
+		auto ceiling = new GameObject();
+		ceiling->AddComponent<Material>(ModelLoader::GetModel("floor"), TextureLoader::GetTexture("ceiling"));
+		ceiling->GetComponent<Transform>()->position = m_tablePosition;
+		ceiling->GetComponent<Transform>()->position += glm::vec3{ 0, 13, -5 };
+		//ceiling->AddComponent<RoofMove>(ceiling->GetComponent<Transform>(), 3, SceneManager::GetActiveScene());
+
+	}
+
+	void spawnBallMovers(){
+	
+		Ref<SphereShape> s = new SphereShape(2);
+		s->SetDensity(5000);
+
+		// 1st row
+		auto rightball = new GameObject();
+		rightball->GetComponent<Transform>()->position = glm::vec3(7,5,-9);
+		rightball->GetComponent<Transform>()->scale = glm::vec3(2,2,2);
+		rightball->AddComponent<ObjectTag>("solid");
+		addRigidBodyToBall(rightball, s);
+		rightball->GetComponent<Rigidbody>()->AddLinearVelocity(JPH::Vec3(80,0,0));
+		
+		
+		auto leftBall = new GameObject();
+		leftBall->GetComponent<Transform>()->position = glm::vec3(-7,5,-9);
+		leftBall->GetComponent<Transform>()->scale = glm::vec3(2,2,2);
+		leftBall->AddComponent<ObjectTag>("solid");
+		addRigidBodyToBall(leftBall, s);
+		leftBall->GetComponent<Rigidbody>()->AddLinearVelocity(JPH::Vec3(-80,0,0));
+
+		auto backBall = new GameObject();
+		backBall->GetComponent<Transform>()->position = glm::vec3(0,5,-14);
+		backBall->GetComponent<Transform>()->scale = glm::vec3(2,2,2);
+		backBall->AddComponent<ObjectTag>("solid");
+		addRigidBodyToBall(backBall, s);
+		backBall->GetComponent<Rigidbody>()->AddLinearVelocity(JPH::Vec3(0,0,-80));
 
 	}
 
