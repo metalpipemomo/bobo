@@ -89,11 +89,13 @@ public:
 			cueball->SetPositionHard(rb->GetPosition());
 			cueball->EnableBody();
 			Disable();
+			
 		}
 	}
 
 	void Enable() {
 		enabled = true;
+		Camera::GetTarget();
 	}
 
 	void Disable() {
@@ -101,6 +103,7 @@ public:
 		wasEnabled = false;
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().DeactivateBody(rb->GetBodyID());
 		//SceneManager::GetActiveScene()->GetComponent<Renderer>(m_OwnerId);
+		Camera::GetTarget();
 	}
 
 private:
