@@ -249,6 +249,10 @@ public:
 	static void Init() 
 	{
 		PhysicsWorld = new Physics();
+		// setting physics settings
+		PhysicsSettings settings = PhysicsSettings();
+		settings.mMinVelocityForRestitution = 0;
+		PhysicsWorld->GetPhysicsSystem()->SetPhysicsSettings(settings);
 	};
 
 	static Physics* GetInstance() { return PhysicsWorld; }

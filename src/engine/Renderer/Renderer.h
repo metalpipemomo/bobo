@@ -99,10 +99,13 @@ public:
 
 			glm::mat4 translation = glm::identity<glm::mat4>();
 			translation = glm::translate(translation, transform->position);
-			glm::mat4 rotation = glm::identity<glm::mat4>();
-			rotation = glm::rotate(rotation, transform->rotation.x, { 1, 0, 0 });
-			rotation = glm::rotate(rotation, transform->rotation.y, { 0, 1, 0 });
-			rotation = glm::rotate(rotation, transform->rotation.z, { 0, 0, 1 });
+			glm::mat4 rotX = glm::rotate(glm::identity<glm::mat4>(), transform->rotation.x, { 1, 0, 0 });
+			glm::mat4 rotY = glm::rotate(glm::identity<glm::mat4>(), transform->rotation.y, { 0, 1, 0 });
+			glm::mat4 rotZ = glm::rotate(glm::identity<glm::mat4>(), transform->rotation.z, { 0, 0, 1 });
+
+
+			glm::mat4 rotation = rotZ * rotY * rotX;
+			
 			glm::mat4 scale = glm::identity<glm::mat4>();
 			scale = glm::scale(scale, transform->scale);
 			material->model = translation * rotation * scale;

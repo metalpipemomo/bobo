@@ -7,6 +7,7 @@
 #include "GameComponents/FunnyMove.h"
 #include "GameComponents/ObjectTag.h"
 #include "GameComponents/GameManager.h"
+#include "GameComponents/CueBallGhost.h"
 #include "GameComponents/RoofMove.h";
 
 #include "../engine/GameState/GameStateManager.h"
@@ -35,6 +36,7 @@ private:
 	const float m_ballDistance = .42;
 	// other game objects
 	GameObject* cueball;
+	GameObject* cueballGhost;
 
 	void SetBallPos(GameObject* ball, float xOffset, float zOffset)
 	{
@@ -152,6 +154,21 @@ private:
 		Ref<SphereShape> s2 = new SphereShape(0.2);
 		s2->SetDensity(600);
 		addRigidBodyToBall(cueball, s2);
+
+		CreateGhostBall();
+	}
+
+	void CreateGhostBall() 
+	{
+		cueballGhost = new GameObject();
+		cueballGhost->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("white"));
+		cueballGhost->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0, .35, 1);
+		cueballGhost->GetComponent<Transform>()->scale = glm::vec3(.2, .2, .2);
+		cueballGhost->AddComponent<ObjectTag>("cueBallGhost");
+
+		auto transform = cueballGhost->GetComponent<Transform>();
+		cueballGhost->AddComponent<Rigidbody>(new SphereShape(0.2), transform->position, Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING, transform, true);
+		cueballGhost->AddComponent<CueBallGhost>(cueballGhost->GetComponent<Rigidbody>(), cueball->GetComponent<Rigidbody>());
 	}
 
 	void addRigidBodyToBall(GameObject *ball, Ref<SphereShape> s) 
@@ -177,7 +194,11 @@ private:
 			Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
 			auto scene = SceneManager::GetActiveScene();
 			auto objects = scene->GetComponentsOfType<GameManager>();
+			auto cbg = scene->GetComponentsOfType<CueBallGhost>()[0];
 			string balltag;
+			// prob not best practice but we stay silly
+			auto gameState = (InGameState *) GameStateManager::FetchGameState(GameStateLabel::IN_GAME);
+			printf("%f\n", scene->GetComponent<Transform>(en)->position.y);
 			// get balls tag that is either "striped" or "solid" 
 			if (scene->GetComponent<ObjectTag>(en)) {
 				balltag = scene->GetComponent<ObjectTag>(en)->tag;
@@ -192,8 +213,10 @@ private:
 					auto transform = scene->GetComponent<Transform>(en);
 					transform->position = glm::vec3{ 100,100,100 };
 					rb->DisableBody();
+					gameState->SinkStriped();
 					//scene->DestroyEntity(en);
 					NotificationManager::SendAlphaBannerNotification("A striped ball was sunk!", NotificationTextColor::GREEN);
+					
 				}
 				else if (balltag == "solid")
 				{
@@ -202,8 +225,27 @@ private:
 					auto transform = scene->GetComponent<Transform>(en);
 					transform->position = glm::vec3{ 100,100,100 };
 					rb->DisableBody();
+					gameState->SinkSolid();
 					//scene->DestroyEntity(en);
 					NotificationManager::SendAlphaBannerNotification("A solid ball was sunk!", NotificationTextColor::GREEN);
+				}
+				else if (balltag == "cueBall") 
+				{
+					NotificationManager::SendAlphaBannerNotification("The cue ball has been sunk.", NotificationTextColor::RED);
+					auto rb = scene->GetComponent<Rigidbody>(en);
+					auto transform = scene->GetComponent<Transform>(en);
+					transform->position = glm::vec3{ 100,100,100 };
+					rb->DisableBody();
+					gameState->SinkCueBall();
+					cbg->Enable();
+				}
+				else if (balltag == "8ball") 
+				{
+					auto rb = scene->GetComponent<Rigidbody>(en);
+					auto transform = scene->GetComponent<Transform>(en);
+					transform->position = glm::vec3{ 100,100,100 };
+					rb->DisableBody();
+					gameState->Sink8Ball();
 				}
 			}
 
