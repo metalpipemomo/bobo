@@ -37,6 +37,30 @@ public:
             AnchorPos::TOP_CENTER,
             ImVec2(0, 25)
         );
+
+        m_Scene = SceneManager::GetActiveScene();
+        auto objects = m_Scene->GetComponentsOfType<ObjectTag>();
+
+        // getting game object components needed
+        for (auto& object : objects)
+        {
+            if (object->tag == "cue")
+            {
+                m_CueTransform = m_Scene->GetComponent<Transform>(object->m_OwnerId);
+                
+            }
+            if (object->tag == "cueBall")
+            {
+                m_BallRb = m_Scene->GetComponent<Rigidbody>(object->m_OwnerId);
+                m_CueBallTransform = m_Scene->GetComponent<Transform>(object->m_OwnerId);
+                
+            }
+            if (object->tag == "gamemanager")
+            {
+                m_Manager = m_Scene->GetComponent<GameManager>(object->m_OwnerId);
+                
+            }
+        }
     }
 
     void Exit()
@@ -47,34 +71,11 @@ public:
 
     void UpdateGame()
     {
-        auto scene = SceneManager::GetActiveScene();
-        auto objects = scene->GetComponentsOfType<ObjectTag>();
-        Rigidbody* ballRb;
-        Transform* cueTransform;
-        Transform* cueBallTransform;
-
-        // getting game object components needed
-        for (auto& object : objects)
-        {
-            if (object->tag == "cue")
-            {
-                cueTransform = scene->GetComponent<Transform>(object->m_OwnerId);
-                cueTransform->rotation = glm::vec3(0, m_shotAngle, 0);
-            }
-            if (object->tag == "cueBall")
-            {
-                ballRb = scene->GetComponent<Rigidbody>(object->m_OwnerId);
-                cueBallTransform = scene->GetComponent<Transform>(object->m_OwnerId);
-                auto transform = scene->GetComponent<Transform>(object->m_OwnerId);
-                m_cueBallPos = transform->position;
-            }
-            if (object->tag == "gamemanager")
-            {
-                auto manager = scene->GetComponent<GameManager>(object->m_OwnerId);
-                m_StripedBallsRemaining = manager->stripesAmount;
-                m_SolidBallsRemaining = manager->solidsAmount;
-            }
-        }
+        m_StripedBallsRemaining = m_Manager->stripesAmount;
+        m_SolidBallsRemaining = m_Manager->solidsAmount;
+        auto transform = m_BallRb->GetTransform();
+        m_cueBallPos = transform->position;
+        m_CueTransform->rotation = glm::vec3(0, m_shotAngle, 0);
 
         // 1 and 2 keys for rotating shot angle
         if (Input::GetKey(GLFW_KEY_1))
@@ -87,12 +88,12 @@ public:
         }
 
         // if cue ball almost stopped, stop it
-        if (ballRb->GetVelocity().Length() < 0.3)
+        if (m_BallRb->GetVelocity().Length() < 0.3 || !m_BallRb->IsEnabled())
         {
-            ballRb->SetVelocity(JPH::Vec3{ 0,0,0 });
+            m_BallRb->SetVelocity(JPH::Vec3{ 0,0,0 });
             // set cue shot indicator and set flag to true
             m_shotAllowedFlag = true;
-            cueTransform->position = cueBallTransform->position + glm::vec3(Sin(m_shotAngle) * -1, 0, Cos(m_shotAngle) * -1);
+            m_CueTransform->position = m_CueBallTransform->position + glm::vec3(Sin(m_shotAngle) * -1, 0, Cos(m_shotAngle) * -1);
         }
 
         // shoot cue ball with space and swap turns
@@ -101,8 +102,10 @@ public:
             // make cue shot indicator dissapear and set flag to false
             m_shotAllowedFlag = false;
             m_shotactivated = false;
-            cueTransform->position = glm::vec3{ 100,100,100 };
-            ballRb->addForce(JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower*m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower*m_maxShotPower));
+            m_ShotWasAllowed = false;
+            m_HasSunkBadly = false;
+            m_CueTransform->position = glm::vec3{ 100,100,100 };
+            m_BallRb->addForce(JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower*m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower*m_maxShotPower));
         }
     }
 
@@ -126,20 +129,71 @@ public:
         }
         m_TurnLastUpdate = m_Turn;
 
-        // Update game over logic, such as checking for restart or exit
-        if (m_SolidBallsRemaining <= 0)
+        if (!m_ShotWasAllowed && m_shotAllowedFlag) {
+            m_Turn = m_NextTurn;
+            m_HasSunkBadly = false;
+            m_ShotWasAllowed = true;
+        }
+    }
+
+    void SinkSolid() 
+    {
+        NotificationManager::SendDefaultNotification("A Solid Ball has been Sunk", NotificationTextColor::BLUE);
+        
+        if (m_Turn == Turn::P1 && !m_HasSunkBadly)
         {
-            GameOverState* gameOverState = (GameOverState*)GameStateManager::FetchGameState(GameStateLabel::GAME_OVER);
-            gameOverState->SetWinner("Solids");
-            GameStateManager::EnterGameState(GameStateLabel::GAME_OVER);
+            m_NextTurn = Turn::P1;
+        }
+        if (m_Turn == Turn::P2) 
+        {
+            m_NextTurn = Turn::P1;
+            m_HasSunkBadly = true;
+        }
+    }
+
+    void SinkStriped() 
+    {
+        NotificationManager::SendDefaultNotification("A Striped Ball has been Sunk", NotificationTextColor::RED);
+        
+        if (m_Turn == Turn::P1)
+        {
+            m_NextTurn = Turn::P2;
+            m_HasSunkBadly = true;
+        }
+        if (m_Turn == Turn::P2 && !m_HasSunkBadly)
+        {
+            m_NextTurn = Turn::P2;
+        }
+    }
+
+    void SetWinner(std::string winner) 
+    {
+        GameOverState* gameOverState = (GameOverState*)GameStateManager::FetchGameState(GameStateLabel::GAME_OVER);
+        gameOverState->SetWinner(winner);
+        GameStateManager::EnterGameState(GameStateLabel::GAME_OVER);
+    }
+
+    void Sink8Ball()
+    {
+        if (m_SolidBallsRemaining > 0 && m_StripedBallsRemaining > 0) {
+            if (m_Turn == Turn::P1)
+                SetWinner("Stripes");
+            else
+                SetWinner("Solids");
+
+            return;
         }
 
-        if (m_StripedBallsRemaining <= 0)
-        {
-            GameOverState* gameOverState = (GameOverState*)GameStateManager::FetchGameState(GameStateLabel::GAME_OVER);
-            gameOverState->SetWinner("Stripes");
-            GameStateManager::EnterGameState(GameStateLabel::GAME_OVER);
-        }
+        if (m_SolidBallsRemaining <= 0)
+            SetWinner("Solids");
+        else
+            SetWinner("Stripes");
+    }
+
+    void SinkCueBall()
+    {
+        // unneeded maybe? this is called in game.h but idk if we actually need this
+        // if you remove this then remember to remove its call in game.h
     }
 
     void Render()
@@ -167,12 +221,7 @@ public:
 
         ImGuiHelpers::LowerCursor();
 
-        if (ImGuiHelpers::MakeCenterButton("Sink Solid") && m_Turn == Turn::P1)
-        {
-            m_SolidBallsRemaining--;
-            NotificationManager::SendDefaultNotification("A Solid Ball has been Sunk", NotificationTextColor::BLUE);
-            m_Turn = Turn::P2;
-        }
+        
 
         ImGui::End();
 
@@ -196,12 +245,7 @@ public:
 
         ImGuiHelpers::LowerCursor();
 
-        if (ImGuiHelpers::MakeCenterButton("Sink Striped") && m_Turn == Turn::P2)
-        {
-            m_StripedBallsRemaining--;
-            NotificationManager::SendDefaultNotification("A Striped Ball has been Sunk", NotificationTextColor::RED);
-            m_Turn = Turn::P1;
-        }
+        
 
         ImGui::End();
 
@@ -225,7 +269,8 @@ public:
 
         // if space is held or we are still resolving a shot, the bar must be rendered
         // Power Bar
-        m_ShootKeyHeld = Input::GetKey(GLFW_KEY_SPACE);
+
+        m_ShootKeyHeld = Input::GetKey(GLFW_KEY_SPACE) && m_BallRb->IsEnabled();
 
         // set the resolving shot timer upon releasing a shot
         if (!m_ShootKeyHeld && m_ShootKeyHeldLastFrame && m_ResolvingShot <= 0)
@@ -284,6 +329,8 @@ public:
                 // Has resolved shot
                 m_ShotPower = 0;
             }
+
+            m_NextTurn = m_Turn == Turn::P1 ? Turn::P2 : Turn::P1;
         }
 
         m_ShootKeyHeldLastFrame = m_ShootKeyHeld;
@@ -293,6 +340,8 @@ private:
     int m_SolidBallsRemaining;
     Turn m_Turn;
     Turn m_TurnLastUpdate;
+    Turn m_NextTurn;
+    bool m_HasSunkBadly = false;
     float m_ShotPower;
     int m_ShotPowerDirection;
 
@@ -305,9 +354,16 @@ private:
     bool m_ShootKeyHeldLastFrame;
 
     bool m_shotAllowedFlag;
+    bool m_ShotWasAllowed = false;
     bool m_shotactivated;
     glm::vec3 m_cueBallPos;
     float m_shotAngle;
     int m_maxShotPower = 400;
     float m_rotateSpeed = 1.1;
+
+    Rigidbody* m_BallRb;
+    Transform* m_CueTransform;
+    Transform* m_CueBallTransform;
+    GameManager* m_Manager;
+    Scene* m_Scene;
 };

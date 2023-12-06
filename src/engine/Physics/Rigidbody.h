@@ -53,7 +53,9 @@ public:
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().RemoveBody(m_id);
 	}
 
-
+	bool IsEnabled() {
+		return !disabled;
+	}
 
 	void Awake() 
 	{

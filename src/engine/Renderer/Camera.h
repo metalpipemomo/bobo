@@ -4,6 +4,7 @@
 #include "../../Game/GameComponents/ObjectTag.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "../Physics/Rigidbody.h"
 
 class Camera
 {
@@ -163,7 +164,7 @@ public:
 		auto objects = scene->GetComponentsOfType<ObjectTag>();
 		auto c = GetInstance();
 		for (auto object : objects) { // Search thuogh all objects to find the tag of the cueBall
-			if (object->tag == "cueBall")
+			if ((object->tag == "cueBall" || object->tag == "cueBallGhost") && scene->GetComponent<Rigidbody>(object->m_OwnerId)->IsEnabled())
 			{
 				c->m_trackObjectCords = &(scene->GetComponent<Transform>(object->m_OwnerId))->position; // Get the position pointer.
 				return true;

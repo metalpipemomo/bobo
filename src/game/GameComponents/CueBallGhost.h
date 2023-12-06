@@ -46,6 +46,7 @@ public:
 
 		if (!wasEnabled) {
 			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().ActivateBody(rb->GetBodyID());
+			cueball->SetVelocity({ 0,0,0 });
 			rb->SetPositionHard(resetPos);
 			wasEnabled = true;
 		}
@@ -82,17 +83,19 @@ public:
 
 		rb->SetPositionHard(Vec3(xMove, -1.05f, zMove));
 
-		if (Input::GetKey(GLFW_KEY_SPACE) && collisions.size() < 2) 
+		if (Input::GetKey(GLFW_KEY_P) && collisions.size() < 2) 
 		{
 			printf("hi\n");
 			cueball->SetPositionHard(rb->GetPosition());
 			cueball->EnableBody();
 			Disable();
+			
 		}
 	}
 
 	void Enable() {
 		enabled = true;
+		Camera::GetTarget();
 	}
 
 	void Disable() {
@@ -100,6 +103,7 @@ public:
 		wasEnabled = false;
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().DeactivateBody(rb->GetBodyID());
 		//SceneManager::GetActiveScene()->GetComponent<Renderer>(m_OwnerId);
+		Camera::GetTarget();
 	}
 
 private:

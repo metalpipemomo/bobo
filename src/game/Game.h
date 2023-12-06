@@ -195,6 +195,8 @@ private:
 			auto objects = scene->GetComponentsOfType<GameManager>();
 			auto cbg = scene->GetComponentsOfType<CueBallGhost>()[0];
 			string balltag;
+			// prob not best practice but we stay silly
+			auto gameState = (InGameState *) GameStateManager::FetchGameState(GameStateLabel::IN_GAME);
 			printf("%f\n", scene->GetComponent<Transform>(en)->position.y);
 			// get balls tag that is either "striped" or "solid" 
 			if (scene->GetComponent<ObjectTag>(en)) {
@@ -210,8 +212,10 @@ private:
 					auto transform = scene->GetComponent<Transform>(en);
 					transform->position = glm::vec3{ 100,100,100 };
 					rb->DisableBody();
+					gameState->SinkStriped();
 					//scene->DestroyEntity(en);
 					NotificationManager::SendAlphaBannerNotification("A striped ball was sunk!", NotificationTextColor::GREEN);
+					
 				}
 				else if (balltag == "solid")
 				{
@@ -220,18 +224,27 @@ private:
 					auto transform = scene->GetComponent<Transform>(en);
 					transform->position = glm::vec3{ 100,100,100 };
 					rb->DisableBody();
+					gameState->SinkSolid();
 					//scene->DestroyEntity(en);
 					NotificationManager::SendAlphaBannerNotification("A solid ball was sunk!", NotificationTextColor::GREEN);
 				}
-				else if (balltag == "cueBall") {
+				else if (balltag == "cueBall") 
+				{
 					NotificationManager::SendAlphaBannerNotification("The cue ball has been sunk.", NotificationTextColor::RED);
 					auto rb = scene->GetComponent<Rigidbody>(en);
 					auto transform = scene->GetComponent<Transform>(en);
 					transform->position = glm::vec3{ 100,100,100 };
 					rb->DisableBody();
-
-					auto inGameState = GameStateManager::FetchGameState(GameStateLabel::IN_GAME);
+					gameState->SinkCueBall();
 					cbg->Enable();
+				}
+				else if (balltag == "8ball") 
+				{
+					auto rb = scene->GetComponent<Rigidbody>(en);
+					auto transform = scene->GetComponent<Transform>(en);
+					transform->position = glm::vec3{ 100,100,100 };
+					rb->DisableBody();
+					gameState->Sink8Ball();
 				}
 			}
 
