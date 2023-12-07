@@ -58,13 +58,22 @@ public:
             }
             if (object->tag == "cueBall")
             {
+                //Cue ball will be placed in its' default location.
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(true);
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetVelocity({0, 0, 0});
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetPosition({-0.002514, -1.048805, -2.501616});
                 m_BallRb = m_Scene->GetComponent<Rigidbody>(object->m_OwnerId);
                 m_CueBallTransform = m_Scene->GetComponent<Transform>(object->m_OwnerId);
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
                 
             }
             if (object->tag == "gamemanager")
             {
+                //Stripes and solids are set to 7 at the start, which will translate to the game
+                //manager.
                 m_Manager = m_Scene->GetComponent<GameManager>(object->m_OwnerId);
+                m_Manager->stripesAmount = 7;
+                m_Manager->solidsAmount = 7;
                 
             }
             if (object->tag == "solid")
@@ -96,6 +105,90 @@ public:
                 m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
                 m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->AddLinearVelocity(JPH::Vec3(0,0,-80));
             }
+
+        }
+
+        //Only the balls have been given alt tags, no other entities within the game have them.
+
+        auto objects2 = m_Scene->GetComponentsOfType<ObjectTagAlt>();
+
+        //All the balls will be looped through, and, depending on the ball's number
+        //will be placed on a different part of the pool table in the game environment.
+        //If the ball was previoiusly disabled, it will be enabled again.
+        for(auto& object : objects2){
+            m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(true);
+            m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetVelocity({0, 0, 0});
+            float x = 0.0;
+            float y = 0.0;
+            float z = 0.0;
+            if(object->tag == "Ball_001"){
+                x = 0.000000;
+                y = -1.047199;
+                z = -5.500000;
+            } else if(object->tag == "Ball_009"){
+                x = -0.210000;
+                y = -1.047199;
+                z = -5.920382;
+            } else if(object->tag == "Ball_002"){
+                x = 0.209997;
+                y = -1.047199;
+                z = -5.920956;
+            } else if(object->tag == "Ball_010"){
+                x = -0.418573;
+                y = -1.047199;
+                z = -6.339496;
+            } else if(object->tag == "Ball_008"){
+                x = -0.000000;
+                y = -1.047199;
+                z = -6.340000;
+            } else if(object->tag == "Ball_003"){
+                x = 0.421423;
+                y = -1.047199;
+                z = -6.339947;
+            } else if(object->tag == "Ball_011"){
+                x = -0.630001;
+                y = -1.047199;
+                z = -6.760705;
+            } else if(object->tag == "Ball_007"){
+                x = -0.210000;
+                y = -1.047199;
+                z = -6.760676;
+            }else if(object->tag == "Ball_014") {
+                x = 0.209998;
+                y = -1.047199;
+                z = -6.760877;
+            } else if(object->tag == "Ball_004"){
+                x = 0.629998;
+                y = -1.047199;
+                z = -6.761054;
+            } else if(object->tag == "Ball_005"){
+                x = -0.840000;
+                y = -1.047199;
+                z = -7.180000;
+            } else if(object->tag == "Ball_013"){
+                x = -0.420001;
+                y = -1.047199;
+                z = -7.181280;
+            } else if(object->tag == "Ball_015"){
+                x = -0.000002;
+                y = -1.047199;
+                z = -7.180532;
+            } else if(object->tag == "Ball_006"){
+                x = 0.418829;
+                y = -1.047199;
+                z = -7.180407;
+            } else if(object->tag == "Ball_012"){
+                x = 0.839998;
+                y = -1.047199;
+                z = -7.180000;
+            } else {
+
+            }
+            //All the balls have been put into the triangle formation at the start.
+            JPH::Vec3 newPos = {x, y, z};
+            m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->EnableBody();
+            m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetPosition(newPos);
+            m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
         }
     }
 
