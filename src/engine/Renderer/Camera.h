@@ -61,7 +61,6 @@ public:
 		return result;
 	}
 
-
 	static void MoveUp(float speed) {
 	
 		auto c = GetInstance();
@@ -179,6 +178,7 @@ public:
 		c->cameraFront = glm::normalize(targetPos - c->m_Position);
 		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront, { 0.0f, 1.0f, 0.0f });
 	}
+
 	static void HoriSphereNormalizeDistance(const glm::vec3 targetObject) {
 		auto c = GetInstance();
 		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -243,7 +243,7 @@ public:
 		// Clamp pitch to prevent flipping upside down
 		if (c->m_Pitch > 89.0f) c->m_Pitch = 89.0f;
 		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-    // Update camera front vector using yaw and pitch angles
+		// Update camera front vector using yaw and pitch angles
 		glm::vec3 front;
 		front.x = cos(glm::radians(c->m_Yaw)) * cos(glm::radians(c->m_Pitch));
 		front.y = sin(glm::radians(c->m_Pitch));
@@ -259,17 +259,28 @@ public:
 		// Clamp pitch to prevent flipping upside down
 		if (c->m_Pitch > 89.0f) c->m_Pitch = 89.0f;
 		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-    // Update camera front vector using yaw and pitch angles
+		// Update camera front vector using yaw and pitch angles
 		glm::vec3 front;
 		front.x = cos(glm::radians(c->m_Yaw)) * cos(glm::radians(c->m_Pitch));
 		front.y = sin(glm::radians(c->m_Pitch));
 		front.z = sin(glm::radians(c->m_Yaw)) * cos(glm::radians(c->m_Pitch));
 		c->cameraFront = glm::normalize(front);
-		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront,  {0.0f, 1.0f, 0.0f});
-	
+		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront, { 0.0f, 1.0f, 0.0f });
+	}
+
+	static void Update()
+	{
+		auto c = GetInstance();
+		c->cameraRight = { -glm::cos(c->m_Yaw), 0, glm::sin(c->m_Yaw) };
+		c->cameraRight = glm::normalize(c->cameraRight);
+		c->cameraUp = glm::cross(c->cameraFront, c->cameraRight);
+		c->cameraUp = glm::normalize(c->cameraUp);
 	}
 
 	static glm::vec3 GetPosition() { return GetInstance()->m_Position; }
+	static glm::vec3 GetCameraFront() { return GetInstance()->cameraFront; }
+	static glm::vec3 GetCameraRight() { return GetInstance()->cameraRight; }
+	static glm::vec3 GetCameraUp() { return GetInstance()->cameraUp; }
 	static glm::mat4 GetViewMatrix() { return GetInstance()->m_View; }
 	static glm::mat4 GetProjectionMatrix() { return GetInstance()->m_Projection; }
 
@@ -309,6 +320,8 @@ private:
 	// johnny variables//
 
 	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 cameraRight;
+	glm::vec3 cameraUp;
 	float m_Yaw   = -90.0f; // Initialize yaw angle
 	float m_Pitch = 0.0f;   // Initialize pitch angle
 	///

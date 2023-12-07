@@ -53,13 +53,6 @@ public:
     // Stops a Sound
     static void StopSound(SoundInfo soundInfo);
 
-    /**
-    * Updates the position of a looping 3D sound that has already been loaded and is playing back.
-    * The SoundInfo object's position coordinates will be used for the new sound position, so
-    * SoundInfo::set3DCoords(x,y,z) should be called before this method to set the new desired location.
-    */
-    static void Update3DSoundPosition(SoundInfo soundInfo);
-
     // Returns whether or not a sound is playing
     static bool SoundIsPlaying(SoundInfo soundInfo);
 
@@ -73,12 +66,34 @@ public:
         float forwardX, float forwardY, float forwardZ,
         float upX, float upY, float upZ);
 
+    static SoundInfo* GetSoundInfo(const std::string& identifier)
+    {
+        auto a = GetInstance();
+        std::string id = TransformIdentifier(identifier);
+        if (!HasLoadedSound(TransformIdentifier(id))) return nullptr;
+        return &a->m_SoundInfoStore[id];
+    }
+
+    static const bool HasLoadedSound(const std::string& identifier)
+    {
+        auto a = GetInstance();
+        return a->m_SoundInfoStore.find(a->TransformIdentifier(identifier)) != a->m_SoundInfoStore.end();
+    }
+
+    static const std::string TransformIdentifier(const std::string& identifier)
+    {
+        std::string copyIdentifier = identifier;
+        std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
+        return copyIdentifier;
+    }
+
 private:
     static Audio* GetInstance()
     {
         static Audio* instance = new Audio();
         return instance;
     }
+
     // FMOD Studio API system, which can play FMOD sound banks (*.bank)
     FMOD::Studio::System* p_StudioSystem = nullptr;
 
@@ -125,4 +140,11 @@ private:
 
     // Sets the 3D position of a sound        
     void Set3dChannelPosition(SoundInfo soundInfo, FMOD::Channel* channel);
+
+    /**
+    * Updates the position of a looping 3D sound that has already been loaded and is playing back.
+    * The SoundInfo object's position coordinates will be used for the new sound position, so
+    * SoundInfo::set3DCoords(x,y,z) should be called before this method to set the new desired location.
+    */
+    static void Update3DSoundPosition(SoundInfo soundInfo);
 };
