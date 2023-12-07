@@ -6,6 +6,7 @@
 
 #include "GameComponents/FunnyMove.h"
 #include "GameComponents/ObjectTag.h"
+#include "GameComponents/ObjectTagAlt.h"
 #include "GameComponents/GameManager.h"
 #include "GameComponents/CueBallGhost.h"
 #include "GameComponents/IntroSequenceComponents/RoofMove.h";
@@ -38,6 +39,7 @@ private:
 	// other game objects
 	GameObject* cueball;
 	GameObject* cueballGhost;
+	std::vector<GameObject*> balls;
 
 	void SetBallPos(GameObject* ball, float xOffset, float zOffset)
 	{
@@ -47,7 +49,7 @@ private:
 		ball->GetComponent<Transform>()->scale = m_ballScale;
 		ball->GetComponent<Transform>()->rotation.y = -glm::pi<float>()/2;
 		ball->GetComponent<Transform>()->rotation.z = glm::pi<float>() / 2;
-	}
+	};
 
 	// setting up balls initial positions
 	void BallsSetup()
@@ -61,91 +63,122 @@ private:
 		solidOneBall->GetComponent<Transform>()->position = m_firstBallPos;
 		solidOneBall->GetComponent<Transform>()->scale = m_ballScale;
 		solidOneBall->AddComponent<ObjectTag>("solid");
+		solidOneBall->AddComponent<ObjectTagAlt>("Ball_001");
 		AddRigidBodyToBall(solidOneBall, s);
+		balls.push_back(solidOneBall);
 		// 2nd row
 		auto StripedNineBall = new GameObject();
 		StripedNineBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_9"));
 		StripedNineBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedNineBall, -0.5 * m_ballDistance, -m_ballDistance);
 		AddRigidBodyToBall(StripedNineBall, s);
+		StripedNineBall->AddComponent<ObjectTagAlt>("Ball_009");
+		balls.push_back(StripedNineBall);
 		//
 		auto SolidTwoBall = new GameObject();
 		SolidTwoBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_2"));
 		SolidTwoBall->AddComponent<ObjectTag>("solid");
 		SetBallPos(SolidTwoBall, 0.5 * m_ballDistance, -m_ballDistance);
 		AddRigidBodyToBall(SolidTwoBall, s);
+		SolidTwoBall->AddComponent<ObjectTagAlt>("Ball_002");
+		balls.push_back(SolidTwoBall);
+
 		// 3rd row
 		auto StripedTenBall = new GameObject();
 		StripedTenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_10"));
 		StripedTenBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedTenBall, -m_ballDistance, -2 * m_ballDistance);
 		AddRigidBodyToBall(StripedTenBall, s);
+		StripedTenBall->AddComponent<ObjectTagAlt>("Ball_010");
+		balls.push_back(StripedTenBall);
 		//
 		auto SolidEightBall = new GameObject();
 		SolidEightBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("8_ball"));
 		SolidEightBall->AddComponent<ObjectTag>("8ball");
 		SetBallPos(SolidEightBall, 0, -2 * m_ballDistance);
 		AddRigidBodyToBall(SolidEightBall, s);
+		SolidEightBall->AddComponent<ObjectTagAlt>("Ball_008");
+		balls.push_back(SolidEightBall);
 		//
 		auto SolidThreeBall = new GameObject();
 		SolidThreeBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_3"));
 		SolidThreeBall->AddComponent<ObjectTag>("solid");
 		SetBallPos(SolidThreeBall, m_ballDistance, -2 * m_ballDistance);
 		AddRigidBodyToBall(SolidThreeBall, s);
+		SolidThreeBall->AddComponent<ObjectTagAlt>("Ball_003");
+		balls.push_back(SolidThreeBall);
 		// 4th row 
 		auto StripedElevenBall = new GameObject();
 		StripedElevenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_11"));
 		StripedElevenBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedElevenBall, -1.5 * m_ballDistance, -3 * m_ballDistance);
 		AddRigidBodyToBall(StripedElevenBall, s);
+		StripedElevenBall->AddComponent<ObjectTagAlt>("Ball_011");
+		balls.push_back(StripedElevenBall);
 		//
 		auto SolidSevenBall = new GameObject();
 		SolidSevenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_7"));
 		SolidSevenBall->AddComponent<ObjectTag>("solid");
 		SetBallPos(SolidSevenBall, -0.5 * m_ballDistance, -3 * m_ballDistance);
 		AddRigidBodyToBall(SolidSevenBall, s);
+		SolidSevenBall->AddComponent<ObjectTagAlt>("Ball_007");
+		balls.push_back(SolidSevenBall);
 		//
 		auto StripedFourteenBall = new GameObject();
 		StripedFourteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_14"));
 		StripedFourteenBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedFourteenBall, 0.5 * m_ballDistance, -3 * m_ballDistance);
 		AddRigidBodyToBall(StripedFourteenBall, s);
+		StripedFourteenBall->AddComponent<ObjectTagAlt>("Ball_014");
+		balls.push_back(StripedFourteenBall);
 		//
 		auto SolidFourBall = new GameObject();
 		SolidFourBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_4"));
 		SolidFourBall->AddComponent<ObjectTag>("solid");
 		SetBallPos(SolidFourBall, 1.5 * m_ballDistance, -3 * m_ballDistance);
 		AddRigidBodyToBall(SolidFourBall, s);
+		SolidFourBall->AddComponent<ObjectTagAlt>("Ball_004");
+		balls.push_back(SolidFourBall);
 		// 5th row
 		auto SolidFiveBall = new GameObject();
 		SolidFiveBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_5"));
 		SolidFiveBall->AddComponent<ObjectTag>("solid");
 		SetBallPos(SolidFiveBall, -2 * m_ballDistance, -4 * m_ballDistance);
 		AddRigidBodyToBall(SolidFiveBall, s);
+		SolidFiveBall->AddComponent<ObjectTagAlt>("Ball_005");
+		balls.push_back(SolidFiveBall);
 		//
 		auto StripedThirteenBall = new GameObject();
 		StripedThirteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_13"));
 		StripedThirteenBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedThirteenBall, -1 * m_ballDistance, -4 * m_ballDistance);
 		AddRigidBodyToBall(StripedThirteenBall, s);
+		StripedThirteenBall->AddComponent<ObjectTagAlt>("Ball_013");
+		balls.push_back(StripedThirteenBall);
 		//
 		auto StripedFifteenBall = new GameObject();
 		StripedFifteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_15"));
 		StripedFifteenBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedFifteenBall, 0, -4 * m_ballDistance);
 		AddRigidBodyToBall(StripedFifteenBall, s);
+		StripedFifteenBall->AddComponent<ObjectTagAlt>("Ball_015");
+		balls.push_back(StripedFifteenBall);
 		//
 		auto SolidSixBall = new GameObject();
 		SolidSixBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_6"));
 		SolidSixBall->AddComponent<ObjectTag>("solid");
 		SetBallPos(SolidSixBall, m_ballDistance, -4 * m_ballDistance);
 		AddRigidBodyToBall(SolidSixBall, s);
+		SolidSixBall->AddComponent<ObjectTagAlt>("Ball_006");
+		balls.push_back(SolidSixBall);
 		//
 		auto StripedTwelveBall = new GameObject();
 		StripedTwelveBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_12"));
 		StripedTwelveBall->AddComponent<ObjectTag>("striped");
 		SetBallPos(StripedTwelveBall, 2 * m_ballDistance, -4 * m_ballDistance);
 		AddRigidBodyToBall(StripedTwelveBall, s);
+		StripedTwelveBall->AddComponent<ObjectTagAlt>("Ball_012");
+		balls.push_back(StripedTwelveBall);
 		// cue ball
 		cueball = new GameObject();
 		cueball->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("white"));
@@ -157,7 +190,7 @@ private:
 		AddRigidBodyToBall(cueball, s2);
 
 		CreateGhostBall();
-	}
+	};
 
 	void CreateGhostBall() 
 	{
@@ -170,7 +203,7 @@ private:
 		auto transform = cueballGhost->GetComponent<Transform>();
 		cueballGhost->AddComponent<Rigidbody>(new SphereShape(0.2), transform->position, Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING, transform, true);
 		cueballGhost->AddComponent<CueBallGhost>(cueballGhost->GetComponent<Rigidbody>(), cueball->GetComponent<Rigidbody>());
-	}
+	};
 
 	void AddRigidBodyToBall(GameObject *ball, Ref<SphereShape> s) 
 	{
@@ -179,7 +212,7 @@ private:
 		ball->GetComponent<Rigidbody>()->SetTransform(transform);
 		ball->GetComponent<Rigidbody>()->SetBounce(0.4);
 		ball->GetComponent<Rigidbody>()->SetFriction(.4);
-	}
+	};
 
 	void CreateHoleTriggers(float xOffset, float zOffset)
 	{
@@ -596,5 +629,147 @@ private:
 		auto printAfterEvaluation = []() { Log("Printed after evaluation"); };
 		auto evaluator = []() { return Time::RealTimeSinceStartup() > 10; };
 		CoroutineScheduler::StartCoroutine<WaitUntil>(printAfterEvaluation, evaluator);
+	}
+	/** Deletes all of the balls on the board, then replaces them with new ones.
+		*/
+
+void ResetGame() {
+	//Loop through all of the balls and delete them one by one, then replace them with
+	//new ones.
+
+	for (int i = 0; i < balls.size(); i++) {
+		delete(balls[i]);
+	}
+
+	//Ball array is cleared for good measure.
+
+	balls.clear();
+
+	//The balls are reset and remade again.
+
+	Ref<SphereShape> s = new SphereShape(0.2);
+	s->SetDensity(400);
+
+	// 1st row
+	auto solidOneBall = new GameObject();
+	solidOneBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_1"));
+	solidOneBall->GetComponent<Transform>()->position = m_firstBallPos;
+	solidOneBall->GetComponent<Transform>()->scale = m_ballScale;
+	solidOneBall->AddComponent<ObjectTag>("solid");
+	AddRigidBodyToBall(solidOneBall, s);
+	balls.push_back(solidOneBall);
+	// 2nd row
+	auto StripedNineBall = new GameObject();
+	StripedNineBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_9"));
+	StripedNineBall->AddComponent<ObjectTag>("striped");
+	SetBallPos(StripedNineBall, -0.5 * m_ballDistance, -m_ballDistance);
+	AddRigidBodyToBall(StripedNineBall, s);
+	balls.push_back(StripedNineBall);
+	//
+	auto SolidTwoBall = new GameObject();
+	SolidTwoBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_2"));
+	SolidTwoBall->AddComponent<ObjectTag>("solid");
+	SetBallPos(SolidTwoBall, 0.5 * m_ballDistance, -m_ballDistance);
+	AddRigidBodyToBall(SolidTwoBall, s);
+	balls.push_back(SolidTwoBall);
+
+	// 3rd row
+	auto StripedTenBall = new GameObject();
+	StripedTenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_10"));
+	StripedTenBall->AddComponent<ObjectTag>("striped");
+	SetBallPos(StripedTenBall, -m_ballDistance, -2 * m_ballDistance);
+	AddRigidBodyToBall(StripedTenBall, s);
+	balls.push_back(StripedTenBall);
+	//
+	auto SolidEightBall = new GameObject();
+	SolidEightBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("8_ball"));
+	SolidEightBall->AddComponent<ObjectTag>("8ball");
+	SetBallPos(SolidEightBall, 0, -2 * m_ballDistance);
+	AddRigidBodyToBall(SolidEightBall, s);
+	balls.push_back(SolidEightBall);
+	//
+	auto SolidThreeBall = new GameObject();
+	SolidThreeBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_3"));
+	SolidThreeBall->AddComponent<ObjectTag>("solid");
+	SetBallPos(SolidThreeBall, m_ballDistance, -2 * m_ballDistance);
+	AddRigidBodyToBall(SolidThreeBall, s);
+	balls.push_back(SolidThreeBall);
+	// 4th row 
+	auto StripedElevenBall = new GameObject();
+	StripedElevenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_11"));
+	StripedElevenBall->AddComponent<ObjectTag>("striped");
+	SetBallPos(StripedElevenBall, -1.5 * m_ballDistance, -3 * m_ballDistance);
+	AddRigidBodyToBall(StripedElevenBall, s);
+	balls.push_back(StripedElevenBall);
+	//
+	auto SolidSevenBall = new GameObject();
+	SolidSevenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_7"));
+	SolidSevenBall->AddComponent<ObjectTag>("solid");
+	SetBallPos(SolidSevenBall, -0.5 * m_ballDistance, -3 * m_ballDistance);
+	AddRigidBodyToBall(SolidSevenBall, s);
+	balls.push_back(SolidSevenBall);
+	//
+	auto StripedFourteenBall = new GameObject();
+	StripedFourteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_14"));
+	StripedFourteenBall->AddComponent<ObjectTag>("striped");
+	SetBallPos(StripedFourteenBall, 0.5 * m_ballDistance, -3 * m_ballDistance);
+	AddRigidBodyToBall(StripedFourteenBall, s);
+	balls.push_back(StripedFourteenBall);
+	//
+	auto SolidFourBall = new GameObject();
+	SolidFourBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_4"));
+	SolidFourBall->AddComponent<ObjectTag>("solid");
+	SetBallPos(SolidFourBall, 1.5 * m_ballDistance, -3 * m_ballDistance);
+	AddRigidBodyToBall(SolidFourBall, s);
+	balls.push_back(SolidFourBall);
+	// 5th row
+	auto SolidFiveBall = new GameObject();
+	SolidFiveBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_5"));
+	SolidFiveBall->AddComponent<ObjectTag>("solid");
+	SetBallPos(SolidFiveBall, -2 * m_ballDistance, -4 * m_ballDistance);
+	AddRigidBodyToBall(SolidFiveBall, s);
+	balls.push_back(SolidFiveBall);
+	//
+	auto StripedThirteenBall = new GameObject();
+	StripedThirteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_13"));
+	StripedThirteenBall->AddComponent<ObjectTag>("striped");
+	SetBallPos(StripedThirteenBall, -1 * m_ballDistance, -4 * m_ballDistance);
+	AddRigidBodyToBall(StripedThirteenBall, s);
+	balls.push_back(StripedThirteenBall);
+	//
+	auto StripedFifteenBall = new GameObject();
+	StripedFifteenBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_15"));
+	StripedFifteenBall->AddComponent<ObjectTag>("striped");
+	SetBallPos(StripedFifteenBall, 0, -4 * m_ballDistance);
+	AddRigidBodyToBall(StripedFifteenBall, s);
+	balls.push_back(StripedFifteenBall);
+	//
+	auto SolidSixBall = new GameObject();
+	SolidSixBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("solid_6"));
+	SolidSixBall->AddComponent<ObjectTag>("solid");
+	SetBallPos(SolidSixBall, m_ballDistance, -4 * m_ballDistance);
+	AddRigidBodyToBall(SolidSixBall, s);
+	balls.push_back(SolidSixBall);
+	//
+	auto StripedTwelveBall = new GameObject();
+	StripedTwelveBall->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("striped_12"));
+	StripedTwelveBall->AddComponent<ObjectTag>("striped");
+	SetBallPos(StripedTwelveBall, 2 * m_ballDistance, -4 * m_ballDistance);
+	AddRigidBodyToBall(StripedTwelveBall, s);
+	balls.push_back(StripedTwelveBall);
+
+	//Cueball and ghost balls are both made again.
+
+	cueball = new GameObject();
+	cueball->AddComponent<Material>(ModelLoader::GetModel("ball"), TextureLoader::GetTexture("white"));
+	cueball->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0, 0, 3);
+	cueball->GetComponent<Transform>()->scale = glm::vec3(.2, .2, .2);
+	cueball->AddComponent<ObjectTag>("cueBall");
+	Ref<SphereShape> s2 = new SphereShape(0.2);
+	s2->SetDensity(600);
+	AddRigidBodyToBall(cueball, s2);
+
+	CreateGhostBall();
+
 	}
 };
