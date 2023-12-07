@@ -220,10 +220,12 @@ private:
 
 	void CreateHoleTriggers(float xOffset, float zOffset)
 	{
+
 		// create and set the trigger box for a hole
 		auto triggerBox = new GameObject();
-		triggerBox->GetComponent<Transform>()->scale = glm::vec3{ 0.15,.2, 0.15 };
-		triggerBox->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(xOffset, 0, zOffset);
+		triggerBox->GetComponent<Transform>()->scale = glm::vec3{ 0.6,.5, 0.6 };
+		triggerBox->GetComponent<Transform>()->position =  glm::vec3(xOffset, -3, zOffset);
+		//triggerBox->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("striped_14"));
 		triggerBox->AddComponent<Rigidbody>(new BoxShape(RVec3{ 0.15,.25, 0.15 }),
 			triggerBox->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING, nullptr, true);
 		auto triggerBoxRb = triggerBox->GetComponent<Rigidbody>();
@@ -305,37 +307,170 @@ private:
 	{
 		// table creation
 		auto table = new GameObject();
-		table->AddComponent<Material>(ModelLoader::GetModel("Pool_Table"), TextureLoader::GetTexture("Table_Top"));
+		table->AddComponent<Material>(ModelLoader::GetModel("PoolTableFinal"), TextureLoader::GetTexture("pooltabletexture"));
 		auto tableTransform = table->GetComponent<Transform>();
+		tableTransform->scale = glm::vec3(1.3,1.3,1.3);
 		tableTransform->position = m_tablePosition;
-		table->AddComponent<Rigidbody>(new BoxShape(RVec3(4.2, .25, 6.5)), tableTransform->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
-		table->GetComponent<Rigidbody>()->SetFriction(.4);
+		auto tableTop = new GameObject();
+		tableTop->AddComponent<Rigidbody>(new BoxShape(RVec3(4.2, .25, 8)), tableTransform->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		tableTop->GetComponent<Transform>()->scale = glm::vec3(3.9, .25, 7.8);
+		tableTop->GetComponent<Transform>()->position = m_tablePosition;
+		tableTop->GetComponent<Rigidbody>()->SetFriction(.4);
 
 		// adding table sides
 		auto tableSide1 = new GameObject();
-		auto tableSide2 = new GameObject();
-		auto tableSide3 = new GameObject();
-		auto tableSide4 = new GameObject();
-		tableSide1->AddComponent<Rigidbody>(new BoxShape(RVec3(.5, 10, 6.5)), tableTransform->position + glm::vec3(4.6, 0, 0), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
-		tableSide2->AddComponent<Rigidbody>(new BoxShape(RVec3(.5, 10, 6.5)), tableTransform->position + glm::vec3(-4.6, 0, 0), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
-		tableSide3->AddComponent<Rigidbody>(new BoxShape(RVec3(4.2, 10, .5)), tableTransform->position + glm::vec3(0, 0, 6.5), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
-		tableSide4->AddComponent<Rigidbody>(new BoxShape(RVec3(4.2, 10, .5)), tableTransform->position + glm::vec3(0, 0, -6.5), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		//tableSide1->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		tableSide1->GetComponent<Transform>()->position = glm::vec3(-4.55,0,-0.5);
+		tableSide1->AddComponent<Rigidbody>(new BoxShape(RVec3(.5, 10, 3.5)), tableSide1->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		tableSide1->GetComponent<Transform>()->scale = glm::vec3(.5, 10, 3.5);
 		tableSide1->GetComponent<Rigidbody>()->SetFriction(0);
 		tableSide1->GetComponent<Rigidbody>()->SetBounce(1);
+
+		auto tableSide2 = new GameObject();
+		//tableSide2->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		tableSide2->GetComponent<Transform>()->position = glm::vec3(-4.55,0,-8.5);
+		tableSide2->AddComponent<Rigidbody>(new BoxShape(RVec3(.5, 10, 3.5)), tableSide2->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		tableSide2->GetComponent<Transform>()->scale = glm::vec3(.5, 10, 3.5);
 		tableSide2->GetComponent<Rigidbody>()->SetFriction(0);
 		tableSide2->GetComponent<Rigidbody>()->SetBounce(1);
+
+		auto tableSide3 = new GameObject();
+		//tableSide3->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		tableSide3->GetComponent<Transform>()->position = glm::vec3(4.55,0,-8.5);
+		tableSide3->AddComponent<Rigidbody>(new BoxShape(RVec3(.5, 10, 3.5)), tableSide3->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		tableSide3->GetComponent<Transform>()->scale = glm::vec3(.5, 10, 3.5);
 		tableSide3->GetComponent<Rigidbody>()->SetFriction(0);
 		tableSide3->GetComponent<Rigidbody>()->SetBounce(1);
+
+		auto tableSide4 = new GameObject();
+		//tableSide4->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		tableSide4->GetComponent<Transform>()->position = glm::vec3(4.55,0,-0.5);
+		tableSide4->AddComponent<Rigidbody>(new BoxShape(RVec3(.5, 10, 3.5)), tableSide4->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		tableSide4->GetComponent<Transform>()->scale = glm::vec3(.5, 10, 3.5);
 		tableSide4->GetComponent<Rigidbody>()->SetFriction(0);
 		tableSide4->GetComponent<Rigidbody>()->SetBounce(1);
 
+		auto tableSide5 = new GameObject();
+		//tableSide5->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		tableSide5->GetComponent<Transform>()->position = glm::vec3(0,0,4.1);
+		tableSide5->AddComponent<Rigidbody>(new BoxShape(RVec3(3.5, 10, 0.5)), tableSide5->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		tableSide5->GetComponent<Transform>()->scale = glm::vec3(3.5, 10, 0.5);
+		tableSide5->GetComponent<Rigidbody>()->SetFriction(0);
+		tableSide5->GetComponent<Rigidbody>()->SetBounce(1);
+
+		auto tableSide6 = new GameObject();
+		//tableSide6->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		tableSide6->GetComponent<Transform>()->position = glm::vec3(0,0,-13.1);
+		tableSide6->AddComponent<Rigidbody>(new BoxShape(RVec3(3.5, 10, 0.5)), tableSide6->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		tableSide6->GetComponent<Transform>()->scale = glm::vec3(3.5, 10, 0.5);
+		tableSide6->GetComponent<Rigidbody>()->SetFriction(0);
+		tableSide6->GetComponent<Rigidbody>()->SetBounce(1);
+
+
+
+		auto backHoleSide1A = new GameObject();
+		//backHoleSide1A->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		backHoleSide1A->GetComponent<Transform>()->position = glm::vec3(4.5,0,-13.5);
+		backHoleSide1A->AddComponent<Rigidbody>(new BoxShape(RVec3(1, 10, .25)), backHoleSide1A->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		backHoleSide1A->GetComponent<Transform>()->scale = glm::vec3(1, 10, .25);
+		backHoleSide1A->GetComponent<Rigidbody>()->SetFriction(1);
+
+		auto backHoleSide1B = new GameObject();
+		//backHoleSide1B->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		backHoleSide1B->GetComponent<Transform>()->position = glm::vec3(4.9,0,-13);
+		backHoleSide1B->AddComponent<Rigidbody>(new BoxShape(RVec3(.25, 10, 1)), backHoleSide1B->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		backHoleSide1B->GetComponent<Transform>()->scale = glm::vec3(.25, 10, 1);
+		backHoleSide1B->GetComponent<Rigidbody>()->SetFriction(1);
+
+		auto backHoleSide2A = new GameObject();
+		//backHoleSide2A->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		backHoleSide2A->GetComponent<Transform>()->position = glm::vec3(-4.5,0,-13.5);
+		backHoleSide2A->AddComponent<Rigidbody>(new BoxShape(RVec3(1, 10, .25)), backHoleSide2A->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		backHoleSide2A->GetComponent<Transform>()->scale = glm::vec3(1, 10, .25);
+		backHoleSide2A->GetComponent<Rigidbody>()->SetFriction(1);
+
+		auto backHoleSide2B = new GameObject();
+		//backHoleSide2B->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		backHoleSide2B->GetComponent<Transform>()->position = glm::vec3(-4.9,0,-13);
+		backHoleSide2B->AddComponent<Rigidbody>(new BoxShape(RVec3(.25, 10, 1)), backHoleSide2B->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		backHoleSide2B->GetComponent<Transform>()->scale = glm::vec3(.25, 10, 1);
+		backHoleSide2B->GetComponent<Rigidbody>()->SetFriction(1);
+		
+
+		auto backHoleSide3A = new GameObject();
+		//backHoleSide3A->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		backHoleSide3A->GetComponent<Transform>()->position = glm::vec3(-4.5,0,4.5);
+		backHoleSide3A->AddComponent<Rigidbody>(new BoxShape(RVec3(1, 10, .25)), backHoleSide3A->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		backHoleSide3A->GetComponent<Transform>()->scale = glm::vec3(1, 10, .25);
+		backHoleSide3A->GetComponent<Rigidbody>()->SetFriction(1);
+
+		auto backHoleSide3B = new GameObject();
+		//backHoleSide3B->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		backHoleSide3B->GetComponent<Transform>()->position = glm::vec3(-4.9,0,4);
+		backHoleSide3B->AddComponent<Rigidbody>(new BoxShape(RVec3(.25, 10, 1)), backHoleSide3B->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		backHoleSide3B->GetComponent<Transform>()->scale = glm::vec3(.25, 10, 1);
+		backHoleSide3B->GetComponent<Rigidbody>()->SetFriction(1);
+
+
+
+		auto backHoleSide4A = new GameObject();
+		//backHoleSide4A->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		backHoleSide4A->GetComponent<Transform>()->position = glm::vec3(4.5,0,4.5);
+		backHoleSide4A->AddComponent<Rigidbody>(new BoxShape(RVec3(1, 10, .25)), backHoleSide4A->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		backHoleSide4A->GetComponent<Transform>()->scale = glm::vec3(1, 10, .25);
+		backHoleSide4A->GetComponent<Rigidbody>()->SetFriction(1);
+
+		auto backHoleSide4B = new GameObject();
+		//backHoleSide4B->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		backHoleSide4B->GetComponent<Transform>()->position = glm::vec3(4.9,0,4);
+		backHoleSide4B->AddComponent<Rigidbody>(new BoxShape(RVec3(.25, 10, 1)), backHoleSide4B->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		backHoleSide4B->GetComponent<Transform>()->scale = glm::vec3(.25, 10, 1);
+		backHoleSide4B->GetComponent<Rigidbody>()->SetFriction(1);
+
+
+		auto backHoleSideMid1 = new GameObject();
+		//backHoleSideMid1->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		backHoleSideMid1->GetComponent<Transform>()->position = glm::vec3(5.1,0,-4.5);
+		backHoleSideMid1->AddComponent<Rigidbody>(new BoxShape(RVec3(.25, 10, 1)), backHoleSideMid1->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		backHoleSideMid1->GetComponent<Transform>()->scale = glm::vec3(.25, 10, 1);
+		backHoleSideMid1->GetComponent<Rigidbody>()->SetFriction(1);
+
+		auto backHoleSideMid2 = new GameObject();
+		//backHoleSideMid2->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		backHoleSideMid2->GetComponent<Transform>()->position = glm::vec3(-5.1,0,-4.5);
+		backHoleSideMid2->AddComponent<Rigidbody>(new BoxShape(RVec3(.25, 10, 1)), backHoleSideMid2->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		backHoleSideMid2->GetComponent<Transform>()->scale = glm::vec3(.25, 10, 1);
+		backHoleSideMid2->GetComponent<Rigidbody>()->SetFriction(1);
+
+		//auto backHoleSide1 = new GameObject();
+		//backHoleSide1->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("pooltabletexture"));
+		//backHoleSide1->GetComponent<Transform>()->position = glm::vec3(5,0,-13.2);
+		//backHoleSide1->AddComponent<Rigidbody>(new BoxShape(RVec3(3.5, 10, 0.5)), tableSide6->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		//backHoleSide1->GetComponent<Transform>()->scale = glm::vec3(1, 10, 0.5);
+		//backHoleSide1->GetComponent<Transform>()->rotation = glm::vec3(0, -45, 0);
+
+		//backHoleSide1->GetComponent<Rigidbody>()->SetFriction(0);
+		//backHoleSide1->GetComponent<Rigidbody>()->SetBounce(1);
+
+		//tableSide1->AddComponent<Rigidbody>(new BoxShape(RVec3(.5, 10, 6.5)), tableTransform->position + glm::vec3(4.6, 0, 0), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		//tableSide2->AddComponent<Rigidbody>(new BoxShape(RVec3(.5, 10, 6.5)), tableTransform->position + glm::vec3(-4.6, 0, 0), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		//tableSide3->AddComponent<Rigidbody>(new BoxShape(RVec3(4.2, 10, .5)), tableTransform->position + glm::vec3(0, 0, 6.5), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		//tableSide4->AddComponent<Rigidbody>(new BoxShape(RVec3(4.2, 10, .5)), tableTransform->position + glm::vec3(0, 0, -6.5), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		
+		//tableSide2->GetComponent<Rigidbody>()->SetFriction(0);
+		//tableSide2->GetComponent<Rigidbody>()->SetBounce(1);
+		//tableSide3->GetComponent<Rigidbody>()->SetFriction(0);
+		//tableSide3->GetComponent<Rigidbody>()->SetBounce(1);
+		//tableSide4->GetComponent<Rigidbody>()->SetFriction(0);
+		//tableSide4->GetComponent<Rigidbody>()->SetBounce(1);
+
 		// adding hole trigger areas at (x, z) positions
-		CreateHoleTriggers(4.01, 1);
-		CreateHoleTriggers(-4.01, 1);
-		CreateHoleTriggers(4.01, 6.9);
-		CreateHoleTriggers(-4.01, 6.9);
-		CreateHoleTriggers(4.01, -4.9);
-		CreateHoleTriggers(-4.01, -4.9);
+		CreateHoleTriggers(4.5, -4.5);
+		CreateHoleTriggers(-4.5, -4.5);
+		CreateHoleTriggers(4.3, 3.7);
+		CreateHoleTriggers(-4.3, 3.7);
+		CreateHoleTriggers(4.3, -12.7);
+		CreateHoleTriggers(-4.3, -12.7);
 	}
 
 	// Setting up the scene models
