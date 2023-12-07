@@ -128,7 +128,7 @@ public:
         for (auto& ball : m_solidBallTransforms)
         {
             auto ballRb = m_Scene->GetComponent<Rigidbody>(ball->m_OwnerId);
-            if (ballRb->GetVelocity().Length() < m_velocityThreshold)
+            if (ballRb->GetVelocity().Length() < m_velocityThreshold || !ballRb->IsEnabled())
             {
                 ballRb->SetVelocity(JPH::Vec3{ 0,0,0 });
             }
@@ -142,7 +142,7 @@ public:
         for (auto& ball : m_stripedBallTransforms)
         {
             auto ballRb = m_Scene->GetComponent<Rigidbody>(ball->m_OwnerId);
-            if (ballRb->GetVelocity().Length() < m_velocityThreshold)
+            if (ballRb->GetVelocity().Length() < m_velocityThreshold || !ballRb->IsEnabled())
             {
                 ballRb->SetVelocity(JPH::Vec3{ 0,0,0 });
             }
