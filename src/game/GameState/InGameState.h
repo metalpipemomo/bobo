@@ -60,6 +60,14 @@ public:
                 m_Manager = m_Scene->GetComponent<GameManager>(object->m_OwnerId);
                 
             }
+            if (object->tag == "solid")
+            {
+                m_solidBallTransforms.push_back(m_Scene->GetComponent<Transform>(object->m_OwnerId));
+            }
+            if (object->tag == "striped")
+            {
+                m_stripedBallTransforms.push_back(m_Scene->GetComponent<Transform>(object->m_OwnerId));
+            }
 
             //Blast off walls on InGameStateEnter
             if (object->tag == "ceiling")
@@ -97,6 +105,7 @@ public:
         auto transform = m_BallRb->GetTransform();
         m_cueBallPos = transform->position;
         m_CueTransform->rotation = glm::vec3(0, m_shotAngle, 0);
+        allBallsStopped = true;
 
         // 1 and 2 keys for rotating shot angle
         if (Input::GetKey(GLFW_KEY_1))
@@ -108,13 +117,47 @@ public:
             m_shotAngle -= m_rotateSpeed * Time::DeltaTime();
         }
 
+        // check if all balls are stopped
+        for (auto& ball : m_solidBallTransforms)
+        {
+            auto ballRb = m_Scene->GetComponent<Rigidbody>(ball->m_OwnerId);
+            if (ballRb->GetVelocity().Length() < m_velocityThreshold)
+            {
+                ballRb->SetVelocity(JPH::Vec3{ 0,0,0 });
+            }
+            else
+            {
+                allBallsStopped = false;
+                break;
+            }
+        }
+
+        for (auto& ball : m_stripedBallTransforms)
+        {
+            auto ballRb = m_Scene->GetComponent<Rigidbody>(ball->m_OwnerId);
+            if (ballRb->GetVelocity().Length() < m_velocityThreshold)
+            {
+                ballRb->SetVelocity(JPH::Vec3{ 0,0,0 });
+            }
+            else
+            {
+                allBallsStopped = false;
+                break;
+            }
+        }
+
+
+
         // if cue ball almost stopped, stop it
-        if (m_BallRb->GetVelocity().Length() < 0.3 || !m_BallRb->IsEnabled())
+        if (m_BallRb->GetVelocity().Length() < m_velocityThreshold || !m_BallRb->IsEnabled())
         {
             m_BallRb->SetVelocity(JPH::Vec3{ 0,0,0 });
             // set cue shot indicator and set flag to true
+            if (allBallsStopped)
+            {
             m_shotAllowedFlag = true;
             m_CueTransform->position = m_CueBallTransform->position + glm::vec3(Sin(m_shotAngle) * -1, 0, Cos(m_shotAngle) * -1);
+            }
         }
 
         // shoot cue ball with space and swap turns
@@ -387,4 +430,9 @@ private:
     Transform* m_CueBallTransform;
     GameManager* m_Manager;
     Scene* m_Scene;
+
+    std::vector<Transform*> m_solidBallTransforms;
+    std::vector<Transform*> m_stripedBallTransforms;
+    bool allBallsStopped = false;
+    float m_velocityThreshold = 0.1;
 };
