@@ -37,15 +37,13 @@ void Audio::LoadSound(SoundInfo soundInfo, const std::string& identifier)
     auto ae = GetInstance();
     if (!ae->SoundLoaded(soundInfo))
     {
-        std::string copyIdentifier = identifier;
-        std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
-        ae->m_SoundInfoStore.insert({ copyIdentifier, soundInfo });
+        ae->m_SoundInfoStore.insert({ ae->TransformIdentifier(identifier), soundInfo});
         FMOD::Sound* sound;
-        ERRCHECK(ae->p_LowLevelSystem->createSound(soundInfo.m_FilePath, soundInfo.m_Is3D ? FMOD_3D : FMOD_2D, 0, &sound));
+        ERRCHECK(ae->p_LowLevelSystem->createSound(soundInfo.m_UniqueID.c_str(), soundInfo.m_Is3D ? FMOD_3D : FMOD_2D, 0, &sound));
         ERRCHECK(sound->setMode(soundInfo.m_IsLoop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF));
         ERRCHECK(sound->set3DMinMaxDistance(0.5f * ae->DISTANCEFACTOR, 5000.0f * ae->DISTANCEFACTOR));
         ae->m_Sounds.insert({ soundInfo.m_UniqueID, sound });
-        BOBO_INFO("Loaded Sound from File {}", soundInfo.m_FilePath);
+        BOBO_INFO("Loaded Sound from File {}", soundInfo.m_UniqueID);
     } else
     {
         BOBO_WARN("Loading Sound from File {} Failed, Sound was Already Loaded");
@@ -56,15 +54,24 @@ void Audio::PlaySoundI(SoundInfo soundInfo)
 {
     auto ae = GetInstance();
     if (ae->SoundLoaded(soundInfo))
-    {
+    {   
         FMOD::Channel* channel;
 
         // start play in 'paused' state
         ERRCHECK(ae->p_LowLevelSystem->playSound(ae->m_Sounds[soundInfo.m_UniqueID], 0, true, &channel));
 
         if (soundInfo.m_Is3D)
+        {
             ae->Set3dChannelPosition(soundInfo, channel);
-
+        }
+        else
+        {
+            channel->setPan(soundInfo.m_Pan);
+        }
+        channel->setPitch(soundInfo.m_Pitch);
+        channel->setVolume(soundInfo.m_Vol);
+        channel->setMute(soundInfo.m_Muted);
+        
         if (soundInfo.m_IsLoop) // add to channel map of sounds currently playing, to stop later
             ae->m_LoopsPlaying.insert({ soundInfo.m_UniqueID, channel });
 
@@ -72,44 +79,23 @@ void Audio::PlaySoundI(SoundInfo soundInfo)
         ERRCHECK(channel->setPaused(false));
     } else
     {
-        BOBO_WARN("Failed to Play Sound {}, Remember to Load the Sound first using .LoadSound", soundInfo.m_FilePath);
+        BOBO_WARN("Failed to Play Sound {}, Remember to Load the Sound first using .LoadSound", soundInfo.m_UniqueID);
     }
 }
 
 void Audio::PlaySound(const std::string& identifier)
 {
     auto ae = GetInstance();
-
-    std::string copyIdentifier = identifier;
-    std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
-
-    auto soundInfoIt = ae->m_SoundInfoStore.find(copyIdentifier);
+    auto soundInfoIt = ae->m_SoundInfoStore.find(ae->TransformIdentifier(identifier));
+    SoundInfo* soundInfo = &soundInfoIt->second;
     if (soundInfoIt != ae->m_SoundInfoStore.end())
     {
-        SoundInfo* soundInfo = &soundInfoIt->second;
-
-        if (ae->SoundLoaded(*soundInfo))
-        {
-            FMOD::Channel* channel;
-
-            // start play in 'paused' state
-            ERRCHECK(ae->p_LowLevelSystem->playSound(ae->m_Sounds[soundInfo->m_UniqueID], 0, true, &channel));
-
-            if (soundInfo->m_Is3D)
-                ae->Set3dChannelPosition(*soundInfo, channel);
-
-            if (soundInfo->m_IsLoop) // add to channel map of sounds currently playing, to stop later
-                ae->m_LoopsPlaying.insert({ soundInfo->m_UniqueID, channel });
-
-            // start audio playback
-            ERRCHECK(channel->setPaused(false));
-        } else
-        {
-            BOBO_WARN("Failed to Play Sound {}, Remember to Load the Sound first using .LoadSound", soundInfo->m_FilePath);
-        }
+        PlaySoundI(*soundInfo);
+    } else
+    {
+        BOBO_WARN("Failed to Play Sound {}, Remember to Load the Sound first using .LoadSound", soundInfo->m_UniqueID);   
     }
 }
-
 
 void Audio::StopSound(SoundInfo soundInfo)
 {
@@ -120,7 +106,7 @@ void Audio::StopSound(SoundInfo soundInfo)
         ae->m_LoopsPlaying.erase(soundInfo.m_UniqueID);
     } else
     {
-        BOBO_WARN("Failed to Stop Sound {}, Can't Stop a Sound that's not Playing", soundInfo.m_FilePath);
+        BOBO_WARN("Failed to Stop Sound {}, Can't Stop a Sound that's not Playing", soundInfo.m_UniqueID);
     }
 }
 
@@ -138,7 +124,7 @@ void Audio::Update3DSoundPosition(SoundInfo soundInfo)
         ae->Set3dChannelPosition(soundInfo, ae->m_LoopsPlaying[soundInfo.m_UniqueID]);
     } else
     {
-        BOBO_WARN("Failed to Update Sound Position for {}, Can't Update Sound Position of a Sound that's not Playing", soundInfo.m_FilePath);
+        BOBO_WARN("Failed to Update Sound Position for {}, Can't Update Sound Position of a Sound that's not Playing", soundInfo.m_UniqueID);
     }
 }
 
@@ -160,7 +146,7 @@ int Audio::LoadAllSounds(const std::string& directory)
     {
         if (dirEntry.path().extension() != ".mp3") continue;
         auto path = dirEntry.path().generic_string();
-        SoundInfo sf = SoundInfo(path.c_str(), false, false);
+        SoundInfo sf = SoundInfo(path.c_str());
         auto identifier = dirEntry.path().stem().generic_string();
         LoadSound(sf, identifier);
         count++;
@@ -183,5 +169,6 @@ void Audio::Set3dChannelPosition(SoundInfo soundInfo, FMOD::Channel* channel)
         soundInfo.m_PosInfo.y * DISTANCEFACTOR,
         soundInfo.m_PosInfo.z * DISTANCEFACTOR };
     FMOD_VECTOR velocity = { 0.0f, 0.0f, 0.0f };
+    channel->setMode(FMOD_3D);
     ERRCHECK(channel->set3DAttributes(&position, &velocity));
 }
