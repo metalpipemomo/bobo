@@ -70,8 +70,6 @@ void Audio::PlaySoundI(SoundInfo soundInfo)
         }
         channel->setPitch(soundInfo.m_Pitch);
         channel->setVolume(soundInfo.m_Vol);
-
-        BOBO_INFO("Muted: {}", soundInfo.m_Muted);
         channel->setMute(soundInfo.m_Muted);
         
         if (soundInfo.m_IsLoop) // add to channel map of sounds currently playing, to stop later
