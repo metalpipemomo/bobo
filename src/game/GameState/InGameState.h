@@ -58,15 +58,22 @@ public:
             }
             if (object->tag == "cueBall")
             {
+                //Cue ball will be placed in its' default location.
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(true);
                 m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetVelocity({0, 0, 0});
                 m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetPosition({-0.002514, -1.048805, -2.501616});
                 m_BallRb = m_Scene->GetComponent<Rigidbody>(object->m_OwnerId);
                 m_CueBallTransform = m_Scene->GetComponent<Transform>(object->m_OwnerId);
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
                 
             }
             if (object->tag == "gamemanager")
             {
+                //Stripes and solids are set to 7 at the start, which will translate to the game
+                //manager.
                 m_Manager = m_Scene->GetComponent<GameManager>(object->m_OwnerId);
+                m_Manager->stripesAmount = 7;
+                m_Manager->solidsAmount = 7;
                 
             }
             if (object->tag == "solid")
@@ -101,10 +108,13 @@ public:
 
         }
 
-        //Only the balls have been given alt tags, no other entities within the game.
+        //Only the balls have been given alt tags, no other entities within the game have them.
 
         auto objects2 = m_Scene->GetComponentsOfType<ObjectTagAlt>();
 
+        //All the balls will be looped through, and, depending on the ball's number
+        //will be placed on a different part of the pool table in the game environment.
+        //If the ball was previoiusly disabled, it will be enabled again.
         for(auto& object : objects2){
             m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(true);
             m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetVelocity({0, 0, 0});
@@ -174,7 +184,9 @@ public:
             } else {
 
             }
+            //All the balls have been put into the triangle formation at the start.
             JPH::Vec3 newPos = {x, y, z};
+            m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->EnableBody();
             m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetPosition(newPos);
             m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
         }
