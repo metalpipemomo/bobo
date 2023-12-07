@@ -19,8 +19,11 @@ enum AnchorPos
 
 struct PerPopupInformation
 {
-    const char* m_Text;
+    const std::vector<const char*> m_Text;
     const ImVec2 m_WindowSize;
+
+    PerPopupInformation(const char* text, const ImVec2 windowSize) : m_Text({ text }), m_WindowSize(windowSize) {};
+    PerPopupInformation(const std::vector<const char*> text, const ImVec2 windowSize) : m_Text(text), m_WindowSize(windowSize) {};
 };
 
 struct PopupInformation
@@ -45,7 +48,7 @@ struct PopupInformation
         return m_Pages[m_PageIndex].m_WindowSize;
     }
 
-    const char* GetText()
+    const std::vector<const char*> GetText()
     {
         return m_Pages[m_PageIndex].m_Text;
     }
@@ -91,18 +94,24 @@ private:
 class PopupManager
 {
 public:
-    static void MakePopup(const char* title, const char* text, const ImVec2 windowSize, 
+    static void MakePopup(const char* title, const char* text, const ImVec2 windowSize,
         const AnchorPos anchorPos, const ImVec2 offsetFromAnchor, bool allowMove = true)
     {
-        MakePopup(title, std::vector<PerPopupInformation> { PerPopupInformation(text, windowSize) },anchorPos, offsetFromAnchor, allowMove);
+        MakePopup(title, 
+            { PerPopupInformation({ text }, windowSize) }, anchorPos, offsetFromAnchor, allowMove);
+    }
+
+    static void MakePopup(const char* title, const std::vector<const char*> text, const ImVec2 windowSize, 
+        const AnchorPos anchorPos, const ImVec2 offsetFromAnchor, bool allowMove = true)
+    {
+        MakePopup(title, { PerPopupInformation(text, windowSize) },anchorPos, offsetFromAnchor, allowMove);
     }
 
     static void MakePopup(const char* title, std::vector<PerPopupInformation> pages,
         const AnchorPos anchorPos, const ImVec2 offsetFromAnchor, bool allowMove = true)
     {
         auto pm = GetInstance();
-        PopupInformation* popup = new PopupInformation(title, pages, anchorPos, offsetFromAnchor, allowMove);
-        pm->m_ActivePopups.push_back(popup);
+        pm->m_ActivePopups.push_back(new PopupInformation(title, pages, anchorPos, offsetFromAnchor, allowMove));
     }
 
     static void Update()
@@ -129,7 +138,10 @@ public:
 
             ImGuiHelpers::LowerCursor();
 
-            ImGuiHelpers::MakeCenterText(item->GetText());
+            for (auto& it : item->GetText())
+            {
+                ImGuiHelpers::MakeCenterText(it);
+            }
 
             // Controls
             // Prev & Next
