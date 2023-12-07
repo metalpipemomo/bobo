@@ -65,4 +65,19 @@ public:
     {
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() - heightenBy);
     }
+
+    static void MakeVerticalList(std::vector<std::string> texts, float gap, std::string title = "")
+    {
+        if (!title.empty())
+        {
+            MakeCenterText(title);
+            LowerCursor(gap);
+        }
+
+        for (auto& it : texts)
+        {
+            MakeCenterText(it);
+            LowerCursor(gap);
+        }
+    }
 };

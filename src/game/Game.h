@@ -30,7 +30,6 @@ public:
 	}
 
 private:
-
 	// Constants for objects position / rotation / scale
 	const glm::vec3 m_tablePosition = glm::vec3{ 0, -1.5, -4.5 };
 	const glm::vec3 m_ballScale = glm::vec3{ 0.2, 0.2, 0.2 };
@@ -39,6 +38,8 @@ private:
 	// other game objects
 	GameObject* cueball;
 	GameObject* cueballGhost;
+	// Extra tracking information for certain UI
+	bool m_HasShownReplacingCueBallPopup = false;
 
 	void SetBallPos(GameObject* ball, float xOffset, float zOffset)
 	{
@@ -208,7 +209,7 @@ private:
 			triggerBox->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING, nullptr, true);
 		auto triggerBoxRb = triggerBox->GetComponent<Rigidbody>();
 		triggerBoxRb->SetTransform(triggerBox->GetComponent<Transform>());
-		triggerBoxRb->SetOnCollision([](JPH::BodyID other) {
+		triggerBoxRb->SetOnCollision([this](JPH::BodyID other) {
 			Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
 			auto scene = SceneManager::GetActiveScene();
 			auto objects = scene->GetComponentsOfType<GameManager>();
@@ -249,13 +250,25 @@ private:
 				}
 				else if (balltag == "cueBall") 
 				{
-					NotificationManager::SendAlphaBannerNotification("The cue ball has been sunk.", NotificationTextColor::RED);
+					NotificationManager::SendAlphaBannerNotification("The cue ball has been sunk. Choose where to re-place it!", 
+						NotificationTextColor::RED, 2);
 					auto rb = scene->GetComponent<Rigidbody>(en);
 					auto transform = scene->GetComponent<Transform>(en);
 					transform->position = glm::vec3{ 100,100,100 };
 					rb->DisableBody();
 					gameState->SinkCueBall();
 					cbg->Enable();
+
+					if (!m_HasShownReplacingCueBallPopup)
+					{
+						PopupManager::MakePopup("Re-placing the Cue Ball",
+							{ 
+								"Use 'J' & 'L' to move the ball Left & Right",
+								"Use 'K' & 'I' to move the ball Backwards and Forwards",
+								"Use 'P' to confirm placement." },
+							ImVec2(400, 105), AnchorPos::TOP_CENTER, ImVec2(0, 25), true);
+						m_HasShownReplacingCueBallPopup = true;
+					}
 				}
 				else if (balltag == "8ball") 
 				{
@@ -320,9 +333,10 @@ private:
 		// cue creation
 		auto cue = new GameObject();
 		cue->AddComponent<Material>(ModelLoader::GetModel("pool_cue"), TextureLoader::GetTexture("cue"));
-		cue->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0, 1.3, 6);;
+		cue->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(100, 100, 100);;
 		cue->GetComponent<Transform>()->rotation = glm::vec3{ -0.3, 0, 0 };
 		cue->GetComponent<Transform>()->scale = glm::vec3{ 0.7, 0.7, 0.7 };
+		cue->AddComponent<ObjectTag>("cueModel");
 
 		// lamp creation
 		auto lamp = new GameObject();
@@ -582,13 +596,6 @@ private:
 		pl.position = { -5.0f, -5.0f, 5.0f }; // X, Y, Z (Positive Z is closer to camera)
 		pl.intensity = 250.0f;
 		pointlight->AddComponent<PointlightComponent>(pl);
-
-		PopupManager::MakePopup(
-			"Welcome",
-			"Hey there Gamer! (Derogatory)",
-			ImVec2(250, 85),
-			AnchorPos::CENTER_CENTER,
-			ImVec2(0, 0));
 
 		/*------ AUDIO ------*/
 

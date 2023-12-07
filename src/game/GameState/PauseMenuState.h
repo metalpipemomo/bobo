@@ -36,7 +36,9 @@ public:
         ImGui::StyleColorsClassic();
         ImGui::Begin("Pause Menu", NULL, ImGuiHelpers::MakeFlags(true, true, true, true, true, true, true, false, false, false));
 
-        ImGuiHelpers::MakeCenterText("Game Paused", true, true);
+        ImGuiHelpers::LowerCursor(25);
+
+        ImGuiHelpers::MakeCenterText("Game Paused", true, false);
         ImGuiHelpers::LowerCursor();
 
         if (ImGuiHelpers::MakeCenterButton("Resume"))
@@ -44,14 +46,37 @@ public:
             GameStateManager::TogglePauseState();
         }
 
+        ImGuiHelpers::LowerCursor(50);
+
+        ImGuiHelpers::MakeCenterText("Controls", true, false);
+
         ImGuiHelpers::LowerCursor();
 
-        if (ImGuiHelpers::MakeCenterButton("Go to Game Over State"))
-        {
-            GameStateManager::EnterGameState(GameStateLabel::GAME_OVER);
-        }
+        ImGuiHelpers::MakeVerticalList(
+            {
+                "Rotate Cue L/R - 1 <-> 2",
+                "Charge Shot - Hold Space"
+            }, 10, "Gameplay");
+
+        ImGuiHelpers::LowerCursor();
+
+        ImGuiHelpers::MakeVerticalList(
+            {
+                "Move F/B - I <-> K", 
+                "Move L / R - J <-> L",
+                "Confirm Placement - P",
+            }, 10, "Re-placing Cue Ball");
+
+        ImGuiHelpers::LowerCursor();
+
+        ImGuiHelpers::MakeVerticalList(
+            {
+                "Rotate Camera L/R - A <-> D",
+                "Zoom Camera - W <-> S",
+                "Toggle Camera Mode - Tab (Switch between Cue Ball and Table Focus)",
+                "Free Camera - Ctrl + Tab",
+            }, 10, "Camera");
 
         ImGui::End();
-        
     }
 };

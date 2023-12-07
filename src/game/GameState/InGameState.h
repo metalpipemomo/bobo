@@ -5,6 +5,7 @@
 #include <string>
 #include "../../engine/Time.h"
 
+
 enum Turn { P1, P2 };
 
 class InGameState : public GameState
@@ -32,6 +33,7 @@ public:
                 PerPopupInformation("Hold Space to Charge your Shot.The Power will\nbounce back and forth between full and empty.",
                     ImVec2(400, 117.5)),
                 PerPopupInformation("Adjust the Cue's angle using 1 and 2", ImVec2(400, 105)),
+                PerPopupInformation("Check the other controls in the pause menu (Escape)", ImVec2(400, 105)),
                 PerPopupInformation("Happy Pooling Gamer!", ImVec2(400, 105))
             },
             AnchorPos::TOP_CENTER,
@@ -49,6 +51,11 @@ public:
                 m_CueTransform = m_Scene->GetComponent<Transform>(object->m_OwnerId);
                 
             }
+            if (object->tag == "cueModel")
+            {
+                m_CueModelTransform = m_Scene->GetComponent<Transform>(object->m_OwnerId);
+
+            }
             if (object->tag == "cueBall")
             {
                 m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetVelocity({0, 0, 0});
@@ -61,6 +68,14 @@ public:
             {
                 m_Manager = m_Scene->GetComponent<GameManager>(object->m_OwnerId);
                 
+            }
+            if (object->tag == "solid")
+            {
+                m_solidBallTransforms.push_back(m_Scene->GetComponent<Transform>(object->m_OwnerId));
+            }
+            if (object->tag == "striped")
+            {
+                m_stripedBallTransforms.push_back(m_Scene->GetComponent<Transform>(object->m_OwnerId));
             }
 
             //Blast off walls on InGameStateEnter
@@ -178,6 +193,8 @@ public:
         auto transform = m_BallRb->GetTransform();
         m_cueBallPos = transform->position;
         m_CueTransform->rotation = glm::vec3(0, m_shotAngle, 0);
+        allBallsStopped = true;
+        m_CueModelTransform->rotation = glm::vec3(-0.12, m_shotAngle, 0);
 
         // 1 and 2 keys for rotating shot angle
         if (Input::GetKey(GLFW_KEY_1))
@@ -189,13 +206,49 @@ public:
             m_shotAngle -= m_rotateSpeed * Time::DeltaTime();
         }
 
+        // check if all balls are stopped
+        for (auto& ball : m_solidBallTransforms)
+        {
+            auto ballRb = m_Scene->GetComponent<Rigidbody>(ball->m_OwnerId);
+            if (ballRb->GetVelocity().Length() < m_velocityThreshold || !ballRb->IsEnabled())
+            {
+                ballRb->SetVelocity(JPH::Vec3{ 0,0,0 });
+            }
+            else
+            {
+                allBallsStopped = false;
+                break;
+            }
+        }
+
+        for (auto& ball : m_stripedBallTransforms)
+        {
+            auto ballRb = m_Scene->GetComponent<Rigidbody>(ball->m_OwnerId);
+            if (ballRb->GetVelocity().Length() < m_velocityThreshold || !ballRb->IsEnabled())
+            {
+                ballRb->SetVelocity(JPH::Vec3{ 0,0,0 });
+            }
+            else
+            {
+                allBallsStopped = false;
+                break;
+            }
+        }
+
+
+
         // if cue ball almost stopped, stop it
-        if (m_BallRb->GetVelocity().Length() < 0.3 || !m_BallRb->IsEnabled())
+        if (m_BallRb->GetVelocity().Length() < m_velocityThreshold || !m_BallRb->IsEnabled())
         {
             m_BallRb->SetVelocity(JPH::Vec3{ 0,0,0 });
             // set cue shot indicator and set flag to true
+            if (allBallsStopped)
+            {
             m_shotAllowedFlag = true;
             m_CueTransform->position = m_CueBallTransform->position + glm::vec3(Sin(m_shotAngle) * -1, 0, Cos(m_shotAngle) * -1);
+            m_CueModelTransform->position = m_CueBallTransform->position + 
+                glm::vec3(Sin(m_shotAngle)*(3+m_ShotPower), 0.3 + (0.1*m_ShotPower), Cos(m_shotAngle) * (3 + m_ShotPower));
+            }
         }
 
         // shoot cue ball with space and swap turns
@@ -207,7 +260,14 @@ public:
             m_ShotWasAllowed = false;
             m_HasSunkBadly = false;
             m_CueTransform->position = glm::vec3{ 100,100,100 };
-            m_BallRb->addForce(JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower*m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower*m_maxShotPower));
+            // make cue model dissapear after some time to make it look like a real shot
+            m_CueModelTransform->position = m_CueBallTransform->position + glm::vec3(Sin(m_shotAngle) * 3, 0.3, Cos(m_shotAngle) * 3);
+            float waitTime = 0.5;
+            auto makeCueDissapear = [=]() {
+                m_CueModelTransform->position = glm::vec3{ 100,100,100 };
+                };
+            auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(makeCueDissapear, waitTime);
+            m_BallRb->addForce(JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower * m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower * m_maxShotPower));
         }
     }
 
@@ -465,7 +525,13 @@ private:
 
     Rigidbody* m_BallRb;
     Transform* m_CueTransform;
+    Transform* m_CueModelTransform;
     Transform* m_CueBallTransform;
     GameManager* m_Manager;
     Scene* m_Scene;
+
+    std::vector<Transform*> m_solidBallTransforms;
+    std::vector<Transform*> m_stripedBallTransforms;
+    bool allBallsStopped = false;
+    float m_velocityThreshold = 0.1;
 };
