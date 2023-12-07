@@ -51,6 +51,8 @@ public:
             }
             if (object->tag == "cueBall")
             {
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetVelocity({0, 0, 0});
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetPosition({-0.002514, -1.048805, -2.501616});
                 m_BallRb = m_Scene->GetComponent<Rigidbody>(object->m_OwnerId);
                 m_CueBallTransform = m_Scene->GetComponent<Transform>(object->m_OwnerId);
                 
@@ -87,21 +89,13 @@ public:
         //Only the balls have been given alt tags, no other entities within the game.
 
         auto objects2 = m_Scene->GetComponentsOfType<ObjectTagAlt>();
-        /**
-        glm::vec3 m_tablePosition = glm::vec3{ 0, -1.5, -4.5 };
-	    glm::vec3 m_firstBallPos = glm::vec3{ m_tablePosition.x, m_tablePosition.y + 0.1, m_tablePosition.z - 1 };
-        float m_ballDistance = .42;
-        float xOffset = 0.0;
-        float zOffset = 0.0;
-        int ballNum = 0;
-        */
-        float x = 0.0;
-        float y = 0.0;
-        float z = 0.0;
 
         for(auto& object : objects2){
             m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(true);
             m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetVelocity({0, 0, 0});
+            float x = 0.0;
+            float y = 0.0;
+            float z = 0.0;
             if(object->tag == "Ball_001"){
                 x = 0.000000;
                 y = -1.047199;
@@ -169,108 +163,6 @@ public:
             m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetPosition(newPos);
             m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
         }
-        /**
-        for(auto& object : objects2){
-            m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(true);
-            m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetVelocity({0, 0, 0});
-            m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetPosition({m_firstBallPos.x, m_firstBallPos.y, m_firstBallPos.z});
-            if(object->tag == "Ball_001"){
-                ballNum = 1;
-            }
-            if(object->tag == "Ball_002"){
-                xOffset = 0.5 * m_ballDistance;
-                zOffset= -m_ballDistance;
-                ballNum = 2;
-            }
-            if(object->tag == "Ball_003"){
-                xOffset = m_ballDistance;
-                zOffset= -2 * m_ballDistance;
-                ballNum = 3;
-            }
-            if(object->tag == "Ball_004"){
-                xOffset = 1.5 * m_ballDistance;
-                zOffset= -3 * m_ballDistance;
-                ballNum = 4;
-            }
-            if(object->tag == "Ball_005"){
-                xOffset = -2 * m_ballDistance;
-                zOffset= -4 * m_ballDistance;
-                ballNum = 5;
-            }
-            if(object->tag == "Ball_006"){
-                xOffset = m_ballDistance;
-                zOffset= -4 * m_ballDistance;
-                ballNum = 6;
-            }
-            if(object->tag == "Ball_007"){
-                xOffset = -0.5 * m_ballDistance;
-                zOffset= -3 * m_ballDistance;
-                ballNum = 7;
-            }
-            if(object->tag == "Ball_008"){
-                xOffset = 0;
-                zOffset= -2 * m_ballDistance;
-                ballNum = 8;
-            }
-            if(object->tag == "Ball_009"){
-                xOffset = -0.5 * m_ballDistance;
-                zOffset= -m_ballDistance;
-                ballNum = 9;
-            }
-            if(object->tag == "Ball_010"){
-                xOffset = -m_ballDistance;
-                zOffset= -2 * m_ballDistance;
-                ballNum = 10;
-            }
-            if(object->tag == "Ball_011"){
-                xOffset = -1.5 * m_ballDistance;
-                zOffset= -3 * m_ballDistance;
-                ballNum = 11;
-            }
-            if(object->tag == "Ball_012"){
-                xOffset = 2 * m_ballDistance;
-                zOffset= -4 * m_ballDistance;
-                ballNum = 12;
-            }
-            if(object->tag == "Ball_013"){
-                xOffset = -1 * m_ballDistance;
-                zOffset= -4 * m_ballDistance;
-                ballNum = 13;
-            }
-            if(object->tag == "Ball_014"){
-                xOffset = 0.5 * m_ballDistance;
-                zOffset= -3 * m_ballDistance;
-                ballNum = 14;
-            }
-            if(object->tag == "Ball_015"){
-                xOffset = 0;
-                zOffset= -4 * m_ballDistance;
-                ballNum = 15;
-            }
-
-            if(xOffset != NULL && zOffset != NULL){
-                glm::vec3 position = m_firstBallPos;
-                position.x += xOffset;
-                position.z += zOffset;
-                //glm::vec3 rotation = {0, 0, 0};
-                //rotation.y = -glm::pi<float>()/2;
-                //rotation.z = glm::pi<float>() / 2;
-                JPH::Vec3 newPos = {position.x, position.y, position.z};
-                //JPH::Vec3 newRot = {rotation.x, rotation.y, rotation.z};
-                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetPosition(newPos);
-                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
-            }
-
-            float x = m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->GetPosition()[0];
-            float y = m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->GetPosition()[1];
-            float z = m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->GetPosition()[2];
-            
-            printf("Ball Number #%d \n", ballNum);
-            printf("X = %f \n", x);
-            printf("Y = %f \n", y);
-            printf("Z = %f \n", z);
-        }
-        */
     }
 
     void Exit()
