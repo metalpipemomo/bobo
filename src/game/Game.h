@@ -303,9 +303,10 @@ private:
 		// cue creation
 		auto cue = new GameObject();
 		cue->AddComponent<Material>(ModelLoader::GetModel("pool_cue"), TextureLoader::GetTexture("cue"));
-		cue->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0, 1.3, 6);;
+		cue->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(100, 100, 100);;
 		cue->GetComponent<Transform>()->rotation = glm::vec3{ -0.3, 0, 0 };
 		cue->GetComponent<Transform>()->scale = glm::vec3{ 0.7, 0.7, 0.7 };
+		cue->AddComponent<ObjectTag>("cueModel");
 
 		// lamp creation
 		auto lamp = new GameObject();

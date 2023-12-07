@@ -5,6 +5,7 @@
 #include <string>
 #include "../../engine/Time.h"
 
+
 enum Turn { P1, P2 };
 
 class InGameState : public GameState
@@ -48,6 +49,11 @@ public:
             {
                 m_CueTransform = m_Scene->GetComponent<Transform>(object->m_OwnerId);
                 
+            }
+            if (object->tag == "cueModel")
+            {
+                m_CueModelTransform = m_Scene->GetComponent<Transform>(object->m_OwnerId);
+
             }
             if (object->tag == "cueBall")
             {
@@ -97,6 +103,7 @@ public:
         auto transform = m_BallRb->GetTransform();
         m_cueBallPos = transform->position;
         m_CueTransform->rotation = glm::vec3(0, m_shotAngle, 0);
+        m_CueModelTransform->rotation = glm::vec3(-0.12, m_shotAngle, 0);
 
         // 1 and 2 keys for rotating shot angle
         if (Input::GetKey(GLFW_KEY_1))
@@ -115,6 +122,8 @@ public:
             // set cue shot indicator and set flag to true
             m_shotAllowedFlag = true;
             m_CueTransform->position = m_CueBallTransform->position + glm::vec3(Sin(m_shotAngle) * -1, 0, Cos(m_shotAngle) * -1);
+            m_CueModelTransform->position = m_CueBallTransform->position + 
+                glm::vec3(Sin(m_shotAngle)*(3+m_ShotPower), 0.3 + (0.1*m_ShotPower), Cos(m_shotAngle) * (3 + m_ShotPower));
         }
 
         // shoot cue ball with space and swap turns
@@ -126,7 +135,14 @@ public:
             m_ShotWasAllowed = false;
             m_HasSunkBadly = false;
             m_CueTransform->position = glm::vec3{ 100,100,100 };
-            m_BallRb->addForce(JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower*m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower*m_maxShotPower));
+            // make cue model dissapear after some time to make it look like a real shot
+            m_CueModelTransform->position = m_CueBallTransform->position + glm::vec3(Sin(m_shotAngle) * 3, 0.3, Cos(m_shotAngle) * 3);
+            float waitTime = 0.5;
+            auto makeCueDissapear = [=]() {
+                m_CueModelTransform->position = glm::vec3{ 100,100,100 };
+                };
+            auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(makeCueDissapear, waitTime);
+            m_BallRb->addForce(JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower * m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower * m_maxShotPower));
         }
     }
 
@@ -384,6 +400,7 @@ private:
 
     Rigidbody* m_BallRb;
     Transform* m_CueTransform;
+    Transform* m_CueModelTransform;
     Transform* m_CueBallTransform;
     GameManager* m_Manager;
     Scene* m_Scene;
