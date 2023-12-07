@@ -42,10 +42,12 @@ public:
 
         m_Scene = SceneManager::GetActiveScene();
         auto objects = m_Scene->GetComponentsOfType<ObjectTag>();
+        m_CueBallGhostObject = m_Scene->GetComponentsOfType<CueBallGhost>()[0];
 
         // getting game object components needed
         for (auto& object : objects)
         {
+            m_CueBallGhostObject = m_Scene->GetComponentsOfType<CueBallGhost>()[0];
             if (object->tag == "cue")
             {
                 m_CueTransform = m_Scene->GetComponent<Transform>(object->m_OwnerId);
@@ -67,13 +69,9 @@ public:
                 m_Manager = m_Scene->GetComponent<GameManager>(object->m_OwnerId);
                 
             }
-            if (object->tag == "solid")
+            if (object->tag == "solid" || object->tag == "striped" || object->tag == "8ball")
             {
-                m_solidBallTransforms.push_back(m_Scene->GetComponent<Transform>(object->m_OwnerId));
-            }
-            if (object->tag == "striped")
-            {
-                m_stripedBallTransforms.push_back(m_Scene->GetComponent<Transform>(object->m_OwnerId));
+                m_AllBallsTransforms.push_back(m_Scene->GetComponent<Transform>(object->m_OwnerId));
             }
 
             //Blast off walls on InGameStateEnter
@@ -112,7 +110,7 @@ public:
         auto transform = m_BallRb->GetTransform();
         m_cueBallPos = transform->position;
         m_CueTransform->rotation = glm::vec3(0, m_shotAngle, 0);
-        allBallsStopped = true;
+        m_AllBallsStopped = true;
         m_CueModelTransform->rotation = glm::vec3(-0.12, m_shotAngle, 0);
 
         // 1 and 2 keys for rotating shot angle
@@ -125,43 +123,20 @@ public:
             m_shotAngle -= m_rotateSpeed * Time::DeltaTime();
         }
 
-        // check if all balls are stopped
-        for (auto& ball : m_solidBallTransforms)
-        {
-            auto ballRb = m_Scene->GetComponent<Rigidbody>(ball->m_OwnerId);
-            if (ballRb->GetVelocity().Length() < m_velocityThreshold || !ballRb->IsEnabled())
-            {
-                ballRb->SetVelocity(JPH::Vec3{ 0,0,0 });
-            }
-            else
-            {
-                allBallsStopped = false;
-                break;
-            }
-        }
-
-        for (auto& ball : m_stripedBallTransforms)
-        {
-            auto ballRb = m_Scene->GetComponent<Rigidbody>(ball->m_OwnerId);
-            if (ballRb->GetVelocity().Length() < m_velocityThreshold || !ballRb->IsEnabled())
-            {
-                ballRb->SetVelocity(JPH::Vec3{ 0,0,0 });
-            }
-            else
-            {
-                allBallsStopped = false;
-                break;
-            }
-        }
-
-
+        CheckAllBallsHasStopped();
 
         // if cue ball almost stopped, stop it
-        if (m_BallRb->GetVelocity().Length() < m_velocityThreshold || !m_BallRb->IsEnabled())
+        if (m_BallRb->GetVelocity().Length() < m_VelocityThreshold || !m_BallRb->IsEnabled())
         {
             m_BallRb->SetVelocity(JPH::Vec3{ 0,0,0 });
+
+            if (m_IsCueBallSunk && m_AllBallsStopped)
+            {
+                m_CueBallGhostObject->Enable();
+            }
+
             // set cue shot indicator and set flag to true
-            if (allBallsStopped)
+            if (m_AllBallsStopped)
             {
             m_shotAllowedFlag = true;
             m_CueTransform->position = m_CueBallTransform->position + glm::vec3(Sin(m_shotAngle) * -1, 0, Cos(m_shotAngle) * -1);
@@ -174,6 +149,7 @@ public:
         if (m_shotactivated && m_shotAllowedFlag)
         {
             // make cue shot indicator dissapear and set flag to false
+            m_IsCueBallSunk = false;
             m_shotAllowedFlag = false;
             m_shotactivated = false;
             m_ShotWasAllowed = false;
@@ -215,6 +191,25 @@ public:
             m_HasSunkBadly = false;
             m_ShotWasAllowed = true;
         }
+    }
+
+    void CheckAllBallsHasStopped()
+    {
+        // check if all balls are stopped
+        for (auto& ball : m_AllBallsTransforms)
+        {
+            auto ballRb = m_Scene->GetComponent<Rigidbody>(ball->m_OwnerId);
+            if (ballRb->GetVelocity().Length() < m_VelocityThreshold || !ballRb->IsEnabled())
+            {
+                ballRb->SetVelocity(JPH::Vec3{ 0,0,0 });
+            }
+            else
+            {
+                m_AllBallsStopped = false;
+                break;
+            }
+        }
+
     }
 
     void SinkSolid() 
@@ -275,6 +270,7 @@ public:
     {
         // unneeded maybe? this is called in game.h but idk if we actually need this
         // if you remove this then remember to remove its call in game.h
+        m_IsCueBallSunk = true;
     }
 
     void Render()
@@ -449,8 +445,9 @@ private:
     GameManager* m_Manager;
     Scene* m_Scene;
 
-    std::vector<Transform*> m_solidBallTransforms;
-    std::vector<Transform*> m_stripedBallTransforms;
-    bool allBallsStopped = false;
-    float m_velocityThreshold = 0.1;
+    std::vector<Transform*> m_AllBallsTransforms;
+    bool m_AllBallsStopped = false;
+    float m_VelocityThreshold = 0.1;
+    CueBallGhost* m_CueBallGhostObject;
+    bool m_IsCueBallSunk = false;
 };
