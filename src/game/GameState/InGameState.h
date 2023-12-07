@@ -33,6 +33,7 @@ public:
                 PerPopupInformation("Hold Space to Charge your Shot.The Power will\nbounce back and forth between full and empty.",
                     ImVec2(400, 117.5)),
                 PerPopupInformation("Adjust the Cue's angle using 1 and 2", ImVec2(400, 105)),
+                PerPopupInformation("Check the other controls in the pause menu (Escape)", ImVec2(400, 105)),
                 PerPopupInformation("Happy Pooling Gamer!", ImVec2(400, 105))
             },
             AnchorPos::TOP_CENTER,
