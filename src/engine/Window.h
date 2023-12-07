@@ -91,7 +91,19 @@ public:
 			// System Frame Updates
 			Renderer::Update();
 			Time::Update();
+			Camera::Update();
+
+			// Update Audio & 3d Listener
+			glm::vec3 camPos = Camera::GetPosition();
+			glm::vec3 camFront = Camera::GetCameraFront();
+			glm::vec3 camUp = Camera::GetCameraUp();
+			Audio::Set3DListenerPosition(
+				camPos.x, camPos.y, camPos.z,
+				camFront.x, camFront.y, camFront.z,
+				camUp.x, camUp.y, camUp.z
+			);
 			Audio::Update();
+
 			CoroutineScheduler::Update();
 			SceneManager::UpdateActiveScene();
 			NotificationManager::Update();

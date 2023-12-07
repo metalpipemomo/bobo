@@ -20,6 +20,7 @@
 
 #include "../engine/Notifications/NotificationManager.h"
 #include "../engine/Popups/PopupManager.h"
+#include "../engine/EntityComponent/BaseComponents/AudioSource.h"
 
 class Game
 {
@@ -197,7 +198,25 @@ private:
 		ball->GetComponent<Rigidbody>()->SetTransform(transform);
 		ball->GetComponent<Rigidbody>()->SetBounce(0.4);
 		ball->GetComponent<Rigidbody>()->SetFriction(.4);
-	};
+
+		// If you want 3d audio, pass a transform to the AudioSource constructor and it will automatically be so
+		ball->AddComponent<AudioSource>(transform);
+		// If you don't want 3d audio, don't pass in the transform (like so)
+		// ball->AddComponent<AudioSource>();
+		ball->GetComponent<Rigidbody>()->SetOnCollision([=](JPH::BodyID other) {
+			ball->GetComponent<AudioSource>()->Play("punch");
+		});
+
+		// You can change aspects of the sound like so
+		// ball->GetComponent<AudioSource>()->m_Vol = .5;
+		// ball->GetComponent<AudioSource>()->m_Pitch = 2.5;
+
+		// You can reset a sound by doing the following as well
+		// Audio::GetSoundInfo("punch")->SetToDefaultValues();
+		// This will not affect AudioSources as they set the sound info values when they play their sound. But say if you were to 
+		// make a call to Audio::PlaySound directly yourself, the sound info used will still be representative of whatever played 
+		// that sound prior (Unless you also go in and handle that yourself too using Audio::GetSoundInfo)
+	}
 
 	void CreateHoleTriggers(float xOffset, float zOffset)
 	{
@@ -235,7 +254,6 @@ private:
 					gameState->SinkStriped();
 					//scene->DestroyEntity(en);
 					NotificationManager::SendAlphaBannerNotification("A striped ball was sunk!", NotificationTextColor::GREEN);
-					
 				}
 				else if (balltag == "solid")
 				{
@@ -602,8 +620,6 @@ private:
 		// Audio files are loaded from the assets/Sounds directory, they must be .mp3
 		// The files can be accessed through a string identifier, which corresponds to
 		// the file name without extensions. Case doesn't matter
-		Audio::PlaySound("boom");
-		Audio::PlaySound("punch");
 
 		/*------ COROUTINES ------*/
 		// Should be all self-explanatory; Just some examples
