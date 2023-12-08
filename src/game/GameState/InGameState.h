@@ -237,7 +237,7 @@ public:
                 {
                     m_CueBallTransform->position = glm::vec3{ 100,100,100 };
                     m_BallRb->DisableBody();
-                    NotificationManager::SendSlidingBannerNotification("FOUL LMAO", NotificationTextColor::WHITE);
+                    NotificationManager::SendSlidingBannerNotification("Invalid Cueball Hit!", NotificationTextColor::WHITE);
                     m_CueBallGhostObject->Enable();
                     
                 }
