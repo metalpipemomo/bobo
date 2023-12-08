@@ -1,7 +1,7 @@
 #include "../../engine/GameState/GameState.h"
 
 #include "../../engine/Notifications/NotificationManager.h"
-
+#include "glm/ext.hpp"
 #include <string>
 #include "../../engine/Time.h"
 
@@ -81,6 +81,7 @@ public:
             if (object->tag == "solid" || object->tag == "striped" || object->tag == "8ball")
             {
                 m_AllBallsTransforms.push_back(m_Scene->GetComponent<Transform>(object->m_OwnerId));
+                m_AllBallsTransformsPrevious.push_back(*m_Scene->GetComponent<Transform>(object->m_OwnerId));
             }
 
             //Blast off walls on InGameStateEnter
@@ -205,8 +206,7 @@ public:
         m_CueTransform->rotation = glm::vec3(0, m_shotAngle, 0);
         m_AllBallsStopped = true;
         m_CueModelTransform->rotation = glm::vec3(-0.12, m_shotAngle, 0);
-        bool foulBall = CheckFoul();
-
+        
         // 1 and 2 keys for rotating shot angle
         if (Input::GetKey(GLFW_KEY_1))
         {
@@ -228,16 +228,22 @@ public:
             {
                 m_CueBallGhostObject->Enable();
             }
-
-            if (m_AllBallsStopped && !m_IsCueBallSunk && !m_shotactivated && !m_shotAllowedFlag) 
+            
+            if (m_BallRb->GetVelocity().Length() == 0 && !m_IsCueBallSunk && m_ResolvingShot < 0) 
             {
+                
                 bool foulBall = CheckFoul();
-                if (foulBall) {
+                if (foulBall) 
+                {
+                    m_CueBallTransform->position = glm::vec3{ 100,100,100 };
+                    m_BallRb->DisableBody();
                     NotificationManager::SendSlidingBannerNotification("FOUL LMAO", NotificationTextColor::WHITE);
                     m_CueBallGhostObject->Enable();
+                    
                 }
-                
+                m_ResolvingShot = 0;
             }
+            
 
             // set cue shot indicator and set flag to true
             if (m_AllBallsStopped)
@@ -267,6 +273,8 @@ public:
                 };
             auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(makeCueDissapear, waitTime);
             m_BallRb->addForce(JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower * m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower * m_maxShotPower));
+
+
         }
     }
 
@@ -316,37 +324,62 @@ public:
 
     }
 
+    bool compareVec3(const glm::vec3& v1, const glm::vec3& v2, double epsilon) 
+    {
+        double diffX = glm::abs(v1.x - v2.x);
+        double diffY = glm::abs(v1.y - v2.y);
+        double diffZ = glm::abs(v1.z - v2.z);
+        // Check if all differences are within the epsilon or very small difference
+        return (diffX <= epsilon) && (diffY <= epsilon) && (diffZ <= epsilon);
+    }
+
     bool CheckFoul() {
- 
         auto objects = m_Scene->GetComponentsOfType<ObjectTag>();
         m_AllBallsTransformsUpdated.clear();
-        for (auto& object : objects)
+
+        // Gather updated ball transforms
+        for (auto& object : objects) 
         {
-            if (object->tag == "solid" || object->tag == "striped" || object->tag == "8ball")
+            if (object->tag == "solid" || object->tag == "striped" || object->tag == "8ball") 
             {
                 m_AllBallsTransformsUpdated.push_back(*m_Scene->GetComponent<Transform>(object->m_OwnerId));
             }
         }
-        //make sure the ball transform counts are the same
-        if (m_AllBallsTransforms.size() == m_AllBallsTransformsUpdated.size())
+
+        if (m_AllBallsTransformsPrevious.size() == m_AllBallsTransformsUpdated.size()) 
         {
-            for (size_t i = 0; i < m_AllBallsTransforms.size(); ++i)
+            bool anyDifferent = false; // Flag to track if any ball is markedly different
+
+            // Check for position differences
+            for (size_t i = 0; i < m_AllBallsTransformsPrevious.size(); ++i) 
             {
-                Transform initial = *m_AllBallsTransforms[i];
+                Transform initial = m_AllBallsTransformsPrevious[i];
                 Transform updated = m_AllBallsTransformsUpdated[i];
-                //the positions changed, so no foul
-                if (initial.position != updated.position) 
+               
+                // If any ball is markedly different, set the flag and break the loop
+                if (!compareVec3(initial.position, updated.position, 1)) 
                 {
-                    return false;
+                    anyDifferent = true;
+                    break;
                 }
             }
-            return true;
+
+            // If all balls are essentially at the same spot, consider it a foul
+            if (!anyDifferent) 
+            {
+                m_AllBallsTransformsPrevious = m_AllBallsTransformsUpdated;
+                return true;
+            }
         }
         else 
         {
-            //ball transform counts don't match
+            // Ball transform counts don't match, return false
+            m_AllBallsTransformsPrevious = m_AllBallsTransformsUpdated;
             return false;
         }
+
+        // No foul detected, return false
+        m_AllBallsTransformsPrevious = m_AllBallsTransformsUpdated;
         return false;
     }
 
@@ -584,6 +617,7 @@ private:
     Scene* m_Scene;
 
     std::vector<Transform*> m_AllBallsTransforms;
+    std::vector<Transform> m_AllBallsTransformsPrevious;
     std::vector<Transform> m_AllBallsTransformsUpdated;
     bool m_AllBallsStopped = false;
     float m_VelocityThreshold = 0.1;
