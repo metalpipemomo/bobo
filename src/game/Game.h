@@ -234,7 +234,7 @@ private:
 			Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
 			auto scene = SceneManager::GetActiveScene();
 			auto objects = scene->GetComponentsOfType<GameManager>();
-			auto cbg = scene->GetComponentsOfType<CueBallGhost>()[0];
+			// auto cbg = scene->GetComponentsOfType<CueBallGhost>()[0];
 			string balltag;
 			// prob not best practice but we stay silly
 			auto gameState = (InGameState *) GameStateManager::FetchGameState(GameStateLabel::IN_GAME);
@@ -276,8 +276,7 @@ private:
 					auto transform = scene->GetComponent<Transform>(en);
 					transform->position = glm::vec3{ 100,100,100 };
 					rb->DisableBody();
-					gameState->SinkCueBall();
-					cbg->Enable();
+					gameState->SinkCueBall();	
 
 					if (!m_HasShownReplacingCueBallPopup)
 					{
