@@ -22,7 +22,7 @@ public:
         m_ShotPower = 0.0f;
         m_ShotPowerDirection = 1;
         m_shotAllowedFlag = true;
-
+        m_decidedBall = false;
 
         m_Turn = Turn::P1;
 
@@ -387,15 +387,29 @@ public:
     {
         NotificationManager::SendDefaultNotification("A Solid Ball has been Sunk", NotificationTextColor::BLUE);
         
-        if (m_Turn == Turn::P1 && !m_HasSunkBadly)
+        if (m_Turn == Turn::P1)
         {
-            m_NextTurn = Turn::P1;
+            if (!m_decidedBall)
+                m_leftSolid = true;
+            else if (!m_leftSolid) {
+                m_NextTurn = Turn::P2;
+                m_HasSunkBadly = true;
+            }
+            else  if (!m_HasSunkBadly)
+                m_NextTurn = Turn::P1;
         }
         if (m_Turn == Turn::P2) 
         {
-            m_NextTurn = Turn::P1;
-            m_HasSunkBadly = true;
+            if (!m_decidedBall)
+                m_leftSolid = false;
+            else if (m_leftSolid) {
+                m_NextTurn = Turn::P1;
+                m_HasSunkBadly = true;
+            }
+            else if(!m_HasSunkBadly)
+                m_NextTurn = Turn::P2;
         }
+        m_decidedBall = true;
     }
 
     void SinkStriped() 
@@ -404,13 +418,27 @@ public:
         
         if (m_Turn == Turn::P1)
         {
-            m_NextTurn = Turn::P2;
-            m_HasSunkBadly = true;
+            if (!m_decidedBall)
+                m_leftSolid = false;
+            else if (m_leftSolid) {
+                m_NextTurn = Turn::P2;
+                m_HasSunkBadly = true;
+            }
+            else if (!m_HasSunkBadly)
+                m_NextTurn = Turn::P1;
         }
-        if (m_Turn == Turn::P2 && !m_HasSunkBadly)
+        if (m_Turn == Turn::P2)
         {
-            m_NextTurn = Turn::P2;
+            if (!m_decidedBall)
+                m_leftSolid = true;
+            else if (!m_leftSolid) {
+                m_NextTurn = Turn::P1;
+                m_HasSunkBadly = true;
+            }
+            else if (!m_HasSunkBadly)
+                m_NextTurn = Turn::P2;
         }
+        m_decidedBall = true;
     }
 
     void SetWinner(std::string winner) 
@@ -424,17 +452,23 @@ public:
     {
         if (m_SolidBallsRemaining > 0 && m_StripedBallsRemaining > 0) {
             if (m_Turn == Turn::P1)
-                SetWinner("Stripes");
+                SetWinner("Player 2");
             else
-                SetWinner("Solids");
+                SetWinner("Player 1");
 
             return;
         }
-
-        if (m_SolidBallsRemaining <= 0)
-            SetWinner("Solids");
+        if (m_leftSolid) {
+            if (m_SolidBallsRemaining <= 0)
+                SetWinner("Player 1");
+            else
+                SetWinner("Player 2");
+            return;
+        }
+        if (m_StripedBallsRemaining <= 0)
+            SetWinner("Player 1");
         else
-            SetWinner("Stripes");
+            SetWinner("Player 2");
     }
 
     void SinkCueBall()
@@ -463,10 +497,12 @@ public:
         }
 
         ImGui::Begin("P1", NULL, ImGuiHelpers::MakeFlags(false, true, true, true, true, true, true, false, false, false));
-
-        std::string solidLabel = "Solid Balls Remaining " + std::to_string(m_SolidBallsRemaining);
-        ImGuiHelpers::MakeCenterText(solidLabel);
-
+        if (!m_decidedBall)
+            ImGuiHelpers::MakeCenterText("??? Remaining: 7");
+        else if (m_leftSolid)
+            ImGuiHelpers::MakeCenterText("Solid Balls Remaining: " + std::to_string(m_SolidBallsRemaining));
+        else
+            ImGuiHelpers::MakeCenterText("Striped Balls Remaining: " + std::to_string(m_StripedBallsRemaining));
         ImGuiHelpers::LowerCursor();
 
         
@@ -487,10 +523,12 @@ public:
         }
 
         ImGui::Begin("P2", NULL, ImGuiHelpers::MakeFlags(false, true, true, true, true, true, true, false, false, false));
-
-        std::string stripedLabel = "Striped Balls Remaining " + std::to_string(m_StripedBallsRemaining);
-        ImGuiHelpers::MakeCenterText(stripedLabel);
-
+        if (!m_decidedBall)
+            ImGuiHelpers::MakeCenterText("??? Remaining: 7");
+        else if (m_leftSolid)
+            ImGuiHelpers::MakeCenterText("Striped Balls Remaining: " + std::to_string(m_StripedBallsRemaining));
+        else
+            ImGuiHelpers::MakeCenterText("Solid Balls Remaining: " + std::to_string(m_SolidBallsRemaining));
         ImGuiHelpers::LowerCursor();
 
         
@@ -596,6 +634,9 @@ private:
     int m_ProgressBarWidth = 300;
     int m_ProgressBarHeight = 50;
     int m_ProgressBarPadding = 3;
+
+    bool m_decidedBall = false;
+    bool m_leftSolid = true;
 
     float m_ResolvingShot;
     bool m_ShootKeyHeld;
