@@ -205,6 +205,7 @@ public:
         m_CueTransform->rotation = glm::vec3(0, m_shotAngle, 0);
         m_AllBallsStopped = true;
         m_CueModelTransform->rotation = glm::vec3(-0.12, m_shotAngle, 0);
+        bool foulBall = CheckFoul();
 
         // 1 and 2 keys for rotating shot angle
         if (Input::GetKey(GLFW_KEY_1))
@@ -226,6 +227,16 @@ public:
             if (m_IsCueBallSunk && m_AllBallsStopped)
             {
                 m_CueBallGhostObject->Enable();
+            }
+
+            if (m_AllBallsStopped && !m_IsCueBallSunk && !m_shotactivated && !m_shotAllowedFlag) 
+            {
+                bool foulBall = CheckFoul();
+                if (foulBall) {
+                    NotificationManager::SendSlidingBannerNotification("FOUL LMAO", NotificationTextColor::WHITE);
+                    m_CueBallGhostObject->Enable();
+                }
+                
             }
 
             // set cue shot indicator and set flag to true
@@ -303,6 +314,40 @@ public:
             }
         }
 
+    }
+
+    bool CheckFoul() {
+ 
+        auto objects = m_Scene->GetComponentsOfType<ObjectTag>();
+        m_AllBallsTransformsUpdated.clear();
+        for (auto& object : objects)
+        {
+            if (object->tag == "solid" || object->tag == "striped" || object->tag == "8ball")
+            {
+                m_AllBallsTransformsUpdated.push_back(*m_Scene->GetComponent<Transform>(object->m_OwnerId));
+            }
+        }
+        //make sure the ball transform counts are the same
+        if (m_AllBallsTransforms.size() == m_AllBallsTransformsUpdated.size())
+        {
+            for (size_t i = 0; i < m_AllBallsTransforms.size(); ++i)
+            {
+                Transform initial = *m_AllBallsTransforms[i];
+                Transform updated = m_AllBallsTransformsUpdated[i];
+                //the positions changed, so no foul
+                if (initial.position != updated.position) 
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else 
+        {
+            //ball transform counts don't match
+            return false;
+        }
+        return false;
     }
 
     void SinkSolid() 
@@ -539,6 +584,7 @@ private:
     Scene* m_Scene;
 
     std::vector<Transform*> m_AllBallsTransforms;
+    std::vector<Transform> m_AllBallsTransformsUpdated;
     bool m_AllBallsStopped = false;
     float m_VelocityThreshold = 0.1;
     CueBallGhost* m_CueBallGhostObject;
