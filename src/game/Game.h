@@ -223,11 +223,11 @@ private:
 
 		// create and set the trigger box for a hole
 		auto triggerBox = new GameObject();
-		triggerBox->GetComponent<Transform>()->scale = glm::vec3{ 0.6,.5, 0.6 };
+		triggerBox->GetComponent<Transform>()->scale = glm::vec3{ 1.3,.5, 1.3 };
 		triggerBox->GetComponent<Transform>()->position =  glm::vec3(xOffset, -3, zOffset);
 		//triggerBox->AddComponent<Material>(ModelLoader::GetModel("cube"), TextureLoader::GetTexture("striped_14"));
 		triggerBox->AddComponent<Rigidbody>(new BoxShape(RVec3{ 0.15,.25, 0.15 }),
-			triggerBox->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING, nullptr, true);
+		triggerBox->GetComponent<Transform>()->position, Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING, nullptr, true);
 		auto triggerBoxRb = triggerBox->GetComponent<Rigidbody>();
 		triggerBoxRb->SetTransform(triggerBox->GetComponent<Transform>());
 		triggerBoxRb->SetOnCollision([this](JPH::BodyID other) {
