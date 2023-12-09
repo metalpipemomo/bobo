@@ -479,8 +479,10 @@ public:
         
         if (m_Turn == Turn::P1)
         {
-            if (!m_decidedBall)
+            if (!m_decidedBall) {
                 m_leftSolid = false;
+                m_NextTurn = Turn::P1;
+            }
             else if (m_leftSolid) {
                 m_NextTurn = Turn::P2;
                 m_HasSunkBadly = true;
@@ -490,8 +492,10 @@ public:
         }
         if (m_Turn == Turn::P2)
         {
-            if (!m_decidedBall)
+            if (!m_decidedBall) {
+                m_NextTurn = Turn::P2;
                 m_leftSolid = true;
+            }
             else if (!m_leftSolid) {
                 m_NextTurn = Turn::P1;
                 m_HasSunkBadly = true;
