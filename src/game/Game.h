@@ -201,7 +201,18 @@ private:
 
 		ball->AddComponent<AudioSource>(transform);
 		ball->GetComponent<Rigidbody>()->SetOnCollision([=](JPH::BodyID other) {
-			ball->GetComponent<AudioSource>()->Play("punch");
+			Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
+			auto scene = SceneManager::GetActiveScene();
+			string balltag;
+			if (scene->GetComponent<ObjectTag>(en)) {
+				balltag = scene->GetComponent<ObjectTag>(en)->tag;
+			}
+			if (balltag == "solid" || balltag == "striped" || balltag == "8ball" || balltag == "cueBall") {
+				auto s = ball->GetComponent<AudioSource>();
+				s->m_Vol = ball->GetComponent<Rigidbody>()->GetVelocity().Length() / 25;
+				s->Play("Ball");
+			}
+
 		});
 	}
 
