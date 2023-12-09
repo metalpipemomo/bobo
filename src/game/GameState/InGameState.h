@@ -4,6 +4,7 @@
 #include "glm/ext.hpp"
 #include <string>
 #include "../../engine/Time.h"
+#include "../engine/EntityComponent/BaseComponents/AudioSource.h"
 
 
 enum Turn { P1, P2 };
@@ -277,6 +278,15 @@ public:
                 m_CueModelTransform->position = glm::vec3{ 100,100,100 };
                 };
             auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(makeCueDissapear, waitTime);
+            /*
+                        if (que) {
+                GameObject temp;
+                auto s = temp.GetComponent<AudioSource>();
+                s->m_Vol = m_maxShotPower / m_ShotPower / 10;
+                s->Play("Que");
+            }
+            que = !que;
+            */
             m_BallRb->addForce(m_PlayerMuscles * JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower * m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower * m_maxShotPower));
         }
     }
@@ -660,6 +670,7 @@ private:
     bool m_HasSunkBadly = false;
     float m_ShotPower;
     int m_ShotPowerDirection;
+    bool que = true;
 
     int m_ProgressBarWidth = 300;
     int m_ProgressBarHeight = 50;
