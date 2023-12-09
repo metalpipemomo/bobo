@@ -756,6 +756,7 @@ private:
 		// The files can be accessed through a string identifier, which corresponds to
 		// the file name without extensions. Case doesn't matter
 		Audio::GetSoundInfo("Jazz1")->m_Vol = 0.1;
+		Audio::GetSoundInfo("Jazz1")->m_IsLoop = true;
 		Audio::PlaySound("Jazz1");
 
 
