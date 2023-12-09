@@ -45,14 +45,27 @@ public:
     }
 
     // Helper UI function
-    static bool MakeCenterButton(std::string text)
+    static bool MakeCenterButton(std::string text, bool centerHorizontally = true, bool centerVertically = false)
     {
         ImGuiStyle& style = ImGui::GetStyle();
-        float size = ImGui::CalcTextSize(text.c_str()).x + style.FramePadding.x * 2.0f;
-        float avail = ImGui::GetContentRegionAvail().x;
-        float off = (avail - size) * .5;
-        if (off > 0.0f)
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+        if (centerHorizontally)
+        {
+            float size = ImGui::CalcTextSize(text.c_str()).x + style.FramePadding.x * 2.0f;
+            float avail = ImGui::GetContentRegionAvail().x;
+            float off = (avail - size) * .5;
+            if (off > 0.0f)
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+        }
+
+        if (centerVertically)
+        {
+            float size = ImGui::CalcTextSize(text.c_str()).y + style.FramePadding.y * 2.0f;
+            float avail = ImGui::GetContentRegionAvail().y;
+            float off = (avail - size) * .5;
+            if (off > 0.0f)
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + off);
+        }
+
         return ImGui::Button(text.c_str());
     }
 

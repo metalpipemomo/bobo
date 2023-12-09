@@ -17,8 +17,6 @@ public:
     {
         // Clean up pause menu resources
         BOBO_INFO("Exited Pause Menu State");
-
-        Time::SetTimeScale(1);
     }
 
     void Update()
@@ -63,7 +61,7 @@ public:
         ImGuiHelpers::MakeVerticalList(
             {
                 "Move F/B - I <-> K", 
-                "Move L / R - J <-> L",
+                "Move L/R - J <-> L",
                 "Confirm Placement - P",
             }, 10, "Re-placing Cue Ball");
 
