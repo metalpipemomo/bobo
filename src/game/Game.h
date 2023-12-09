@@ -243,6 +243,9 @@ private:
 			}
 			for (auto& object : objects)
 			{
+				auto s = scene->GetComponent<AudioSource>(en);
+				s->m_Vol = 50;
+				s->Play("Sink");
 				// decrease striped or solid ball amount when it is sunk
 				if (balltag == "striped")
 				{

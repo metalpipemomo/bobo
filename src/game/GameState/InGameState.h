@@ -279,7 +279,7 @@ public:
                 };
             auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(makeCueDissapear, waitTime);
             /*
-                        if (que) {
+            if (que) {
                 GameObject temp;
                 auto s = temp.GetComponent<AudioSource>();
                 s->m_Vol = m_maxShotPower / m_ShotPower / 10;
