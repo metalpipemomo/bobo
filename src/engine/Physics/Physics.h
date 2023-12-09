@@ -16,7 +16,7 @@
 #include <Jolt/Physics/Body/BodyActivationListener.h>
 #include <iostream>
 #include "../EntityComponent/EntityManager.h"
-
+#include "../Time.h"
 
 // Disable common warnings triggered by Jolt, you can use JPH_SUPPRESS_WARNING_PUSH / JPH_SUPPRESS_WARNING_POP to store and restore the warning state
 JPH_SUPPRESS_WARNINGS
@@ -279,7 +279,7 @@ public:
 
 		
 		// Step the world
-		Physics::PhysicsWorld->physics_system->Update((1.0/60.0), cCollisionSteps, &temp_allocator, &job_system);
+		Physics::PhysicsWorld->physics_system->Update((Time::GetTimeScale()/60.0), cCollisionSteps, &temp_allocator, &job_system);
 	}
 
 	// use this function if you need to get the entity corresponding to some jolt rigidbody id

@@ -64,6 +64,7 @@ public:
 	static float DeltaTime() { return GetInstance()->m_DeltaTime; }
 	static float UnscaledDeltaTime() { return GetInstance()->m_UnscaledDeltaTime; }
 	static float FixedDeltaTime() { return GetInstance()->m_FixedDeltaTime; }
+	static float GetTimeScale() { return GetInstance()->m_TimeScale; }
 
 private:
 	static Time* GetInstance()
