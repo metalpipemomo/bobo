@@ -209,7 +209,7 @@ private:
 			}
 			if (balltag == "solid" || balltag == "striped" || balltag == "8ball" || balltag == "cueBall") {
 				auto s = ball->GetComponent<AudioSource>();
-				s->m_Vol = ball->GetComponent<Rigidbody>()->GetVelocity().Length() / 25;
+				s->m_Vol = ball->GetComponent<Rigidbody>()->GetVelocity().Length() / 20;
 				s->Play("Ball");
 			}
 
@@ -755,6 +755,9 @@ private:
 		// Audio files are loaded from the assets/Sounds directory, they must be .mp3
 		// The files can be accessed through a string identifier, which corresponds to
 		// the file name without extensions. Case doesn't matter
+		Audio::GetSoundInfo("Jazz1")->m_Vol = 0.1;
+		Audio::PlaySound("Jazz1");
+
 
 		/*------ COROUTINES ------*/
 		// Should be all self-explanatory; Just some examples

@@ -282,7 +282,6 @@ public:
             if (que) {
                 auto s = Audio::GetSoundInfo("Que");
                 s->m_Vol =  m_ShotPower / m_maxShotPower *100 ;
-                BOBO_INFO(m_ShotPower / m_maxShotPower);
                 Audio::PlaySound("Que");
             }
             que = !que;
