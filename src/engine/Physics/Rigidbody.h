@@ -31,12 +31,12 @@ public:
 		
 		shape_settings.mIsSensor = isTrigger;
 		
-		auto body = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().CreateBody(shape_settings);
+		auto body = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().CreateBody(shape_settings);
 		if(inMotionType == EMotionType::Static) {
-			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddBody(body->GetID(), EActivation::DontActivate);
+			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().AddBody(body->GetID(), EActivation::DontActivate);
 		} else {
 			body->GetMotionProperties()->SetAngularDamping(0.75);
-			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddBody(body->GetID(), EActivation::Activate);
+			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().AddBody(body->GetID(), EActivation::Activate);
 
 		}
 		m_id = body->GetID();
@@ -49,8 +49,8 @@ public:
 
 	~Rigidbody() 
 	{
-		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().DestroyBody(m_id);
-		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().RemoveBody(m_id);
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().DestroyBody(m_id);
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().RemoveBody(m_id);
 	}
 
 	bool IsEnabled() {
@@ -66,8 +66,8 @@ public:
 	{
 		if(transform != nullptr && !disabled) 
 		{
-			auto tempPosition = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetPosition(m_id);
-			auto tempRotation = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetRotation(m_id).GetEulerAngles();
+			auto tempPosition = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().GetPosition(m_id);
+			auto tempRotation = Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().GetRotation(m_id).GetEulerAngles();
 
 			transform->position = glm::vec3(tempPosition.GetX(), tempPosition.GetY(), tempPosition.GetZ());
 			transform->rotation = glm::vec3(tempRotation.GetX(), tempRotation.GetY(), tempRotation.GetZ());
@@ -94,54 +94,54 @@ public:
 	
 	void AddLinearVelocity(Vec3 velocity) 
 	{
-		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddLinearVelocity(m_id, velocity);
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().AddLinearVelocity(m_id, velocity);
 	}
 
 	JPH::Vec3 GetPosition() 
 	{
-		return Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetCenterOfMassPosition(m_id);
+		return Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().GetCenterOfMassPosition(m_id);
 	}
 
 	void SetPosition(JPH::Vec3 position) 
 	{
-		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetPosition(m_id, position, EActivation::Activate);
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().SetPosition(m_id, position, EActivation::Activate);
 	}
 
 	// sets the position while resetting velocity
 	void SetPositionHard(JPH::Vec3 position) 
 	{
-		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetPosition(m_id, position, EActivation::Activate);
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().SetPosition(m_id, position, EActivation::Activate);
 		SetVelocity(JPH::Vec3::sZero());
 	}
 	
 	JPH::Vec3 GetVelocity() 
 	{
-		return Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetLinearVelocity(m_id);
+		return Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().GetLinearVelocity(m_id);
 	}
 
 	void SetVelocity(JPH::Vec3 velocity) 
 	{
-		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetLinearVelocity(m_id, velocity);
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().SetLinearVelocity(m_id, velocity);
 	}
 
 	float GetFriction() 
 	{
-		return Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetFriction(m_id);
+		return Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().GetFriction(m_id);
 	}
 
 	void SetFriction(float friction) 
 	{
-		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetFriction(m_id, friction);
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().SetFriction(m_id, friction);
 	}
 
 	float GetBounce() 
 	{
-		return Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().GetRestitution(m_id);
+		return Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().GetRestitution(m_id);
 	}
 
 	void SetBounce(float bounce) 
 	{
-		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetRestitution(m_id, bounce);
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().SetRestitution(m_id, bounce);
 	}
 
 	// set a function to be called when this object collides with another object.
@@ -162,10 +162,10 @@ public:
 	{
 		if(isStatic) 
 		{
-			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetMotionType(m_id, EMotionType::Static, EActivation::Activate);
+			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().SetMotionType(m_id, EMotionType::Static, EActivation::Activate);
 		} else 
 		{
-			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().SetMotionType(m_id, EMotionType::Dynamic, EActivation::Activate);
+			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().SetMotionType(m_id, EMotionType::Dynamic, EActivation::Activate);
 		}
 	}
 
@@ -178,7 +178,7 @@ public:
 
 	void addForce(JPH::Vec3 force)
 	{
-		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().AddImpulse(m_id, force);
+		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().AddImpulse(m_id, force);
 	}
 
 	BodyID GetBodyID() 
