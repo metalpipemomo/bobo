@@ -278,15 +278,15 @@ public:
                 m_CueModelTransform->position = glm::vec3{ 100,100,100 };
                 };
             auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(makeCueDissapear, waitTime);
-            /*
+            
             if (que) {
-                GameObject temp;
-                auto s = temp.GetComponent<AudioSource>();
-                s->m_Vol = m_maxShotPower / m_ShotPower / 10;
-                s->Play("Que");
+                auto s = Audio::GetSoundInfo("Que");
+                s->m_Vol =  m_ShotPower / m_maxShotPower *100 ;
+                BOBO_INFO(m_ShotPower / m_maxShotPower);
+                Audio::PlaySound("Que");
             }
             que = !que;
-            */
+            
             m_BallRb->addForce(m_PlayerMuscles * JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower * m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower * m_maxShotPower));
         }
     }
