@@ -236,7 +236,12 @@ public:
             if (m_BallRb->GetVelocity().Length() == 0 && !m_IsCueBallSunk && m_ResolvingShot < 0) 
             {
                 
-                bool foulBall = CheckFoul();
+                bool foulBall = m_BallContactFoul;
+                
+                if (!foulBall) {
+                    foulBall = CheckFoul();
+                }
+
                 if (foulBall) 
                 {
                     m_CueBallTransform->position = glm::vec3{ 100,100,100 };
@@ -245,6 +250,7 @@ public:
                     m_CueBallGhostObject->Enable();
                     
                 }
+                m_FirstCollisionHit = false;
                 m_ResolvingShot = 0;
             }
 
@@ -336,10 +342,61 @@ public:
         return (diffX <= epsilon) && (diffY <= epsilon) && (diffZ <= epsilon);
     }
 
+    void applyBallGroupCollisionTrigger()
+    {
+        if (m_decidedBall) {
+            return;
+        }
+    
+
+        m_BallRb->SetOnCollision([=](JPH::BodyID other) {
+            //once the first collision is accounted for, don't bother calculating
+            if (m_FirstCollisionHit)
+            {
+                return;
+            }
+            Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
+            auto otherObject = m_Scene->GetComponent<ObjectTag>(en);
+            if (otherObject != NULL) {
+                // Check the type of the collided object
+                if (otherObject->tag == "solid" || otherObject->tag == "striped") {
+                    bool isCollidedBallSolid = (otherObject->tag == "solid");
+
+                    // Check if the collided ball doesn't belong to the current player's group based on m_Turn
+                    bool ballNotFromCurrentPlayerGroup = ((m_Turn == Turn::P1 && isCollidedBallSolid) || (m_Turn == Turn::P2 && !isCollidedBallSolid));
+
+                    // Set m_BallContactFoul based on whether the collided ball doesn't belong to the current player's group
+                    m_BallContactFoul = ballNotFromCurrentPlayerGroup;
+                    m_FirstCollisionHit = true;
+                }
+                else if (otherObject->tag == "8ball") {
+                    // If it hit an 8-ball first, it's an automatic foul
+                    m_BallContactFoul = true;
+                    m_FirstCollisionHit = true;
+                }
+                else {
+                    // Default case
+                    m_BallContactFoul = false;
+                    m_FirstCollisionHit = false;
+                }
+
+
+                BOBO_INFO(std::to_string(m_BallContactFoul) + " Contact foul?");
+                
+                BOBO_INFO("WTF");
+            }
+            else {
+                BOBO_WARN("not a ball");
+            }
+            
+        });
+    }
+
     bool CheckFoul() {
         auto objects = m_Scene->GetComponentsOfType<ObjectTag>();
         m_AllBallsTransformsUpdated.clear();
 
+      
         // Gather updated ball transforms
         for (auto& object : objects) 
         {
@@ -412,6 +469,7 @@ public:
             else if(!m_HasSunkBadly)
                 m_NextTurn = Turn::P2;
         }
+        applyBallGroupCollisionTrigger();
         m_decidedBall = true;
     }
 
@@ -441,7 +499,9 @@ public:
             else if (!m_HasSunkBadly)
                 m_NextTurn = Turn::P2;
         }
+        applyBallGroupCollisionTrigger();
         m_decidedBall = true;
+        
     }
 
     void SetWinner(std::string winner) 
@@ -551,6 +611,7 @@ public:
             currentTurn = "P2";
         std::string turnLabel = "Shooting: " + currentTurn;
         ImGuiHelpers::MakeCenterText(turnLabel.c_str(), true, true);
+ 
 
         ImGui::End();
 
@@ -691,6 +752,8 @@ private:
     std::vector<Transform*> m_AllBallsTransforms;
     std::vector<Transform> m_AllBallsTransformsPrevious;
     std::vector<Transform> m_AllBallsTransformsUpdated;
+    bool m_FirstCollisionHit = false;
+    bool m_BallContactFoul = false;
     bool m_AllBallsStopped = false;
     float m_VelocityThreshold = 0.1;
     CueBallGhost* m_CueBallGhostObject;
