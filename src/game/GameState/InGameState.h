@@ -475,7 +475,8 @@ public:
         {
             if (!m_decidedBall) {
                 m_leftSolid = true;
-                m_NextTurn = Turn::P1;
+                if (!m_IsCueBallSunk)
+                    m_NextTurn = Turn::P1;
             }
             else if (!m_leftSolid) {
                 m_NextTurn = Turn::P2;
@@ -488,7 +489,8 @@ public:
         {
             if (!m_decidedBall){
                 m_leftSolid = false;
-                m_NextTurn = Turn::P2;
+                if (!m_IsCueBallSunk)
+                    m_NextTurn = Turn::P2;
             }
             else if (m_leftSolid) {
                 m_NextTurn = Turn::P1;
@@ -509,7 +511,8 @@ public:
         {
             if (!m_decidedBall) {
                 m_leftSolid = false;
-                m_NextTurn = Turn::P1;
+                if (!m_IsCueBallSunk) 
+                    m_NextTurn = Turn::P1;
             }
             else if (m_leftSolid) {
                 m_NextTurn = Turn::P2;
@@ -521,8 +524,9 @@ public:
         if (m_Turn == Turn::P2)
         {
             if (!m_decidedBall) {
-                m_NextTurn = Turn::P2;
                 m_leftSolid = true;
+                if (!m_IsCueBallSunk)
+                    m_NextTurn = Turn::P2;
             }
             else if (!m_leftSolid) {
                 m_NextTurn = Turn::P1;
@@ -571,13 +575,14 @@ public:
         // unneeded maybe? this is called in game.h but idk if we actually need this
         // if you remove this then remember to remove its call in game.h
         m_IsCueBallSunk = true;
-        if (m_HasSunkBadly && m_Turn == Turn::P1)
+        m_HasSunkBadly = true;
+        if (m_Turn == Turn::P1)
         {
-            m_Turn = Turn::P2;
+            m_NextTurn = Turn::P2;
         }
-        else if (m_HasSunkBadly && m_Turn == Turn::P2)
+        else if (m_Turn == Turn::P2)
         {
-            m_Turn = Turn::P1;
+            m_NextTurn = Turn::P1;
         }
     }
 
