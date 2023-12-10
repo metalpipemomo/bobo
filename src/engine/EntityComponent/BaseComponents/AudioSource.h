@@ -34,7 +34,7 @@ public:
 		soundInfo->m_Is3D = m_Is3D;
 		if (m_Is3D)
 		{
-			soundInfo->m_PosInfo = p_Transform->position;
+			soundInfo->Set3DCoords(p_Transform->position);
 		}
 		else
 		{
@@ -42,7 +42,7 @@ public:
 		}
 		soundInfo->m_Muted = m_Muted;
 		soundInfo->m_Pitch = m_Pitch;
-		soundInfo->m_Vol = m_Vol;
+		soundInfo->SetVolume(m_Vol);
 
 		// Play sound
 		Audio::PlaySound(identifier);

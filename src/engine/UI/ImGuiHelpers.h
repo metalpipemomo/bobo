@@ -44,6 +44,14 @@ public:
         ImGui::Text(text.c_str());
     }
 
+    static bool MakeButton(std::string text, ImVec2 size = ImVec2(0, 0))
+    {
+        bool b = ImGui::Button(text.c_str(), size);
+        if (b)
+            PlayUIClick();
+        return b;
+    }
+
     // Helper UI function
     static bool MakeCenterButton(std::string text, bool centerHorizontally = true, bool centerVertically = false)
     {
@@ -66,7 +74,7 @@ public:
                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + off);
         }
 
-        return ImGui::Button(text.c_str());
+        return MakeButton(text);
     }
 
     static void LowerCursor(int lowerBy = 10)
@@ -92,5 +100,18 @@ public:
             MakeCenterText(it);
             LowerCursor(gap);
         }
+    }
+
+    static void PlayUIClick()
+    {
+        auto s = Audio::GetSoundInfo("Click");
+        s->m_Pitch = RandomFloat(.9, 1.1);
+        s->SetVolume(RandomFloat(.8, 1));
+        Audio::PlaySound("Click");
+    }
+
+    static float RandomFloat(float a, float b)
+    {
+        return ((b - a) * ((float)rand() / RAND_MAX)) + a;
     }
 };

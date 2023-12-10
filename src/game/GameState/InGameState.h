@@ -4,7 +4,6 @@
 #include "glm/ext.hpp"
 #include <string>
 #include "../../engine/Time.h"
-#include "../engine/EntityComponent/BaseComponents/AudioSource.h"
 
 
 enum Turn { P1, P2 };
@@ -194,6 +193,13 @@ public:
             m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetPosition(newPos);
             m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
         }
+
+        auto playAudioBoom = [=]() {
+            auto s = Audio::GetSoundInfo("Boom");
+            s->SetVolume(.5);
+            Audio::PlaySound("Boom");
+        };
+        auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(playAudioBoom, .5);
     }
 
     void Exit()
@@ -279,12 +285,12 @@ public:
                 };
             auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(makeCueDissapear, waitTime);
             
-            if (que) {
-                auto s = Audio::GetSoundInfo("Que");
-                s->m_Vol =  m_ShotPower / m_maxShotPower *100 ;
-                Audio::PlaySound("Que");
+            if (m_Cue) {
+                auto s = Audio::GetSoundInfo("CueHit");
+                s->SetVolume(m_ShotPower / m_maxShotPower * 100);
+                Audio::PlaySound("CueHit");
             }
-            que = !que;
+            m_Cue = !m_Cue;
             
             m_BallRb->addForce(m_PlayerMuscles * JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower * m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower * m_maxShotPower));
         }
@@ -669,7 +675,7 @@ private:
     bool m_HasSunkBadly = false;
     float m_ShotPower;
     int m_ShotPowerDirection;
-    bool que = true;
+    bool m_Cue = true;
 
     int m_ProgressBarWidth = 300;
     int m_ProgressBarHeight = 50;

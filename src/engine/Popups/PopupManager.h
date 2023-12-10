@@ -152,7 +152,7 @@ public:
             if (hasPrevButton && !hasNextButton)
             {
                 ImGui::SetCursorPosX((windowWidth - 75) * 0.5f);
-                if (ImGui::Button("Previous", ImVec2(75, 20)))
+                if (ImGuiHelpers::MakeButton("Previous", ImVec2(75, 20)))
                     item->m_PageIndex--;
             }
             else if (!hasPrevButton && hasNextButton)
@@ -160,7 +160,7 @@ public:
                 // To Center
                 ImGui::SetCursorPosX((windowWidth - 75) * 0.5f);
 
-                if (ImGui::Button("Next", ImVec2(75, 20)))
+                if (ImGuiHelpers::MakeButton("Next", ImVec2(75, 20)))
                     item->m_PageIndex++;
             }
             else if (hasPrevButton && hasNextButton)
@@ -168,17 +168,20 @@ public:
                 // To Center
                 ImGui::SetCursorPosX((windowWidth - 150) * 0.5f);
 
-                if (ImGui::Button("Previous", ImVec2(75, 20)))
+                if (ImGuiHelpers::MakeButton("Previous", ImVec2(75, 20)))
                     item->m_PageIndex--;
                 ImGui::SameLine();
-                if (ImGui::Button("Next", ImVec2(75, 20)))
+                if (ImGuiHelpers::MakeButton("Next", ImVec2(75, 20)))
                     item->m_PageIndex++;
             }
             
             if (open)
                 i++;
             else
+            {
                 pm->m_ActivePopups.erase(pm->m_ActivePopups.begin() + i);
+                ImGuiHelpers::PlayUIClick();
+            }
             open = true;
 
             ImGui::End();

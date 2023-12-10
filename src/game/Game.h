@@ -212,13 +212,11 @@ private:
 				s->m_Vol = ball->GetComponent<Rigidbody>()->GetVelocity().Length() / 20;
 				s->Play("Ball");
 			}
-
 		});
 	}
 
 	void CreateHoleTriggers(float xOffset, float zOffset)
 	{
-
 		// create and set the trigger box for a hole
 		auto triggerBox = new GameObject();
 		//triggerBox->GetComponent<Transform>()->scale = glm::vec3{ 1.3,.5, 1.3 };
@@ -755,10 +753,10 @@ private:
 		// Audio files are loaded from the assets/Sounds directory, they must be .mp3
 		// The files can be accessed through a string identifier, which corresponds to
 		// the file name without extensions. Case doesn't matter
-		Audio::GetSoundInfo("Jazz1")->m_Vol = 0.1;
-		Audio::GetSoundInfo("Jazz1")->m_IsLoop = true;
+		auto s = Audio::GetSoundInfo("Jazz1");
+		s->SetVolume(0.1);
+		s->m_IsLoop = true;
 		Audio::PlaySound("Jazz1");
-
 
 		/*------ COROUTINES ------*/
 		// Should be all self-explanatory; Just some examples
