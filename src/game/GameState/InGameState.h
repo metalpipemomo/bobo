@@ -193,6 +193,13 @@ public:
             m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetPosition(newPos);
             m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
         }
+
+        auto playAudioBoom = [=]() {
+            auto s = Audio::GetSoundInfo("Boom");
+            s->SetVolume(.5);
+            Audio::PlaySound("Boom");
+        };
+        auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(playAudioBoom, .5);
     }
 
     void Exit()
@@ -283,6 +290,14 @@ public:
                 m_CueModelTransform->position = glm::vec3{ 100,100,100 };
                 };
             auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(makeCueDissapear, waitTime);
+            
+            if (m_Cue) {
+                auto s = Audio::GetSoundInfo("CueHit");
+                s->SetVolume(m_ShotPower / m_maxShotPower * 100);
+                Audio::PlaySound("CueHit");
+            }
+            m_Cue = !m_Cue;
+            
             m_BallRb->addForce(m_PlayerMuscles * JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower * m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower * m_maxShotPower));
         }
     }
@@ -725,6 +740,7 @@ private:
     bool m_HasSunkBadly = false;
     float m_ShotPower;
     int m_ShotPowerDirection;
+    bool m_Cue = true;
 
     int m_ProgressBarWidth = 300;
     int m_ProgressBarHeight = 50;

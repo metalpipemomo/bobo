@@ -129,6 +129,7 @@ public:
         auto n = GetInstance();
         DefaultNotificationInfo* info = new DefaultNotificationInfo(text, textColor, 1, duration);
         n->m_ActiveNotifications.push_back(info);
+        ImGuiHelpers::PlayUIClick();
     }
 
     /* Banner */

@@ -68,10 +68,11 @@ void Audio::PlaySoundI(SoundInfo soundInfo)
         {
             channel->setPan(soundInfo.m_Pan);
         }
+        channel->setVolume(soundInfo.GetVolume());
         channel->setPitch(soundInfo.m_Pitch);
-        channel->setVolume(soundInfo.m_Vol);
         channel->setMute(soundInfo.m_Muted);
-        
+
+        ERRCHECK(channel->setMode(soundInfo.m_IsLoop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF));
         if (soundInfo.m_IsLoop) // add to channel map of sounds currently playing, to stop later
             ae->m_LoopsPlaying.insert({ soundInfo.m_UniqueID, channel });
 
@@ -165,9 +166,9 @@ bool Audio::SoundLoaded(SoundInfo soundInfo)
 void Audio::Set3dChannelPosition(SoundInfo soundInfo, FMOD::Channel* channel)
 {
     FMOD_VECTOR position = {
-        soundInfo.m_PosInfo.x * DISTANCEFACTOR,
-        soundInfo.m_PosInfo.y * DISTANCEFACTOR,
-        soundInfo.m_PosInfo.z * DISTANCEFACTOR };
+        soundInfo.GetPosInfo().x* DISTANCEFACTOR,
+        soundInfo.GetPosInfo().y * DISTANCEFACTOR,
+        soundInfo.GetPosInfo().z * DISTANCEFACTOR };
     FMOD_VECTOR velocity = { 0.0f, 0.0f, 0.0f };
     channel->setMode(FMOD_3D);
     ERRCHECK(channel->set3DAttributes(&position, &velocity));

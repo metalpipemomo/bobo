@@ -10,13 +10,11 @@ public:
 
     // 3d info
     bool m_Is3D;
-    glm::vec3 m_PosInfo;
 
     // normal info
-    bool m_IsLoop;
     bool m_Muted;
+    bool m_IsLoop;
     float m_Pitch;
-    float m_Vol;
 
     // non-3d info
     float m_Pan;
@@ -43,6 +41,15 @@ public:
         m_PosInfo.y = y;
         m_PosInfo.z = z;
     }
-
+    
     void Set3DCoords(glm::vec3 coords) { m_PosInfo = coords; }
+    
+    glm::vec3 GetPosInfo() { return m_PosInfo; }
+
+    void SetVolume(float vol) { m_Vol = vol > 3 ? 3 : vol; }
+
+    float GetVolume() { return m_Vol; }
+private:
+    float m_Vol;
+    glm::vec3 m_PosInfo;
 };

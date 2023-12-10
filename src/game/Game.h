@@ -201,13 +201,22 @@ private:
 
 		ball->AddComponent<AudioSource>(transform);
 		ball->GetComponent<Rigidbody>()->SetOnCollision([=](JPH::BodyID other) {
-			ball->GetComponent<AudioSource>()->Play("punch");
+			Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
+			auto scene = SceneManager::GetActiveScene();
+			string balltag;
+			if (scene->GetComponent<ObjectTag>(en)) {
+				balltag = scene->GetComponent<ObjectTag>(en)->tag;
+			}
+			if (balltag == "solid" || balltag == "striped" || balltag == "8ball" || balltag == "cueBall") {
+				auto s = ball->GetComponent<AudioSource>();
+				s->m_Vol = ball->GetComponent<Rigidbody>()->GetVelocity().Length() / 20;
+				s->Play("Ball");
+			}
 		});
 	}
 
 	void CreateHoleTriggers(float xOffset, float zOffset)
 	{
-
 		// create and set the trigger box for a hole
 		auto triggerBox = new GameObject();
 		//triggerBox->GetComponent<Transform>()->scale = glm::vec3{ 1.3,.5, 1.3 };
@@ -232,6 +241,9 @@ private:
 			}
 			for (auto& object : objects)
 			{
+				auto s = scene->GetComponent<AudioSource>(en);
+				s->m_Vol = 50;
+				s->Play("Sink");
 				// decrease striped or solid ball amount when it is sunk
 				if (balltag == "striped")
 				{
@@ -741,6 +753,10 @@ private:
 		// Audio files are loaded from the assets/Sounds directory, they must be .mp3
 		// The files can be accessed through a string identifier, which corresponds to
 		// the file name without extensions. Case doesn't matter
+		auto s = Audio::GetSoundInfo("Jazz1");
+		s->SetVolume(0.1);
+		s->m_IsLoop = true;
+		Audio::PlaySound("Jazz1");
 
 		/*------ COROUTINES ------*/
 		// Should be all self-explanatory; Just some examples

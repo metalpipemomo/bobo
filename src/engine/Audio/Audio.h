@@ -40,14 +40,6 @@ public:
     */
     static void LoadSound(SoundInfo soundInfo, const std::string& identifier);
 
-    /**
-    * Plays a sound file using FMOD's low level audio system. If the sound file has not been
-    * previously loaded using loadSoundFile(), a console message is displayed
-    *
-    * @var filename - relative path to file from project directory. (Can be .OGG, .WAV, .MP3,
-    *                 or any other FMOD-supported audio format)
-    */
-    static void PlaySoundI(SoundInfo soundInfo);
     static void PlaySound(const std::string& identifier);
 
     // Stops a Sound
@@ -70,7 +62,7 @@ public:
     {
         auto a = GetInstance();
         std::string id = TransformIdentifier(identifier);
-        if (!HasLoadedSound(TransformIdentifier(id))) return nullptr;
+        if (!HasLoadedSound(id)) return nullptr;
         return &a->m_SoundInfoStore[id];
     }
 
@@ -86,7 +78,6 @@ public:
         std::transform(copyIdentifier.begin(), copyIdentifier.end(), copyIdentifier.begin(), ::toupper);
         return copyIdentifier;
     }
-
 private:
     static Audio* GetInstance()
     {
@@ -147,4 +138,13 @@ private:
     * SoundInfo::set3DCoords(x,y,z) should be called before this method to set the new desired location.
     */
     static void Update3DSoundPosition(SoundInfo soundInfo);
+
+    /**
+    * Plays a sound file using FMOD's low level audio system. If the sound file has not been
+    * previously loaded using loadSoundFile(), a console message is displayed
+    *
+    * @var filename - relative path to file from project directory. (Can be .OGG, .WAV, .MP3,
+    *                 or any other FMOD-supported audio format)
+    */
+    static void PlaySoundI(SoundInfo soundInfo);
 };
