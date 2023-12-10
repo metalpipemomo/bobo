@@ -362,7 +362,9 @@ public:
         if (m_decidedBall) {
             return;
         }
-    
+  
+        // on the break make sure first collision is set true
+        m_FirstCollisionHit = true;
 
         m_BallRb->SetOnCollision([=](JPH::BodyID other) {
             //once the first collision is accounted for, don't bother calculating
@@ -376,9 +378,16 @@ public:
                 // Check the type of the collided object
                 if (otherObject->tag == "solid" || otherObject->tag == "striped") {
                     bool isCollidedBallSolid = (otherObject->tag == "solid");
-
+                    bool ballNotFromCurrentPlayerGroup;
                     // Check if the collided ball doesn't belong to the current player's group based on m_Turn
-                    bool ballNotFromCurrentPlayerGroup = ((m_Turn == Turn::P1 && isCollidedBallSolid) || (m_Turn == Turn::P2 && !isCollidedBallSolid));
+                    if (m_leftSolid)
+                    {
+                        ballNotFromCurrentPlayerGroup = ((m_Turn == Turn::P1 && !isCollidedBallSolid) || (m_Turn == Turn::P2 && isCollidedBallSolid));
+                    }
+                    else
+                    {
+                        ballNotFromCurrentPlayerGroup = ((m_Turn == Turn::P1 && isCollidedBallSolid) || (m_Turn == Turn::P2 && !isCollidedBallSolid));
+                    }
 
                     // Set m_BallContactFoul based on whether the collided ball doesn't belong to the current player's group
                     m_BallContactFoul = ballNotFromCurrentPlayerGroup;
@@ -464,8 +473,10 @@ public:
         
         if (m_Turn == Turn::P1)
         {
-            if (!m_decidedBall)
+            if (!m_decidedBall) {
                 m_leftSolid = true;
+                m_NextTurn = Turn::P1;
+            }
             else if (!m_leftSolid) {
                 m_NextTurn = Turn::P2;
                 m_HasSunkBadly = true;
@@ -475,8 +486,10 @@ public:
         }
         if (m_Turn == Turn::P2) 
         {
-            if (!m_decidedBall)
+            if (!m_decidedBall){
                 m_leftSolid = false;
+                m_NextTurn = Turn::P2;
+            }
             else if (m_leftSolid) {
                 m_NextTurn = Turn::P1;
                 m_HasSunkBadly = true;
@@ -558,6 +571,14 @@ public:
         // unneeded maybe? this is called in game.h but idk if we actually need this
         // if you remove this then remember to remove its call in game.h
         m_IsCueBallSunk = true;
+        if (m_HasSunkBadly && m_Turn == Turn::P1)
+        {
+            m_Turn = Turn::P2;
+        }
+        else if (m_HasSunkBadly && m_Turn == Turn::P2)
+        {
+            m_Turn = Turn::P1;
+        }
     }
 
     void Render()
