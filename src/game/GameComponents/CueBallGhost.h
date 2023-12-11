@@ -89,7 +89,6 @@ public:
 			cueball->SetPositionHard(rb->GetPosition());
 			cueball->EnableBody();
 			Disable();
-			Camera::GetTarget();
 		}
 	}
 
