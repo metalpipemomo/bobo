@@ -221,11 +221,17 @@ public:
         // 1 and 2 keys for rotating shot angle
         if (Input::GetKey(GLFW_KEY_1))
         {
-            m_shotAngle += m_rotateSpeed * Time::DeltaTime();
+            if(Input::GetKey(GLFW_KEY_LEFT_CONTROL))
+                m_shotAngle += (m_rotateSpeed/3.0f) * Time::DeltaTime();
+            else
+                m_shotAngle += m_rotateSpeed * Time::DeltaTime();
         }
         if (Input::GetKey(GLFW_KEY_2))
         {
-            m_shotAngle -= m_rotateSpeed * Time::DeltaTime();
+            if (Input::GetKey(GLFW_KEY_LEFT_CONTROL))
+                m_shotAngle -= (m_rotateSpeed/3.0f) * Time::DeltaTime();
+            else
+                m_shotAngle -= m_rotateSpeed * Time::DeltaTime();
         }
 
         CheckAllBallsHasStopped();

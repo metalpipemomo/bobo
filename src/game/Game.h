@@ -275,6 +275,7 @@ private:
 					auto transform = scene->GetComponent<Transform>(en);
 					transform->position = glm::vec3{ 100,100,100 };
 					rb->DisableBody();
+					Camera::CueballSunk(true);
 					gameState->SinkCueBall();	
 
 					if (!m_HasShownReplacingCueBallPopup)

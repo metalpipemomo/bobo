@@ -74,14 +74,20 @@ public:
 		auto c = GetInstance(); // Change the mode
 		if (c->m_mode == 3) {
 			SwitchLamp(); // Switch lamp back on since we're activating it
-			if (c->m_firstMode) // Remember past action to get into mode 3
+			if (c->m_firstMode) { // Remember past action to get into mode 3
 				c->m_mode = 1;
+				c->m_distance = 15.0f;
+				return c->m_mode;
+			}
 		}
 		if (Input::GetKey(GLFW_KEY_LEFT_CONTROL)) // Have to hold CTRL and TAB in order to get freecam
 			c->m_mode = 0;
-		else if (c->m_mode == 1 && GetTarget()) { // Only switch to mode 2 if we found target
+		else if (c->m_mode == 1 && GetTarget() && !(c->m_cueBallSunk)) { // Only switch to mode 2 if we found target
 			c->m_mode = 2;
 			c->m_distance = 5.0f;
+		}
+		else if (c->m_mode == 2 && Overcam()) {
+
 		}
 		else {
 			c->m_mode = 1;
@@ -90,8 +96,10 @@ public:
 		return c->m_mode; // Return m-mode for all that cares about it
 	}
 
-	static void Overcam() {
+	static bool Overcam() {
 		auto c = GetInstance(); // Change the mode to above for ball placement
+		if (c->m_mode == 3)
+			return false;
 		if (c->m_mode == 2) { // We record what our last mode was
 			c->m_firstMode = true;
 		}
@@ -100,7 +108,18 @@ public:
 		}
 		SwitchLamp(); // Switch the lamp so it's hidden
 		c->m_mode = 3; // Set mode correctly
-		SetCameraPositionAndLookAt({ 0.0,15.0,-4.4f }, { 0.0,0.0,-4.5f }); // Above view
+		SetCameraPositionAndLookAt({ 0.0,20.0,-4.4f }, { 0.0,0.0,-4.5f }); // Above view
+		return true;
+	}
+	
+	static void CueballSunk(bool inputBool) {
+		auto c = GetInstance();
+		if (c->m_cueBallSunk == inputBool)
+			return;
+		c->m_cueBallSunk = inputBool;
+		if (c->m_mode == 2 && c->m_cueBallSunk) {
+			SwitchMode();
+		}
 	}
 
 	static short GetMode() {
@@ -227,7 +246,7 @@ public:
 
 	static void HandleCameraEvents() {
 		auto c = GetInstance(); // Return the mode number.
-		if (Input::GetKeyDown(GLFW_KEY_TAB) && c->m_mode != 3) { // Use Key down so that we're not going through toggles at extreme speed
+		if (Input::GetKeyDown(GLFW_KEY_TAB) && !c->m_camLock) { // Use Key down so that we're not going through toggles at extreme speed
 			SwitchMode(); // Switch mode of the camera.
 		}
 		if (!c->m_mode) { // If 0, essentially.
@@ -306,6 +325,11 @@ public:
 		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront, { 0.0f, 1.0f, 0.0f });
 	}
 
+	static void lockCam() {
+		auto c = GetInstance();
+		c->m_camLock = !c->m_camLock; // A quick lock of camera
+	}
+
 	static void Update()
 	{
 		auto c = GetInstance();
@@ -351,6 +375,8 @@ private:
 
 	// mode //
 
+	bool m_camLock = false;
+	bool m_cueBallSunk = false;
 	bool m_firstMode = 0; // Mode tracking last
 	short m_mode = 1; // 0 = Freecam, 1 = Table, 2 = Ball
 	glm::vec3* m_trackObjectCords; // Coordinates pointer of what we're tracking.
