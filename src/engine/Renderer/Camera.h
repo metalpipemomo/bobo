@@ -74,7 +74,7 @@ public:
 		auto c = GetInstance(); // Change the mode
 		if (c->m_mode == 3) {
 			SwitchLamp(); // Switch lamp back on since we're activating it
-			if (c->firstMode) // Remember past action to get into mode 3
+			if (c->m_firstMode) // Remember past action to get into mode 3
 				c->m_mode = 1;
 		}
 		if (Input::GetKey(GLFW_KEY_LEFT_CONTROL)) // Have to hold CTRL and TAB in order to get freecam
@@ -93,10 +93,10 @@ public:
 	static void Overcam() {
 		auto c = GetInstance(); // Change the mode to above for ball placement
 		if (c->m_mode == 2) { // We record what our last mode was
-			c->firstMode = true;
+			c->m_firstMode = true;
 		}
 		else {
-			c->firstMode = false;
+			c->m_firstMode = false;
 		}
 		SwitchLamp(); // Switch the lamp so it's hidden
 		c->m_mode = 3; // Set mode correctly
@@ -351,7 +351,7 @@ private:
 
 	// mode //
 
-	bool firstMode = 0; // Mode tracking last
+	bool m_firstMode = 0; // Mode tracking last
 	short m_mode = 1; // 0 = Freecam, 1 = Table, 2 = Ball
 	glm::vec3* m_trackObjectCords; // Coordinates pointer of what we're tracking.
 	float m_distance = 10.0f; // Distance from orbit.
