@@ -441,7 +441,7 @@ public:
                 Transform updated = m_AllBallsTransformsUpdated[i];
                
                 // If any ball is markedly different, set the flag and break the loop
-                if (!compareVec3(initial.position, updated.position, 1)) 
+                if (!compareVec3(initial.position, updated.position, 0.01)) 
                 {
                     anyDifferent = true;
                     break;
@@ -801,7 +801,7 @@ private:
     bool m_FirstCollisionHit = false;
     bool m_BallContactFoul = false;
     bool m_AllBallsStopped = false;
-    float m_VelocityThreshold = 0.1;
+    float m_VelocityThreshold = 0.15;
     CueBallGhost* m_CueBallGhostObject;
     bool m_IsCueBallSunk = false;
 
