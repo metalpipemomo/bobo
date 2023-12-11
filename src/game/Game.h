@@ -281,8 +281,8 @@ private:
 					{
 						PopupManager::MakePopup("Re-placing the Cue Ball",
 							{ 
-								"Use 'J' & 'L' to move the ball Left & Right",
-								"Use 'K' & 'I' to move the ball Backwards and Forwards",
+								"Use 'A' & 'D' to move the ball Left & Right",
+								"Use 'S' & 'W' to move the ball Backwards and Forwards",
 								"Use 'P' to confirm placement." },
 							ImVec2(400, 105), AnchorPos::TOP_CENTER, ImVec2(0, 25), true);
 						m_HasShownReplacingCueBallPopup = true;
@@ -494,6 +494,7 @@ private:
 		lamp->AddComponent<Material>(ModelLoader::GetModel("lamp"), TextureLoader::GetTexture("lamp"));
 		lamp->GetComponent<Transform>()->position = m_tablePosition;
 		lamp->GetComponent<Transform>()->position += glm::vec3{ 0, 5, 0 };
+		lamp->AddComponent<ObjectTag>("lamp");
 
 		auto spotlight = new GameObject();
 		Spotlight sl;

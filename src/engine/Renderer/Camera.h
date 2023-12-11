@@ -72,6 +72,11 @@ public:
 
 	static short SwitchMode() {
 		auto c = GetInstance(); // Change the mode
+		if (c->m_mode == 3) {
+			SwitchLamp(); // Switch lamp back on since we're activating it
+			if (c->firstMode) // Remember past action to get into mode 3
+				c->m_mode = 1;
+		}
 		if (Input::GetKey(GLFW_KEY_LEFT_CONTROL)) // Have to hold CTRL and TAB in order to get freecam
 			c->m_mode = 0;
 		else if (c->m_mode == 1 && GetTarget()) { // Only switch to mode 2 if we found target
@@ -82,12 +87,45 @@ public:
 			c->m_mode = 1;
 			c->m_distance = 15.0f;
 		}
-		return c->m_mode;
+		return c->m_mode; // Return m-mode for all that cares about it
+	}
+
+	static void Overcam() {
+		auto c = GetInstance(); // Change the mode to above for ball placement
+		if (c->m_mode == 2) { // We record what our last mode was
+			c->firstMode = true;
+		}
+		else {
+			c->firstMode = false;
+		}
+		SwitchLamp(); // Switch the lamp so it's hidden
+		c->m_mode = 3; // Set mode correctly
+		SetCameraPositionAndLookAt({ 0.0,15.0,-4.4f }, { 0.0,0.0,-4.5f }); // Above view
 	}
 
 	static short GetMode() {
 		auto c = GetInstance(); // Return the mode number.
 		return c->m_mode;
+	}
+
+	static void SwitchLamp() {
+		auto scene = SceneManager::GetActiveScene();
+		auto objects = scene->GetComponentsOfType<ObjectTag>();
+		auto c = GetInstance();
+		for (auto object : objects) { // Search thuogh all objects to find the tag of the cueBall
+			if ((object->tag == "lamp")) // Look for lamp object
+			{
+				if (c->m_mode == 3) {
+					((scene->GetComponent<Transform>(object->m_OwnerId)))->position = glm::vec3{ 0, -1.5, -4.5 }; // Current table view
+					(scene->GetComponent<Transform>(object->m_OwnerId))->position += glm::vec3{ 0, 5, 0 };
+				}
+				else {
+					((scene->GetComponent<Transform>(object->m_OwnerId)))->position = glm::vec3{ 0, -1.5, -4.5 }; // Current table view
+					(scene->GetComponent<Transform>(object->m_OwnerId))->position += glm::vec3{ 0, 500, 0 }; // It's far in the sky now
+				}
+				return;
+			}
+		}
 	}
 
 	static void FreeCamControls() {
@@ -174,8 +212,8 @@ public:
 
 	static void SetCameraPositionAndLookAt(const glm::vec3 newCameraPos, const glm::vec3 targetPos) {
 		auto c = GetInstance();
-		c->m_Position = newCameraPos;
-		c->cameraFront = glm::normalize(targetPos - c->m_Position);
+		c->m_Position = newCameraPos; // Set position
+		c->cameraFront = glm::normalize(targetPos - c->m_Position); // Set to be towards the taret
 		c->m_View = glm::lookAt(c->m_Position, c->m_Position + c->cameraFront, { 0.0f, 1.0f, 0.0f });
 	}
 
@@ -189,7 +227,7 @@ public:
 
 	static void HandleCameraEvents() {
 		auto c = GetInstance(); // Return the mode number.
-		if (Input::GetKeyDown(GLFW_KEY_TAB)) { // Use Key down so that we're not going through toggles at extreme speed
+		if (Input::GetKeyDown(GLFW_KEY_TAB) && c->m_mode != 3) { // Use Key down so that we're not going through toggles at extreme speed
 			SwitchMode(); // Switch mode of the camera.
 		}
 		if (!c->m_mode) { // If 0, essentially.
@@ -206,7 +244,7 @@ public:
 			SetCameraPositionAndLookAt(c->m_Position, { 0.0,0.0,-4.5f }); // We are assuming that the table won't move.
 			HoriSphereNormalizeDistance({ 0.0,0.0,-4.5f });
 		}
-		else {
+		else if (c->m_mode == 2) { // If 2, ball view
 			SlideControls();
 			if (c->m_distance < 2.0f) { // Clamp the distance values
 				c->m_distance = 2.0f;
@@ -313,6 +351,7 @@ private:
 
 	// mode //
 
+	bool firstMode = 0; // Mode tracking last
 	short m_mode = 1; // 0 = Freecam, 1 = Table, 2 = Ball
 	glm::vec3* m_trackObjectCords; // Coordinates pointer of what we're tracking.
 	float m_distance = 10.0f; // Distance from orbit.

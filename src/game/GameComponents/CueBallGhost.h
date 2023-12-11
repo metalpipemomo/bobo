@@ -54,19 +54,19 @@ public:
 		float xMove = 0;
 		float zMove = 0;
 
-		if (Input::GetKey(GLFW_KEY_I)) 
+		if (Input::GetKey(GLFW_KEY_W))
 		{
 			zMove -= 0.03f;
 		}
-		if (Input::GetKey(GLFW_KEY_K))
+		if (Input::GetKey(GLFW_KEY_S))
 		{
 			zMove += 0.03f;
 		}
-		if (Input::GetKey(GLFW_KEY_J)) 
+		if (Input::GetKey(GLFW_KEY_A))
 		{
 			xMove -= 0.03f;
 		}
-		if (Input::GetKey(GLFW_KEY_L)) 
+		if (Input::GetKey(GLFW_KEY_D))
 		{
 			xMove += 0.03f;
 		}
@@ -94,6 +94,9 @@ public:
 	}
 
 	void Enable() {
+		if (enabled) // Ignore repeated enable commands
+			return;
+		Camera::Overcam();
 		enabled = true;
 		Camera::GetTarget();
 	}
@@ -101,6 +104,9 @@ public:
 	void Disable() {
 		enabled = false;
 		wasEnabled = false;
+		if (preset)
+			Camera::SwitchMode(); // Switch back to last camera
+		preset = true;
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().DeactivateBody(rb->GetBodyID());
 		//SceneManager::GetActiveScene()->GetComponent<Renderer>(m_OwnerId);
 		Camera::GetTarget();
@@ -109,4 +115,5 @@ public:
 private:
 	bool enabled;
 	bool wasEnabled;
+	bool preset = false; // Ignore first deactivation for camera
 };
