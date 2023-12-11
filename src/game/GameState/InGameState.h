@@ -290,7 +290,7 @@ public:
                 m_CueModelTransform->position = glm::vec3{ 100,100,100 };
                 };
             auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(makeCueDissapear, waitTime);
-            
+            //When the player hits the que ball with the que, plays the que hit sound scaling with power
             if (m_Cue) {
                 auto s = Audio::GetSoundInfo("CueHit");
                 s->SetVolume(m_ShotPower / m_maxShotPower * 100);

@@ -200,6 +200,7 @@ private:
 		ball->GetComponent<Rigidbody>()->SetFriction(.4);
 
 		ball->AddComponent<AudioSource>(transform);
+		//Adds collision to balls
 		ball->GetComponent<Rigidbody>()->SetOnCollision([=](JPH::BodyID other) {
 			Entity en = Physics::GetInstance()->GetEntityFromJoltRb(other);
 			auto scene = SceneManager::GetActiveScene();
@@ -207,6 +208,7 @@ private:
 			if (scene->GetComponent<ObjectTag>(en)) {
 				balltag = scene->GetComponent<ObjectTag>(en)->tag;
 			}
+			//Audio for ball collision, triggers only if balls collide with one another
 			if (balltag == "solid" || balltag == "striped" || balltag == "8ball" || balltag == "cueBall") {
 				auto s = ball->GetComponent<AudioSource>();
 				s->m_Vol = ball->GetComponent<Rigidbody>()->GetVelocity().Length() / 20;
@@ -241,6 +243,7 @@ private:
 			}
 			for (auto& object : objects)
 			{
+				//Plays ball sinking audio when a ball is sunk
 				auto s = scene->GetComponent<AudioSource>(en);
 				s->m_Vol = 50;
 				s->Play("Sink");
@@ -754,6 +757,7 @@ private:
 		// Audio files are loaded from the assets/Sounds directory, they must be .mp3
 		// The files can be accessed through a string identifier, which corresponds to
 		// the file name without extensions. Case doesn't matter
+		//BGM for game, loops automaticaly 
 		auto s = Audio::GetSoundInfo("Jazz1");
 		s->SetVolume(0.1);
 		s->m_IsLoop = true;
