@@ -297,6 +297,7 @@ private:
 		lamp->AddComponent<Material>(ModelLoader::GetModel("lamp"), TextureLoader::GetTexture("lamp"));
 		lamp->GetComponent<Transform>()->position = m_tablePosition;
 		lamp->GetComponent<Transform>()->position += glm::vec3{ 0, 5, 0 };
+		lamp->AddComponent<ObjectTag>("lamp");
 
 		auto spotlight = new GameObject();
 		Spotlight sl;

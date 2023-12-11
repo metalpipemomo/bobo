@@ -73,6 +73,11 @@ public:
 
 	static short SwitchMode() {
 		auto c = GetInstance(); // Change the mode
+		if (c->m_mode == 3) {
+			SwitchLamp();
+			if (c->firstMode)
+				c->m_mode = 1;
+		}
 		if (Input::GetKey(GLFW_KEY_LEFT_CONTROL)) // Have to hold CTRL and TAB in order to get freecam
 			c->m_mode = 0;
 		else if (c->m_mode == 1 && GetTarget()) { // Only switch to mode 2 if we found target
@@ -86,9 +91,43 @@ public:
 		return c->m_mode;
 	}
 
+	static void Overcam() {
+		auto c = GetInstance(); // Change the mode to above
+		if (c->m_mode == 2) {
+			c->firstMode = true;
+		}
+		else {
+			c->firstMode = false;
+		}
+		SwitchLamp();
+		c->m_mode = 3;
+		c->m_distance = 10.0f;
+		SetCameraPositionAndLookAt({ 0.0,15.0,-4.4f }, { 0.0,0.0,-4.5f });
+	}
+
 	static short GetMode() {
 		auto c = GetInstance(); // Return the mode number.
 		return c->m_mode;
+	}
+
+	static void SwitchLamp() {
+		auto scene = SceneManager::GetActiveScene();
+		auto objects = scene->GetComponentsOfType<ObjectTag>();
+		auto c = GetInstance();
+		for (auto object : objects) { // Search thuogh all objects to find the tag of the cueBall
+			if ((object->tag == "lamp"))
+			{
+				if (c->m_mode == 3) {
+					((scene->GetComponent<Transform>(object->m_OwnerId)))->position = glm::vec3{0, -1.5, -4.5};
+					(scene->GetComponent<Transform>(object->m_OwnerId))->position += glm::vec3{ 0, 5, 0 };
+				}
+				else {
+					((scene->GetComponent<Transform>(object->m_OwnerId)))->position = glm::vec3{ 0, -1.5, -4.5 };
+					(scene->GetComponent<Transform>(object->m_OwnerId))->position += glm::vec3{ 0, 500, 0 };
+				}
+				return;
+			}
+		}
 	}
 
 	static void FreeCamControls() {
@@ -210,7 +249,7 @@ public:
 			SetCameraPositionAndLookAt(c->m_Position, { 0.0,0.0,-4.5f }); // We are assuming that the table won't move.
 			HoriSphereNormalizeDistance({ 0.0,0.0,-4.5f });
 		}
-		else {
+		else if (c->m_mode == 2){ // If 2, ball view
 			SlideControls();
 			if (c->m_distance < 2.0f) { // Clamp the distance values
 				c->m_distance = 2.0f;
@@ -299,6 +338,7 @@ private:
 	glm::vec3 m_Position;
 	glm::vec3 m_Target;
 	
+	bool firstMode = 0;
 	float m_Fov;
 	float m_AspectRatio;
 	float m_NearClipping;

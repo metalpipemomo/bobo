@@ -13,6 +13,7 @@ public:
 	std::vector<BodyID> collisions;
 	Rigidbody* cueball;
 	Vec3 resetPos;
+	bool preset = false;
 
 	CueBallGhost(Rigidbody *body, Rigidbody* cbRb) {
 		rb = body;
@@ -53,19 +54,19 @@ public:
 		float xMove = 0;
 		float zMove = 0;
 
-		if (Input::GetKey(GLFW_KEY_I)) 
+		if (Input::GetKey(GLFW_KEY_W)) 
 		{
 			zMove -= 0.03f;
 		}
-		if (Input::GetKey(GLFW_KEY_K))
+		if (Input::GetKey(GLFW_KEY_S))
 		{
 			zMove += 0.03f;
 		}
-		if (Input::GetKey(GLFW_KEY_J)) 
+		if (Input::GetKey(GLFW_KEY_A)) 
 		{
 			xMove -= 0.03f;
 		}
-		if (Input::GetKey(GLFW_KEY_L)) 
+		if (Input::GetKey(GLFW_KEY_D)) 
 		{
 			xMove += 0.03f;
 		}
@@ -93,12 +94,16 @@ public:
 	}
 
 	void Enable() {
+		Camera::Overcam();
 		enabled = true;
 	}
 
 	void Disable() {
 		enabled = false;
 		wasEnabled = false;
+		if (preset)
+			Camera::SwitchMode();
+		preset = true;
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().DeactivateBody(rb->GetBodyID());
 		//SceneManager::GetActiveScene()->GetComponent<Renderer>(m_OwnerId);
 	}
