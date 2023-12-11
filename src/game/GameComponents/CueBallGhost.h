@@ -104,9 +104,9 @@ public:
 	void Disable() {
 		enabled = false;
 		wasEnabled = false;
-		if (preset)
+		if (m_preset)
 			Camera::SwitchMode(); // Switch back to last camera
-		preset = true;
+		m_preset = true;
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().DeactivateBody(rb->GetBodyID());
 		//SceneManager::GetActiveScene()->GetComponent<Renderer>(m_OwnerId);
 		Camera::GetTarget();
@@ -115,5 +115,5 @@ public:
 private:
 	bool enabled;
 	bool wasEnabled;
-	bool preset = false; // Ignore first deactivation for camera
+	bool m_preset = false; // Ignore first deactivation for camera
 };
