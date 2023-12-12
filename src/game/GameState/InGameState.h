@@ -124,6 +124,12 @@ public:
                 m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->AddLinearVelocity(JPH::Vec3(0,0,-80));
             }
 
+            if (object->tag == "frontWallMover")
+            {
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
+                m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->AddLinearVelocity(JPH::Vec3(0,0,80));
+            }
+
         }
 
         //Only the balls have been given alt tags, no other entities within the game have them.
