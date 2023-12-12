@@ -53,7 +53,7 @@ public:
         ImGuiHelpers::MakeVerticalList(
             {
                 "Rotate Cue L/R - 1 <-> 2",
-                "Fine Adjustment - Ctrl + 1 <-> 2",
+                "Fine Adjustment - Hold Ctrl while Rotating Cue",
                 "Fast Forward - F",
                 "Charge Shot - Hold Space"
             }, 10, "Gameplay");
