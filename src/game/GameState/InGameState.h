@@ -450,7 +450,7 @@ public:
                 Transform updated = m_AllBallsTransformsUpdated[i];
                
                 // If any ball is markedly different, set the flag and break the loop
-                if (!compareVec3(initial.position, updated.position, 0.1)) 
+                if (!compareVec3(initial.position, updated.position, 0.001)) 
                 {
                     anyDifferent = true;
                     break;
@@ -622,9 +622,8 @@ public:
             ImGuiHelpers::MakeCenterText("Striped Balls Remaining: " + std::to_string(m_StripedBallsRemaining));
         ImGuiHelpers::LowerCursor();
 
-        
-
         ImGui::End();
+
 
         // Striped UI
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH - 250, main_viewport->WorkPos.y + 25), 0);
@@ -650,6 +649,61 @@ public:
 
         ImGui::End();
 
+    
+        // Controls
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH - 250, main_viewport->WorkPos.y + 150), 0);
+        ImGui::SetNextWindowSize(ImVec2(225, 325), 0);
+
+        ImGui::StyleColorsDark();
+
+        ImGui::Begin("Controls", NULL, ImGuiHelpers::MakeFlags(false, true, true, true, true, true, true, false, false, false));
+
+        if  (Camera::GetMode() == 0) {
+            ImGuiHelpers::LowerCursor();
+
+            ImGuiHelpers::MakeVerticalList(
+            {
+                "Enable Free Cam - Ctrl + Tab",
+                "Exit Free Cam - Tab",
+                "Move - WASD",
+                "Look - Arrow Keys",
+                "Move Up - Ctrl + W",
+                "Move Down - Ctrl + D"
+            }, 10, "Free Camera");
+        } else if (m_CueBallGhostObject->enabled) {
+            ImGuiHelpers::LowerCursor();
+
+            ImGuiHelpers::MakeVerticalList(
+            {
+                "Move F/B - W <-> S", 
+                "Move L/R - A <-> D",
+                "Confirm Placement - P",
+            }, 10, "Re-placing Cue Ball");
+        } else if (!m_CueBallGhostObject->enabled) {
+            ImGuiHelpers::LowerCursor();
+
+            ImGuiHelpers::MakeVerticalList(
+            {
+                "Rotate Cue L/R - 1 <-> 2",
+                "Fine Adjust - Ctrl + 1 <-> 2",
+                "Fast Forward - F",
+                "Charge Shot - Hold Space"
+            }, 10, "Gameplay");
+
+            ImGuiHelpers::LowerCursor();
+
+            ImGuiHelpers::MakeVerticalList(
+            {
+                "Rotate Camera L/R - A <-> D",
+                "Zoom Camera - W <-> S",
+                "Toggle Camera Mode - Tab",
+                "Enable Free Cam - Ctrl + Tab"
+            }, 10, "Game Camera");
+        }
+
+        ImGui::End();
+
+
         // Turn UI
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH - 225, main_viewport->WorkPos.y + WINDOW_HEIGHT - 50), 0);
         ImGui::SetNextWindowSize(ImVec2(200, 25), 0);
@@ -667,9 +721,9 @@ public:
         ImGuiHelpers::MakeCenterText(turnLabel.c_str(), true, true);
         ImGui::End();
 
+
         // if space is held or we are still resolving a shot, the bar must be rendered
         // Power Bar
-
         m_ShootKeyHeld = Input::GetKey(GLFW_KEY_SPACE) && m_BallRb->IsEnabled();
 
         // set the resolving shot timer upon releasing a shot

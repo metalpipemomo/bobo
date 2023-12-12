@@ -13,6 +13,7 @@ public:
 	std::vector<BodyID> collisions;
 	Rigidbody* cueball;
 	Vec3 resetPos;
+	bool enabled;
 
 	CueBallGhost(Rigidbody *body, Rigidbody* cbRb) {
 		rb = body;
@@ -116,7 +117,6 @@ public:
 	}
 
 private:
-	bool enabled;
 	bool wasEnabled;
 	bool m_preset = false; // Ignore first deactivation for camera
 };
