@@ -643,41 +643,43 @@ public:
     
         // Controls
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH - 250, main_viewport->WorkPos.y + 150), 0);
-        ImGui::SetNextWindowSize(ImVec2(225, 400), 0);
+        ImGui::SetNextWindowSize(ImVec2(225, 325), 0);
 
         ImGui::StyleColorsDark();
 
         ImGui::Begin("Controls", NULL, ImGuiHelpers::MakeFlags(false, true, true, true, true, true, true, false, false, false));
-        ImGuiHelpers::MakeCenterText("Controls", true, false);
 
-        ImGuiHelpers::LowerCursor();
+        if (m_CueBallGhostObject->enabled) {
 
-        ImGuiHelpers::MakeVerticalList(
-            {
-                "Rotate Cue L/R - 1 <-> 2",
-                "Fine Adjustment - Ctrl + 1 <-> 2",
-                "Fast Forward - F",
-                "Charge Shot - Hold Space"
-            }, 10, "Gameplay");
+            ImGuiHelpers::LowerCursor();
 
-        ImGuiHelpers::LowerCursor();
+            ImGuiHelpers::MakeVerticalList(
+                {
+                    "Move F/B - W <-> S", 
+                    "Move L/R - A <-> D",
+                    "Confirm Placement - P",
+                }, 10, "Re-placing Cue Ball");
+        } else {
+            ImGuiHelpers::LowerCursor();
 
-        ImGuiHelpers::MakeVerticalList(
-            {
-                "Move F/B - I <-> K", 
-                "Move L/R - J <-> L",
-                "Confirm Placement - P",
-            }, 10, "Re-placing Cue Ball");
+            ImGuiHelpers::MakeVerticalList(
+                {
+                    "Rotate Cue L/R - 1 <-> 2",
+                    "Fine Adjustment - Ctrl + 1 <-> 2",
+                    "Fast Forward - F",
+                    "Charge Shot - Hold Space"
+                }, 10, "Gameplay");
 
-        ImGuiHelpers::LowerCursor();
+            ImGuiHelpers::LowerCursor();
 
-        ImGuiHelpers::MakeVerticalList(
-            {
-                "Rotate Camera L/R - A <-> D",
-                "Zoom Camera - W <-> S",
-                "Toggle Camera Mode - Tab",
-                "Free Camera - Ctrl + Tab",
-            }, 10, "Camera");
+            ImGuiHelpers::MakeVerticalList(
+                {
+                    "Rotate Camera L/R - A <-> D",
+                    "Zoom Camera - W <-> S",
+                    "Toggle Camera Mode - Tab",
+                    "Free Camera - Ctrl + Tab",
+                }, 10, "Camera");
+        }
 
         ImGui::End();
 
