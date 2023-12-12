@@ -613,9 +613,8 @@ public:
             ImGuiHelpers::MakeCenterText("Striped Balls Remaining: " + std::to_string(m_StripedBallsRemaining));
         ImGuiHelpers::LowerCursor();
 
-        
-
         ImGui::End();
+
 
         // Striped UI
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH - 250, main_viewport->WorkPos.y + 25), 0);
@@ -641,6 +640,46 @@ public:
 
         ImGui::End();
 
+    
+        // Controls
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH - 250, main_viewport->WorkPos.y + 150), 0);
+        ImGui::SetNextWindowSize(ImVec2(225, 400), 0);
+
+        ImGui::StyleColorsDark();
+
+        ImGui::Begin("Controls", NULL, ImGuiHelpers::MakeFlags(false, true, true, true, true, true, true, false, false, false));
+        ImGuiHelpers::MakeCenterText("Controls", true, false);
+
+        ImGuiHelpers::LowerCursor();
+
+        ImGuiHelpers::MakeVerticalList(
+            {
+                "Rotate Cue L/R - 1 <-> 2",
+                "Charge Shot - Hold Space"
+            }, 10, "Gameplay");
+
+        ImGuiHelpers::LowerCursor();
+
+        ImGuiHelpers::MakeVerticalList(
+            {
+                "Move F/B - I <-> K", 
+                "Move L/R - J <-> L",
+                "Confirm Placement - P",
+            }, 10, "Re-placing Cue Ball");
+
+        ImGuiHelpers::LowerCursor();
+
+        ImGuiHelpers::MakeVerticalList(
+            {
+                "Rotate Camera L/R - A <-> D",
+                "Zoom Camera - W <-> S",
+                "Toggle Camera Mode - Tab",
+                "Free Camera - Ctrl + Tab",
+            }, 10, "Camera");
+
+        ImGui::End();
+
+
         // Turn UI
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH - 225, main_viewport->WorkPos.y + WINDOW_HEIGHT - 50), 0);
         ImGui::SetNextWindowSize(ImVec2(200, 25), 0);
@@ -657,12 +696,11 @@ public:
         std::string turnLabel = "Shooting: " + currentTurn;
         ImGuiHelpers::MakeCenterText(turnLabel.c_str(), true, true);
  
-
         ImGui::End();
+
 
         // if space is held or we are still resolving a shot, the bar must be rendered
         // Power Bar
-
         m_ShootKeyHeld = Input::GetKey(GLFW_KEY_SPACE) && m_BallRb->IsEnabled();
 
         // set the resolving shot timer upon releasing a shot
