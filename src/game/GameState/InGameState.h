@@ -409,16 +409,7 @@ public:
                     m_BallContactFoul = false;
                     m_FirstCollisionHit = false;
                 }
-
-
-                BOBO_INFO(std::to_string(m_BallContactFoul) + " Contact foul?");
-                
-                BOBO_INFO("WTF");
             }
-            else {
-                BOBO_WARN("not a ball");
-            }
-            
         });
     }
 

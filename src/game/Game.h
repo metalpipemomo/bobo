@@ -234,7 +234,6 @@ private:
 			string balltag;
 			// prob not best practice but we stay silly
 			auto gameState = (InGameState *) GameStateManager::FetchGameState(GameStateLabel::IN_GAME);
-			printf("%f\n", scene->GetComponent<Transform>(en)->position.y);
 			// get balls tag that is either "striped" or "solid" 
 			if (scene->GetComponent<ObjectTag>(en)) {
 				balltag = scene->GetComponent<ObjectTag>(en)->tag;

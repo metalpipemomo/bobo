@@ -85,7 +85,6 @@ public:
 
 		if (Input::GetKey(GLFW_KEY_P) && collisions.size() < 2) 
 		{
-			printf("hi\n");
 			cueball->SetPositionHard(rb->GetPosition());
 			cueball->EnableBody();
 			Disable();
