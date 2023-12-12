@@ -34,6 +34,9 @@ public:
         ImGuiHelpers::MakeCenterText("Congratulations " + winner + "!", true, true);
         ImGuiHelpers::LowerCursor();
 
+        ImGuiHelpers::MakeCenterText("Won via: " + winReason, true);
+        ImGuiHelpers::LowerCursor();
+
         if (ImGuiHelpers::MakeCenterButton("Return to Main Menu"))
         {
             GameStateManager::ResetGameStateStack();
@@ -43,11 +46,13 @@ public:
         ImGui::End();
     }
 
-    void SetWinner(std::string winner)
+    void SetWinner(std::string winner, std::string winReason)
     {
         this->winner = winner;
+        this->winReason = winReason;
     }
 
 private:
     std::string winner;
+    std::string winReason;
 };

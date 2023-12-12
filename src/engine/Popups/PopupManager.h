@@ -33,11 +33,12 @@ struct PopupInformation
     unsigned int m_PageIndex;
     const ImVec2 m_OffsetFromAnchor;
     const bool m_AllowMove;
+    const bool m_AllowEarlyClose;
     ImVec2 m_AnchorPosition;
 
     PopupInformation(const char* title, std::vector<PerPopupInformation> pages,
-        const AnchorPos anchorPos, const ImVec2 offsetFromAnchor, const bool allowMove)
-        : m_Title(title), m_Pages(pages), m_OffsetFromAnchor(offsetFromAnchor), m_AllowMove(allowMove)
+        const AnchorPos anchorPos, const ImVec2 offsetFromAnchor, const bool allowMove, const bool allowEarlyClose)
+        : m_Title(title), m_Pages(pages), m_OffsetFromAnchor(offsetFromAnchor), m_AllowMove(allowMove), m_AllowEarlyClose(allowEarlyClose)
     {
         m_PageIndex = 0;
         SetAnchorPos(anchorPos);
@@ -108,10 +109,10 @@ public:
     }
 
     static void MakePopup(const char* title, std::vector<PerPopupInformation> pages,
-        const AnchorPos anchorPos, const ImVec2 offsetFromAnchor, bool allowMove = true)
+        const AnchorPos anchorPos, const ImVec2 offsetFromAnchor, bool allowMove = true, bool allowEarlyClose = false)
     {
         auto pm = GetInstance();
-        pm->m_ActivePopups.push_back(new PopupInformation(title, pages, anchorPos, offsetFromAnchor, allowMove));
+        pm->m_ActivePopups.push_back(new PopupInformation(title, pages, anchorPos, offsetFromAnchor, allowMove, allowEarlyClose));
     }
 
     static void Update()
@@ -131,7 +132,7 @@ public:
            
             bool hasNextButton = item->m_PageIndex + 1 < item->m_Pages.size();
             bool hasPrevButton = item->m_PageIndex > 0;
-            bool canClose = item->m_Pages.size() == 1 || item->m_PageIndex == item->m_Pages.size() - 1;
+            bool canClose = (item->m_Pages.size() == 1 || item->m_PageIndex == item->m_Pages.size() - 1) || item->m_AllowEarlyClose;
 
             ImGui::Begin(item->m_Title, canClose ? &open : NULL, 
                 ImGuiHelpers::MakeFlags(false, false, true, false, true, false, true, false, false, true));

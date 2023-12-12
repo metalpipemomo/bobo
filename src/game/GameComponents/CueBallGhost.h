@@ -13,6 +13,7 @@ public:
 	std::vector<BodyID> collisions;
 	Rigidbody* cueball;
 	Vec3 resetPos;
+	bool enabled;
 
 	CueBallGhost(Rigidbody *body, Rigidbody* cbRb) {
 		rb = body;
@@ -78,14 +79,13 @@ public:
 		xMove = min(xMove, 3.9f);
 
 		zMove += pos.GetZ();
-		zMove = min(zMove, 1.3f);
-		zMove = max(zMove, -10.3f);
+		zMove = min(zMove, 3.3f);
+		zMove = max(zMove, -12.3f);
 
 		rb->SetPositionHard(Vec3(xMove, -1.05f, zMove));
 
 		if (Input::GetKey(GLFW_KEY_P) && collisions.size() < 2) 
 		{
-			printf("hi\n");
 			cueball->SetPositionHard(rb->GetPosition());
 			cueball->EnableBody();
 			Disable();
@@ -96,6 +96,7 @@ public:
 	void Enable() {
 		if (enabled) // Ignore repeated enable commands
 			return;
+		Camera::lockCam();
 		Camera::Overcam();
 		enabled = true;
 		Camera::GetTarget();
@@ -104,8 +105,11 @@ public:
 	void Disable() {
 		enabled = false;
 		wasEnabled = false;
-		if (m_preset)
+		if (m_preset) {
+			Camera::CueballSunk(false);
+			Camera::lockCam();
 			Camera::SwitchMode(); // Switch back to last camera
+		}
 		m_preset = true;
 		Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterface().DeactivateBody(rb->GetBodyID());
 		//SceneManager::GetActiveScene()->GetComponent<Renderer>(m_OwnerId);
@@ -113,7 +117,6 @@ public:
 	}
 
 private:
-	bool enabled;
 	bool wasEnabled;
 	bool m_preset = false; // Ignore first deactivation for camera
 };

@@ -234,7 +234,6 @@ private:
 			string balltag;
 			// prob not best practice but we stay silly
 			auto gameState = (InGameState *) GameStateManager::FetchGameState(GameStateLabel::IN_GAME);
-			printf("%f\n", scene->GetComponent<Transform>(en)->position.y);
 			// get balls tag that is either "striped" or "solid" 
 			if (scene->GetComponent<ObjectTag>(en)) {
 				balltag = scene->GetComponent<ObjectTag>(en)->tag;
@@ -269,12 +268,13 @@ private:
 				}
 				else if (balltag == "cueBall") 
 				{
-					NotificationManager::SendAlphaBannerNotification("The cue ball has been sunk. Choose where to re-place it!", 
-						NotificationTextColor::RED, 2);
+					NotificationManager::SendAlphaBannerNotification("Foul: The cue ball has been sunk.", NotificationTextColor::RED);
+					NotificationManager::SendSlidingBannerNotification("Re-place the cue ball!", NotificationTextColor::WHITE);
 					auto rb = scene->GetComponent<Rigidbody>(en);
 					auto transform = scene->GetComponent<Transform>(en);
 					transform->position = glm::vec3{ 100,100,100 };
 					rb->DisableBody();
+					Camera::CueballSunk(true);
 					gameState->SinkCueBall();	
 
 					if (!m_HasShownReplacingCueBallPopup)
@@ -297,8 +297,7 @@ private:
 					gameState->Sink8Ball();
 				}
 			}
-
-			});
+		});
 	}
 
 	void TableRigidBodySetUp()
@@ -460,6 +459,7 @@ private:
 		shotIndicator->GetComponent<Transform>()->position = m_firstBallPos + glm::vec3(0, 0.35, 3) + glm::vec3(0, 0, -1);
 		shotIndicator->GetComponent<Transform>()->rotation = glm::vec3(0, 0, 0);
 		shotIndicator->AddComponent<ObjectTag>("cue");
+
 		// cue creation
 		auto cue = new GameObject();
 		cue->AddComponent<Material>(ModelLoader::GetModel("pool_cue"), TextureLoader::GetTexture("cue"));
@@ -477,7 +477,7 @@ private:
 
 		auto spotlight = new GameObject();
 		Spotlight sl;
-		sl.baseColor = { 0.7, 0.7, 0.7 }; // RGB, same as before
+		sl.baseColor = { 0.4, 0.4, 0.4 }; // RGB, same as before
 		sl.cutoffAngle = 50.0f; // The radius of the cone
 		sl.direction = { 0.0f, -1.0f, 0.0f }; // Direction of the light
 		sl.position = lamp->GetComponent<Transform>()->position; // X, Y, Z
@@ -779,6 +779,13 @@ private:
 		pl.position = { -5.0f, -5.0f, 5.0f }; // X, Y, Z (Positive Z is closer to camera)
 		pl.intensity = 250.0f;
 		pointlight->AddComponent<PointlightComponent>(pl);
+
+		pointlight = new GameObject();
+		Pointlight pl2;
+		pl2.baseColor = { 0.5f, 0.5f, 0.5f };
+		pl2.position = { 0, 10, 0 };
+		pl2.intensity = 100;
+		pointlight->AddComponent<PointlightComponent>(pl2);
 
 		/*------ AUDIO ------*/
 

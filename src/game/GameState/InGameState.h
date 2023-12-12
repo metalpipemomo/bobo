@@ -21,8 +21,22 @@ public:
         m_StripedBallsRemaining = 7;
         m_ShotPower = 0.0f;
         m_ShotPowerDirection = 1;
-        m_shotAllowedFlag = true;
+
+        m_FastForwarding = false;
+        m_Cue = true;
+
+        m_shotAllowedFlag = false;
+        m_ShotWasAllowed = false;
+        m_shotactivated = false;
+        m_HasSunkBadly = false;
+
         m_decidedBall = false;
+        m_leftSolid = true;
+
+        m_FirstCollisionHit = false;
+        m_BallContactFoul = false;
+        m_AllBallsStopped = false;
+        m_IsCueBallSunk = false;
 
         m_Turn = Turn::P1;
 
@@ -40,7 +54,8 @@ public:
                     PerPopupInformation("Happy Pooling Gamer!", ImVec2(400, 105))
                 },
                 AnchorPos::TOP_CENTER,
-                ImVec2(0, 25)
+                ImVec2(0, 25),
+                true, true
             );
         }
 
@@ -227,11 +242,17 @@ public:
         // 1 and 2 keys for rotating shot angle
         if (Input::GetKey(GLFW_KEY_1))
         {
-            m_shotAngle += m_rotateSpeed * Time::DeltaTime();
+            if(Input::GetKey(GLFW_KEY_LEFT_CONTROL))
+                m_shotAngle += (m_rotateSpeed/3.0f) * Time::DeltaTime();
+            else
+                m_shotAngle += m_rotateSpeed * Time::DeltaTime();
         }
         if (Input::GetKey(GLFW_KEY_2))
         {
-            m_shotAngle -= m_rotateSpeed * Time::DeltaTime();
+            if (Input::GetKey(GLFW_KEY_LEFT_CONTROL))
+                m_shotAngle -= (m_rotateSpeed/3.0f) * Time::DeltaTime();
+            else
+                m_shotAngle -= m_rotateSpeed * Time::DeltaTime();
         }
 
         CheckAllBallsHasStopped();
@@ -248,7 +269,6 @@ public:
             
             if (m_BallRb->GetVelocity().Length() == 0 && !m_IsCueBallSunk && m_ResolvingShot < 0) 
             {
-                
                 bool foulBall = m_BallContactFoul;
                 
                 if (!foulBall) {
@@ -259,9 +279,10 @@ public:
                 {
                     m_CueBallTransform->position = glm::vec3{ 100,100,100 };
                     m_BallRb->DisableBody();
-                    NotificationManager::SendSlidingBannerNotification("Invalid Cueball Hit!", NotificationTextColor::WHITE);
+                    NotificationManager::SendSlidingBannerNotification("Foul: Player either failed to hit a ball or failed to hit a ball of their type!", 
+                        NotificationTextColor::RED);
+                    NotificationManager::SendSlidingBannerNotification("Re-place the cue ball!", NotificationTextColor::WHITE);
                     m_CueBallGhostObject->Enable();
-                    
                 }
                 m_FirstCollisionHit = false;
                 m_ResolvingShot = 0;
@@ -271,8 +292,6 @@ public:
             if (m_AllBallsStopped)
             {
                 m_shotAllowedFlag = true;
-                m_FastForwarding = false;
-                Time::SetTimeScale(1);
                 m_CueTransform->position = m_CueBallTransform->position + glm::vec3(Sin(m_shotAngle) * -1, 0, Cos(m_shotAngle) * -1);
                 m_CueModelTransform->position = m_CueBallTransform->position + 
                 glm::vec3(Sin(m_shotAngle)*(3+m_ShotPower), 0.3 + (0.1*m_ShotPower), Cos(m_shotAngle) * (3 + m_ShotPower));
@@ -409,23 +428,13 @@ public:
                     m_BallContactFoul = false;
                     m_FirstCollisionHit = false;
                 }
-
-
-                BOBO_INFO(std::to_string(m_BallContactFoul) + " Contact foul?");
-                
-                BOBO_INFO("WTF");
             }
-            else {
-                BOBO_WARN("not a ball");
-            }
-            
         });
     }
 
     bool CheckFoul() {
         auto objects = m_Scene->GetComponentsOfType<ObjectTag>();
         m_AllBallsTransformsUpdated.clear();
-
       
         // Gather updated ball transforms
         for (auto& object : objects) 
@@ -447,7 +456,7 @@ public:
                 Transform updated = m_AllBallsTransformsUpdated[i];
                
                 // If any ball is markedly different, set the flag and break the loop
-                if (!compareVec3(initial.position, updated.position, 1)) 
+                if (!compareVec3(initial.position, updated.position, 0.001)) 
                 {
                     anyDifferent = true;
                     break;
@@ -546,10 +555,10 @@ public:
         
     }
 
-    void SetWinner(std::string winner) 
+    void SetWinner(std::string winner, std::string winReason) 
     {
         GameOverState* gameOverState = (GameOverState*)GameStateManager::FetchGameState(GameStateLabel::GAME_OVER);
-        gameOverState->SetWinner(winner);
+        gameOverState->SetWinner(winner, winReason);
         GameStateManager::EnterGameState(GameStateLabel::GAME_OVER);
     }
 
@@ -557,23 +566,23 @@ public:
     {
         if (m_SolidBallsRemaining > 0 && m_StripedBallsRemaining > 0) {
             if (m_Turn == Turn::P1)
-                SetWinner("Player 2");
+                SetWinner("Player 2", "Player 1 sunk the 8 ball before sinking all of their other balls.");
             else
-                SetWinner("Player 1");
+                SetWinner("Player 1", "Player 2 sunk the 8 ball before sinking all of their other balls.");
 
             return;
         }
         if (m_leftSolid) {
             if (m_SolidBallsRemaining <= 0)
-                SetWinner("Player 1");
+                SetWinner("Player 1", "Player 1 has sunk all their balls and the 8 ball.");
             else
-                SetWinner("Player 2");
+                SetWinner("Player 2", "Player 2 has sunk all their balls and the 8 ball.");
             return;
         }
         if (m_StripedBallsRemaining <= 0)
-            SetWinner("Player 1");
+            SetWinner("Player 1", "Player 1 has sunk all their balls and the 8 ball.");
         else
-            SetWinner("Player 2");
+            SetWinner("Player 2", "Player 2 has sunk all their balls and the 8 ball.");
     }
 
     void SinkCueBall()
@@ -619,9 +628,8 @@ public:
             ImGuiHelpers::MakeCenterText("Striped Balls Remaining: " + std::to_string(m_StripedBallsRemaining));
         ImGuiHelpers::LowerCursor();
 
-        
-
         ImGui::End();
+
 
         // Striped UI
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH - 250, main_viewport->WorkPos.y + 25), 0);
@@ -647,6 +655,61 @@ public:
 
         ImGui::End();
 
+    
+        // Controls
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH - 250, main_viewport->WorkPos.y + 150), 0);
+        ImGui::SetNextWindowSize(ImVec2(225, 325), 0);
+
+        ImGui::StyleColorsDark();
+
+        ImGui::Begin("Controls", NULL, ImGuiHelpers::MakeFlags(false, true, true, true, true, true, true, false, false, false));
+
+        if  (Camera::GetMode() == 0) {
+            ImGuiHelpers::LowerCursor();
+
+            ImGuiHelpers::MakeVerticalList(
+            {
+                "Enable Free Cam - Ctrl + Tab",
+                "Exit Free Cam - Tab",
+                "Move - WASD",
+                "Look - Arrow Keys",
+                "Move Up - Ctrl + W",
+                "Move Down - Ctrl + D"
+            }, 10, "Free Camera");
+        } else if (m_CueBallGhostObject->enabled) {
+            ImGuiHelpers::LowerCursor();
+
+            ImGuiHelpers::MakeVerticalList(
+            {
+                "Move F/B - W <-> S", 
+                "Move L/R - A <-> D",
+                "Confirm Placement - P",
+            }, 10, "Re-placing Cue Ball");
+        } else if (!m_CueBallGhostObject->enabled) {
+            ImGuiHelpers::LowerCursor();
+
+            ImGuiHelpers::MakeVerticalList(
+            {
+                "Rotate Cue L/R - 1 <-> 2",
+                "Fine Adjust - Ctrl + 1 <-> 2",
+                "Fast Forward - F",
+                "Charge Shot - Hold Space"
+            }, 10, "Gameplay");
+
+            ImGuiHelpers::LowerCursor();
+
+            ImGuiHelpers::MakeVerticalList(
+            {
+                "Rotate Camera L/R - A <-> D",
+                "Zoom Camera - W <-> S",
+                "Toggle Camera Mode - Tab",
+                "Enable Free Cam - Ctrl + Tab"
+            }, 10, "Game Camera");
+        }
+
+        ImGui::End();
+
+
         // Turn UI
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH - 225, main_viewport->WorkPos.y + WINDOW_HEIGHT - 50), 0);
         ImGui::SetNextWindowSize(ImVec2(200, 25), 0);
@@ -662,13 +725,11 @@ public:
             currentTurn = "P2";
         std::string turnLabel = "Shooting: " + currentTurn;
         ImGuiHelpers::MakeCenterText(turnLabel.c_str(), true, true);
- 
-
         ImGui::End();
+
 
         // if space is held or we are still resolving a shot, the bar must be rendered
         // Power Bar
-
         m_ShootKeyHeld = Input::GetKey(GLFW_KEY_SPACE) && m_BallRb->IsEnabled();
 
         // set the resolving shot timer upon releasing a shot
@@ -734,25 +795,28 @@ public:
 
         m_ShootKeyHeldLastFrame = m_ShootKeyHeld;
 
-        if (!m_shotAllowedFlag)
-        {
-            // Time Control
-            ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH / 2 - 200 / 2, main_viewport->WorkPos.y + WINDOW_HEIGHT - 150), 0);
-            ImGui::SetNextWindowSize(ImVec2(200, 62.5), 0);
+        // Time Control
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + WINDOW_WIDTH - 225, main_viewport->WorkPos.y + WINDOW_HEIGHT - 135), 0);
+        ImGui::SetNextWindowSize(ImVec2(200, 75), 0);
 
-            ImGui::Begin("Time Control", NULL, ImGuiHelpers::MakeFlags(true, true, true, true, true, true, true, false, false, false));
+        ImGui::Begin("Time Control", NULL, ImGuiHelpers::MakeFlags(true, true, true, true, true, true, true, false, false, false));
 
-            if (ImGuiHelpers::MakeCenterButton("Toggle Fast Forward", true, true)) {
-                m_FastForwarding = !m_FastForwarding;
-                if (m_FastForwarding)
-                    Time::SetTimeScale(2);
-                else 
-                   Time::SetTimeScale(1);
-                NotificationManager::SendDefaultNotification("Time Scale is now " + std::to_string(Time::GetTimeScale()),
-                    NotificationTextColor::WHITE);
-            }
-            ImGui::End();
+        ImGuiHelpers::LowerCursor();
+        if (ImGuiHelpers::MakeCenterButton("Toggle Fast Forward", true, false) || Input::GetKeyDown(GLFW_KEY_F)) {
+            m_FastForwarding = !m_FastForwarding;
+            if (m_FastForwarding)
+                Time::SetTimeScale(2);
+            else
+                Time::SetTimeScale(1);
+            NotificationManager::SendDefaultNotification("Time Scale is now " + std::to_string(Time::GetTimeScale()),
+                NotificationTextColor::WHITE);
         }
+
+        ImGuiHelpers::LowerCursor();
+        std::string ffString = m_FastForwarding ? "Enabled" : "Disabled";
+        ImGuiHelpers::MakeCenterText("Fast Forwarding " + ffString, true, false);
+
+        ImGui::End();
     }
 
     virtual void Resume()
@@ -764,53 +828,63 @@ public:
     }
 
 private:
-    int m_StripedBallsRemaining;
-    int m_SolidBallsRemaining;
-    Turn m_Turn;
-    Turn m_TurnLastUpdate;
-    Turn m_NextTurn;
-    bool m_HasSunkBadly = false;
-    float m_ShotPower;
-    int m_ShotPowerDirection;
-    bool m_Cue = true;
-
-    int m_ProgressBarWidth = 300;
-    int m_ProgressBarHeight = 50;
-    int m_ProgressBarPadding = 3;
-
-    bool m_decidedBall = false;
-    bool m_leftSolid = true;
-
-    float m_ResolvingShot;
-    bool m_ShootKeyHeld;
-    bool m_ShootKeyHeldLastFrame;
-
-    bool m_shotAllowedFlag;
-    bool m_ShotWasAllowed = false;
-    bool m_shotactivated;
-    glm::vec3 m_cueBallPos;
-    float m_shotAngle;
-    int m_maxShotPower = 400;
-    float m_rotateSpeed = 1.1;
-    float m_PlayerMuscles = 1.25;
-
+    // References
     Rigidbody* m_BallRb;
     Transform* m_CueTransform;
     Transform* m_CueModelTransform;
     Transform* m_CueBallTransform;
     GameManager* m_Manager;
     Scene* m_Scene;
-
+    CueBallGhost* m_CueBallGhostObject;
     std::vector<Transform*> m_AllBallsTransforms;
     std::vector<Transform> m_AllBallsTransformsPrevious;
     std::vector<Transform> m_AllBallsTransformsUpdated;
+
+    // Game tracking
+    int m_StripedBallsRemaining;
+    int m_SolidBallsRemaining;
+    Turn m_Turn;
+    Turn m_TurnLastUpdate;
+    Turn m_NextTurn;
+    bool m_Cue = true;
+
+    float m_ShotPower;
+    int m_ShotPowerDirection;
+
+    float m_shotAngle;
+
+    glm::vec3 m_cueBallPos;
+
+    bool m_shotAllowedFlag = false;
+    bool m_ShotWasAllowed = false;
+    bool m_shotactivated = false;
+    bool m_HasSunkBadly = false;
+
+    // Deciding which ball type belongs to each player
+    bool m_decidedBall = false;
+    bool m_leftSolid = true;
+
+    // Fouls & other
     bool m_FirstCollisionHit = false;
     bool m_BallContactFoul = false;
     bool m_AllBallsStopped = false;
-    float m_VelocityThreshold = 0.1;
-    CueBallGhost* m_CueBallGhostObject;
     bool m_IsCueBallSunk = false;
 
-    bool m_HasShownHowToPlay = false;
+    // Adjustables
+    int m_maxShotPower = 400;
+    float m_rotateSpeed = 1.1;
+    float m_PlayerMuscles = 1.25;
+    float m_VelocityThreshold = 0.2;
+
+    // UI
+    int m_ProgressBarWidth = 300;
+    int m_ProgressBarHeight = 50;
+    int m_ProgressBarPadding = 3;
+    float m_ResolvingShot;
+    bool m_ShootKeyHeld;
+    bool m_ShootKeyHeldLastFrame;
+
+    // Other
     bool m_FastForwarding = false;
+    bool m_HasShownHowToPlay = false;
 };
