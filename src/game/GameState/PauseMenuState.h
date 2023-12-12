@@ -53,6 +53,8 @@ public:
         ImGuiHelpers::MakeVerticalList(
             {
                 "Rotate Cue L/R - 1 <-> 2",
+                "Fine Adjustment - Ctrl + 1 <-> 2",
+                "Fast Forward - F",
                 "Charge Shot - Hold Space"
             }, 10, "Gameplay");
 
@@ -60,8 +62,8 @@ public:
 
         ImGuiHelpers::MakeVerticalList(
             {
-                "Move F/B - I <-> K", 
-                "Move L/R - J <-> L",
+                "Move F/B - W <-> S", 
+                "Move L/R - A <-> D",
                 "Confirm Placement - P",
             }, 10, "Re-placing Cue Ball");
 
