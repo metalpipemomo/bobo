@@ -86,7 +86,7 @@ struct SlideBannerNotificationInfo : BannerNotificationInfo
 
     SlideBannerNotificationInfo(const std::string& text, const ImVec4 textColor, const float fontScale, const float duration,
         const float slideSpeed) :
-        BannerNotificationInfo(text, textColor, fontScale, duration, .75, -WINDOW_HEIGHT / 2), m_SlideSpeed(slideSpeed) {};
+        BannerNotificationInfo(text, textColor, fontScale, duration, .5, -WINDOW_HEIGHT / 2), m_SlideSpeed(slideSpeed) {};
 
     bool In()
     {
@@ -124,7 +124,7 @@ public:
         SendDefaultNotification(text, n->GetNotificationColor(textColor), duration);
     }
 
-    static void SendDefaultNotification(const std::string& text, const ImVec4 textColor, const float duration = 3)
+    static void SendDefaultNotification(const std::string& text, const ImVec4 textColor, const float duration = 7.5)
     {
         auto n = GetInstance();
         DefaultNotificationInfo* info = new DefaultNotificationInfo(text, textColor, 1, duration);
@@ -133,14 +133,14 @@ public:
     }
 
     /* Banner */
-    static void SendAlphaBannerNotification(const std::string& text, const NotificationTextColor textColor, const float duration = 1, 
+    static void SendAlphaBannerNotification(const std::string& text, const NotificationTextColor textColor, const float duration = 3, 
         const float speed = 5, const float targetAlpha = .75)
     {
         auto n = GetInstance();
         SendAlphaBannerNotification(text, n->GetNotificationColor(textColor), duration, speed, targetAlpha);
     }
 
-    static void SendAlphaBannerNotification(const std::string& text, const ImVec4 textColor, const float duration = 1,
+    static void SendAlphaBannerNotification(const std::string& text, const ImVec4 textColor, const float duration = 3,
         const float speed = 5, const float targetAlpha = .75)
     {
         auto n = GetInstance();
@@ -148,14 +148,14 @@ public:
         n->m_PendingBannerNotifications.push(info);
     }
 
-    static void SendSlidingBannerNotification(const std::string& text, const NotificationTextColor textColor, const float duration = 1,
+    static void SendSlidingBannerNotification(const std::string& text, const NotificationTextColor textColor, const float duration = 3,
         const float speed = 750)
     {
         auto n = GetInstance();
         SendSlidingBannerNotification(text, n->GetNotificationColor(textColor), duration, speed);
     }
 
-    static void SendSlidingBannerNotification(const std::string& text, const ImVec4 textColor, const float duration = 1,
+    static void SendSlidingBannerNotification(const std::string& text, const ImVec4 textColor, const float duration = 3,
         const float speed = 750)
     {
         auto n = GetInstance();
