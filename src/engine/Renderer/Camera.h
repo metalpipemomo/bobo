@@ -72,6 +72,7 @@ public:
 
 	static short SwitchMode() {
 		auto c = GetInstance(); // Change the mode
+		if (GameStateManager::GetCurrentState() != GameStateManager::FetchGameState(GameStateLabel::IN_GAME)) return c->m_mode;
 		if (c->m_mode == 3) {
 			SwitchLamp(); // Switch lamp back on since we're activating it
 			if (c->m_firstMode) { // Remember past action to get into mode 3
