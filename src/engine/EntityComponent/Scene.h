@@ -51,10 +51,13 @@ public:
 
 	void SetParent(const Entity& child, const Entity& parent)
 	{
+		// get the child's current parent
 		auto oldParentComponent = GetComponent<Parent>(child);
 
+		// if the child DOES have a parent
 		if (oldParentComponent != nullptr)
 		{
+			// take this child out of its parent's list of children
 			auto& children = m_ChildMap[oldParentComponent->parentId];
 
 			for (size_t i = 0; i < children.size(); ++i)
@@ -66,11 +69,15 @@ public:
 			}
 			oldParentComponent->parentId = parent;
 			return;
-		} else
+		} 
+		// if the child doesn't have a parent
+		else
 		{
+			// add a component to the child telling it who its parent is
 			AddComponent<Parent>(child, parent);
 		}
 
+		// add the child to the parent's list of children
 		m_ChildMap[parent].push_back(child);
 	}
 

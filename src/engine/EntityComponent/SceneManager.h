@@ -55,6 +55,7 @@ public:
 		return scene->second;
 	}
 
+	// calls the active scene's awake function when it first starts
 	static void AwakeActiveScene()
 	{
 		auto sm = GetInstance();
@@ -62,6 +63,7 @@ public:
 		sm->p_ActiveScene->Awake();
 	}
 
+	// calls the active scene's update every update
 	static void UpdateActiveScene()
 	{
 		auto sm = GetInstance();
@@ -69,6 +71,7 @@ public:
 		sm->p_ActiveScene->Update();
 	}
 
+	// calls the active scene's fixed update every fixed update
 	static void FixedUpdateActiveScene()
 	{
 		auto sm = GetInstance();
@@ -76,12 +79,14 @@ public:
 		sm->p_ActiveScene->FixedUpdate();
 	}
 
+	// adds a function to be called when the scene is changed
 	static void AddOnSceneChanged(std::string id, std::function<void()> callback)
 	{
 		auto sm = GetInstance();
 		sm->onSceneChangedActions[id] = callback;
 	}
 
+	// removes a function which would be called when the scene is changed
 	static void RemoveOnSceneChanged(std::string id)
 	{
 		auto sm = GetInstance();

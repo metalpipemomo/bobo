@@ -18,6 +18,7 @@ public:
 			p_Transform->rotation.x = sin(m_Interval * 0.05 * PI)/3;
 			p_Transform->rotation.y = sin(m_Interval * 0.05 * PI);
 
+			// if this has moved past a certain point, destroy it
 			if(p_Transform->position.y >= 80) {
 				SceneManager::GetActiveScene()->DestroyEntity(m_OwnerId);
 			}

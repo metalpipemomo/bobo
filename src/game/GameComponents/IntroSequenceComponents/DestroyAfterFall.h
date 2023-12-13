@@ -11,6 +11,7 @@ public:
 	DestroyAfterFall(Transform* transform) : p_Transform(transform) {};
 	void Update() 
 	{
+		// if the object has fallen past a certain point, destroy it
 		if(p_Transform->position.y <= -40) {
 				SceneManager::GetActiveScene()->DestroyEntity(m_OwnerId);
 		}

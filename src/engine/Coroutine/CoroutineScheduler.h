@@ -34,17 +34,24 @@ public:
 		auto it = c->m_Coroutines.begin();
 		while (it != c->m_Coroutines.end())
 		{
+			// update the state of all coroutines
 			(*it)->Update();
+			// if the coroutine is done
 			if ((*it)->Resolve())
 			{
+				// call its function
 				(*it)->m_Function();
 
+				// if there's a followup coroutine then start it
 				if ((*it)->m_NextCoroutine != nullptr)
 				{
 					StartCoroutine((*it)->m_NextCoroutine);
 				}
+
+				// get rid of this current coroutine from the coroutine list
 				it = c->m_Coroutines.erase(it);
 			}
+			// otherwise, move onto the next coroutine
 			else
 			{
 				it++;

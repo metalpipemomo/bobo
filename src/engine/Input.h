@@ -32,11 +32,13 @@ public:
 		}
 	}
 
+	// get if the current key is being held down right now
 	static bool GetKey(int key)
 	{
 		return p_KeyHoldArray[key];
 	}
 
+	// get if the current key has just been pressed
 	static bool GetKeyDown(int key)
 	{
 		bool keyVal = p_KeyPressArray[key];
@@ -44,6 +46,7 @@ public:
 		return keyVal;
 	}
 
+	// get if the current key has just been released
 	static bool GetKeyUp(int key)
 	{
 		bool keyVal = p_KeyReleaseArray[key];
