@@ -148,6 +148,7 @@ public:
 		}
 	}
 
+	// handles movement of the camera while in freecam
 	static void FreeCamControls() {
 		if (Input::GetKey(GLFW_KEY_W) && Input::GetKey(GLFW_KEY_LEFT_CONTROL))
 		{
@@ -196,6 +197,7 @@ public:
 		}
 	}
 
+	// handles movement of the camera when in slide view (essentially when focused on something)
 	static void SlideControls() {
 		auto c = GetInstance();
 		if (Input::GetKey(GLFW_KEY_D))
@@ -216,6 +218,7 @@ public:
 		}
 	}
 
+	// gets the camera target for the ball-targeting camera mode
 	static bool GetTarget() {
 		auto scene = SceneManager::GetActiveScene();
 		auto objects = scene->GetComponentsOfType<ObjectTag>();

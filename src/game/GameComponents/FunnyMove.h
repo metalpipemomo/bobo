@@ -5,6 +5,7 @@
 
 #define PI 3.14159265
 
+// this component was just for demoing the ECS
 class FunnyMove : public Component
 {
 public:

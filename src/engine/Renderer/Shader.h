@@ -22,7 +22,7 @@ std::vector<char> Shader::ReadFile(const std::string& path)
 
     if (!file.is_open())
     {
-        throw std::runtime_error("file shit aint workin dawg");
+        throw std::runtime_error("file [Stuff] aint workin dawg");
     }
 
     size_t fileSize = static_cast<size_t>(file.tellg());
@@ -42,7 +42,7 @@ GLuint Shader::LoadShader(GLenum type, const std::string& shaderSource)
 
     if (shader == 0)
     {
-        throw std::runtime_error("shader shit aint workin 1");
+        throw std::runtime_error("shader [Stuff] aint workin 1");
         return -1;
     }
 
@@ -64,7 +64,7 @@ GLuint Shader::LoadShader(GLenum type, const std::string& shaderSource)
             char* infoLog = (char*)malloc(sizeof(char) * infoLen);
             glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
             std::cout << infoLog << std::endl;
-            throw std::runtime_error("shader shit aint workin 2");
+            throw std::runtime_error("shader [Stuff] aint workin 2");
             free(infoLog);
         }
 
@@ -81,14 +81,14 @@ GLuint Shader::LoadProgram(const std::string& vertSource, const std::string& fra
     GLuint vertexShader = LoadShader(GL_VERTEX_SHADER, vertSource);
     if (vertexShader == -1)
     {
-        throw std::runtime_error("program shit aint workin 1");
+        throw std::runtime_error("program [Stuff] aint workin 1");
         return -1;
     }
 
     GLuint fragmentShader = LoadShader(GL_FRAGMENT_SHADER, fragSource);
     if (fragmentShader == -1)
     {
-        throw std::runtime_error("program shit aint workin 2");
+        throw std::runtime_error("program [Stuff] aint workin 2");
         glDeleteShader(vertexShader);
         return -1;
     }
@@ -118,7 +118,7 @@ GLuint Shader::LoadProgram(const std::string& vertSource, const std::string& fra
         {
             char* infoLog = (char*)malloc(sizeof(char) * infoLen);
             glGetProgramInfoLog(program, infoLen, NULL, infoLog);
-            throw std::runtime_error("program shit aint workin 2");
+            throw std::runtime_error("program [Stuff] aint workin 2");
             free(infoLog);
         }
 
