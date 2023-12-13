@@ -215,6 +215,8 @@ public:
             m_Scene->GetComponent<Rigidbody>(object->m_OwnerId)->SetMotionType(false);
         }
 
+        // this was originally just for sound testing but now it works to accompany the
+        // walls blowing away 
         auto playAudioBoom = [=]() {
             auto s = Audio::GetSoundInfo("Boom");
             s->SetVolume(.5);
@@ -239,7 +241,7 @@ public:
         m_AllBallsStopped = true;
         m_CueModelTransform->rotation = glm::vec3(-0.12, m_shotAngle, 0);
         
-        // 1 and 2 keys for rotating shot angle
+        // checks 1 and 2 keys for rotating shot angle; 1 to rotate CCW, 2 to rotate CW
         if (Input::GetKey(GLFW_KEY_1))
         {
             if(Input::GetKey(GLFW_KEY_LEFT_CONTROL))
@@ -257,24 +259,29 @@ public:
 
         CheckAllBallsHasStopped();
 
-        // if cue ball almost stopped, stop it
+        // if cue ball almost stopped
         if (m_BallRb->GetVelocity().Length() < m_VelocityThreshold || !m_BallRb->IsEnabled())
         {
+            // stop the cue ball
             m_BallRb->SetVelocity(JPH::Vec3{ 0,0,0 });
 
+            // the ghost cue ball (i.e., the cue ball placement mode) is only enabled if all balls have stopped
             if (m_IsCueBallSunk && m_AllBallsStopped)
             {
                 m_CueBallGhostObject->Enable();
             }
             
+            // if the cue ball has stopped, is not sunk, and the ball was hit
             if (m_BallRb->GetVelocity().Length() == 0 && !m_IsCueBallSunk && m_ResolvingShot < 0) 
             {
                 bool foulBall = m_BallContactFoul;
                 
+                // check if a foul occurred
                 if (!foulBall) {
                     foulBall = CheckFoul();
                 }
 
+                // if a foul occurred, send notifications, disable the cueball, and enable the cueball placement mode
                 if (foulBall) 
                 {
                     m_CueBallTransform->position = glm::vec3{ 100,100,100 };
@@ -298,16 +305,17 @@ public:
             }
         }
 
-        // shoot cue ball with space and swap turns
+        // handle events related to when the cueball has actually been hit
         if (m_shotactivated && m_shotAllowedFlag)
         {
-            // make cue shot indicator dissapear and set flag to false
+            // reset variables to false to make a clean slate for a new turn
             m_IsCueBallSunk = false;
             m_shotAllowedFlag = false;
             m_shotactivated = false;
             m_ShotWasAllowed = false;
             m_HasSunkBadly = false;
             m_CueTransform->position = glm::vec3{ 100,100,100 };
+
             // make cue model dissapear after some time to make it look like a real shot
             m_CueModelTransform->position = m_CueBallTransform->position + glm::vec3(Sin(m_shotAngle) * 3, 0.3, Cos(m_shotAngle) * 3);
             float waitTime = 0.5;
@@ -316,6 +324,7 @@ public:
                 };
             auto c = CoroutineScheduler::StartCoroutine<WaitForSeconds>(makeCueDissapear, waitTime);
             
+            // play a sound for when the cue is hit
             if (m_Cue) {
                 auto s = Audio::GetSoundInfo("CueHit");
                 s->SetVolume(m_ShotPower / m_maxShotPower * 100);
@@ -323,6 +332,7 @@ public:
             }
             m_Cue = !m_Cue;
             
+            // make the cueball move
             m_BallRb->addForce(m_PlayerMuscles * JPH::Vec3(Sin(m_shotAngle) * -m_ShotPower * m_maxShotPower, 0, Cos(m_shotAngle) * -m_ShotPower * m_maxShotPower));
         }
     }
@@ -332,8 +342,10 @@ public:
         // do game updating stuff
         UpdateGame();
 
+        // if the turns have changed
         if (m_Turn != m_TurnLastUpdate)
         {
+            // make a banner declaring this new turn
             std::string newTurn;
             if (m_Turn == Turn::P1)
             {
@@ -345,8 +357,11 @@ public:
             }
             NotificationManager::SendSlidingBannerNotification(newTurn + " Turn Start", NotificationTextColor::WHITE);
         }
+        // keep track of what the turn just was
         m_TurnLastUpdate = m_Turn;
 
+        // when everything has settled and the cueball is once again ready to be hit, the turn will be resolved
+        // based on the results of the prior turn (if the player sunk a ball of their type w/o sinking the other person's or not)
         if (!m_ShotWasAllowed && m_shotAllowedFlag) {
             m_Turn = m_NextTurn;
             m_HasSunkBadly = false;
@@ -354,14 +369,17 @@ public:
         }
     }
 
+    // checks if all balls have stopped, or should stop; if a ball is just barely moving, it will be stopped manually
     void CheckAllBallsHasStopped()
     {
         // check if all balls are stopped
         for (auto& ball : m_AllBallsTransforms)
         {
             auto ballRb = m_Scene->GetComponent<Rigidbody>(ball->m_OwnerId);
+            // if a ball is almost stopped or is not enabled
             if (ballRb->GetVelocity().Length() < m_VelocityThreshold || !ballRb->IsEnabled())
             {
+                // stop the ball
                 ballRb->SetVelocity(JPH::Vec3{ 0,0,0 });
             }
             else
@@ -486,20 +504,29 @@ public:
     {
         NotificationManager::SendDefaultNotification("A Solid Ball has been Sunk", NotificationTextColor::BLUE);
         
+        // if it's player 1's turn
         if (m_Turn == Turn::P1)
         {
+            // if the ball hasn't been decided, their ball will become solid
             if (!m_decidedBall) {
                 m_leftSolid = true;
+                // and they get another turn if the cueball isn't sunk
                 if (!m_IsCueBallSunk)
                     m_NextTurn = Turn::P1;
             }
+            // if p1 is not solid, they've sunk badly, so next turn will be p2's turn
             else if (!m_leftSolid) {
                 m_NextTurn = Turn::P2;
                 m_HasSunkBadly = true;
             }
-            else  if (!m_HasSunkBadly)
+            // if p1 is solid and hasn't sunk badly already, the next turn might just be theirs...!!!!!
+            else if (!m_HasSunkBadly)
                 m_NextTurn = Turn::P1;
         }
+        // essentially the same as the prior but for p2;
+        // if ball hasn't been determined, p2 becomes solid and if the cueball hasn't sunk they get another turn
+        // if they're not solid, they've sunk badly, so next turn will be p1's turn
+        // if they haven't sunk badly, they will get another turn unless they sink badly later
         if (m_Turn == Turn::P2) 
         {
             if (!m_decidedBall){
@@ -518,6 +545,14 @@ public:
         m_decidedBall = true;
     }
 
+    // this function is essentially the same as SinkSolid, but for sinking a striped
+    // to summarise:
+    // - if the ball type hasn't been decided, whoever sunk will become striped,
+    //   and get another turn (if they haven't sunk the cueball)
+    // - if the person sunk a ball that was not theirs, they have sunk badly, so the
+    //   next turn will be their opponent's no matter what
+    // - if the person sunk a ball that was theirs and have not sunk badly, the next
+    //   turn will become theirs unless they later sink a ball that was not theirs 
     void SinkStriped() 
     {
         NotificationManager::SendDefaultNotification("A Striped Ball has been Sunk", NotificationTextColor::RED);
@@ -555,6 +590,7 @@ public:
         
     }
 
+    // ends the game and sets the winner as whoever won
     void SetWinner(std::string winner, std::string winReason) 
     {
         GameOverState* gameOverState = (GameOverState*)GameStateManager::FetchGameState(GameStateLabel::GAME_OVER);
@@ -562,8 +598,10 @@ public:
         GameStateManager::EnterGameState(GameStateLabel::GAME_OVER);
     }
 
+    // handles ending the game; game only ends when the 8ball is sunk
     void Sink8Ball()
     {
+        // if there's still balls remaining, then whoever sunk the ball lost
         if (m_SolidBallsRemaining > 0 && m_StripedBallsRemaining > 0) {
             if (m_Turn == Turn::P1)
                 SetWinner("Player 2", "Player 1 sunk the 8 ball before sinking all of their other balls.");
@@ -572,23 +610,28 @@ public:
 
             return;
         }
+        // if player 1 is solid
         if (m_leftSolid) {
+            // player 1 wins if there's no solid balls left
             if (m_SolidBallsRemaining <= 0)
                 SetWinner("Player 1", "Player 1 has sunk all their balls and the 8 ball.");
+            // otherwise, player 2 wins
             else
                 SetWinner("Player 2", "Player 2 has sunk all their balls and the 8 ball.");
             return;
         }
+        // otherwise, player 1 wins if there's no striped balls left
         if (m_StripedBallsRemaining <= 0)
             SetWinner("Player 1", "Player 1 has sunk all their balls and the 8 ball.");
+        // otherwise, player 2 wins
         else
             SetWinner("Player 2", "Player 2 has sunk all their balls and the 8 ball.");
     }
 
     void SinkCueBall()
     {
-        // unneeded maybe? this is called in game.h but idk if we actually need this
-        // if you remove this then remember to remove its call in game.h
+        // if the player sinks the cue ball, they've sunk badly,
+        // and it should become the other player's turn
         m_IsCueBallSunk = true;
         m_HasSunkBadly = true;
         if (m_Turn == Turn::P1)
@@ -601,6 +644,7 @@ public:
         }
     }
 
+    // this function creates and handles the majority of UI elements in the ingamestate
     void Render()
     {
         // Render the game over screen to the display
