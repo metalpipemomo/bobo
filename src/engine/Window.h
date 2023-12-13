@@ -52,14 +52,11 @@ public:
 		TextureLoader::Init();
 		ModelLoader::Init();
 		Renderer::Init();
-		
 		SceneManager::Init();
 		SceneManager::AddOnSceneChanged("SetSceneHasChanged", [this]() { hasSceneChanged = true;});
 		hasSceneChanged = true;
-		
 		Audio::Init();
 		CoroutineScheduler::Init();
-
 		Physics::Init();
 	}
 

@@ -3,6 +3,7 @@
 #include "bpch.h"
 #include <glad/glad.h>
 
+// Shader class definition
 class Shader
 {
 public:
@@ -16,6 +17,7 @@ protected:
     GLuint m_Program;
 };
 
+// Reads a file into a vector of characters, basically a string
 std::vector<char> Shader::ReadFile(const std::string& path)
 {
     std::ifstream file{ path, std::ios::ate };
@@ -35,7 +37,7 @@ std::vector<char> Shader::ReadFile(const std::string& path)
     return buffer;
 }
 
-
+// Compiles a shader, boilerplate
 GLuint Shader::LoadShader(GLenum type, const std::string& shaderSource)
 {
     GLuint shader = glCreateShader(type);
@@ -76,6 +78,7 @@ GLuint Shader::LoadShader(GLenum type, const std::string& shaderSource)
     return shader;
 }
 
+// Loads a program from a vertex and a fragment shader, boilerplate
 GLuint Shader::LoadProgram(const std::string& vertSource, const std::string& fragSource)
 {
     GLuint vertexShader = LoadShader(GL_VERTEX_SHADER, vertSource);

@@ -3,6 +3,7 @@
 #include "../bpch.h"
 #include <GLFW/glfw3.h>
 
+// Key Input Class
 class Input
 {
 public:
@@ -18,6 +19,7 @@ public:
 		glfwSetKeyCallback(window, KeyCallback);
 	}
 
+	// Called whenever a key is pressed
 	static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 		if (action == GLFW_PRESS)

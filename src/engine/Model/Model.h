@@ -33,6 +33,7 @@ struct Model
 	GLuint vao;
 };
 
+// A hashing function for the Vertex struct, needed for use in some std data structures
 namespace std
 {
     template<> struct hash<Vertex>

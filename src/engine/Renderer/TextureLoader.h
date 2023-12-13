@@ -6,6 +6,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+
+// A class to help load textures
 class TextureLoader
 {
 public:
@@ -24,6 +26,7 @@ public:
 		tl->LoadCubeMap(faces);
 	}
 
+	// Get texture ID by string identifier
 	static unsigned int GetTexture(const std::string& identifier)
 	{
 		std::string copyIdentifier = identifier;
@@ -65,6 +68,7 @@ private:
 		m_TexCount = 0;
 	}
 
+	// Loads all textures in a specified directory
 	int LoadAllTextures(const std::string& directory)
 	{
 		int count = 0;
@@ -78,6 +82,7 @@ private:
 		return count;
 	}
 	
+	// Loads a texture with anisotropy
 	void LoadTexture(const std::string& path, const std::string& identifier)
 	{
 		int width, height, numChannels;
@@ -111,6 +116,7 @@ private:
 		m_TexMap.insert({ copyIdentifier, texture });
 	}
 
+	// Load a cubemap texture
 	void LoadCubeMap(std::vector<std::string> faces) {
 		//Creates Cubemap Texture ID
 		unsigned int textureID;
@@ -135,7 +141,6 @@ private:
 			stbi_image_free(data);
 		}
 
-		//Wrapping and filtering methods are determined here.
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

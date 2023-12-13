@@ -50,6 +50,8 @@ Model* ModelLoader::GetModel(const std::string& identifier)
 	return nullptr;
 }
 
+// Loads a model using tinyobjloader then parses its internal storage of the obj data into a format usable for us
+// Thread-safe
 void ModelLoader::LoadModel(const std::string& identifier, const std::string& path)
 {
     tinyobj::attrib_t attrib;
@@ -155,6 +157,7 @@ void ModelLoader::LoadAllModels(const std::string& directory)
 	BOBO_INFO("ModelLoader Loaded {} Models from Directory {}", m_LoadedModels.size(), directory);
 }
 
+// Constructs VAOs for all models
 void ModelLoader::ConstructVAO(const std::string& name, Model* model)
 {
     GLuint vao;

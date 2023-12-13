@@ -33,6 +33,7 @@ public:
         glUseProgram(m_Program);
     }
 
+    // Sets all the uniforms used for the standard shader
     void Data(StandardShaderProps ssp)
     {
         glUniformMatrix4fv(glGetUniformLocation(m_Program, "model"), 1, GL_FALSE, glm::value_ptr(ssp.model));
