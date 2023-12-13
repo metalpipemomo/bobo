@@ -56,7 +56,7 @@ private:
 	void BallsSetup()
 	{
 		Ref<SphereShape> s = new SphereShape(0.2);
-		s->SetDensity(400);
+		s->SetDensity(1000);
 
 		// 1st row
 		auto solidOneBall = new GameObject();
@@ -172,7 +172,7 @@ private:
 		cueball->GetComponent<Transform>()->scale = glm::vec3(.2, .2, .2);
 		cueball->AddComponent<ObjectTag>("cueBall");
 		Ref<SphereShape> s2 = new SphereShape(0.2);
-		s2->SetDensity(600);
+		s2->SetDensity(1000);
 		AddRigidBodyToBall(cueball, s2);
 
 		CreateGhostBall();

@@ -36,6 +36,7 @@ public:
 			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().AddBody(body->GetID(), EActivation::DontActivate);
 		} else {
 			body->GetMotionProperties()->SetAngularDamping(0.75);
+			body->GetMotionProperties()->SetLinearDamping(0.2);
 			Physics::GetInstance()->GetPhysicsSystem()->GetBodyInterfaceNoLock().AddBody(body->GetID(), EActivation::Activate);
 
 		}
