@@ -9,7 +9,7 @@ Commands in code blocks are to be typed into your terminal.
 
 #### Step 1: Clone the repo
 ```bash
-git clone https://github.com/MoBaydoun/bobo.git
+git clone https://github.com/metalpipemomo/bobo.git
 ```
 
 #### Step 2: Ensure you have CMake installed

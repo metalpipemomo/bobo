@@ -16,6 +16,7 @@
 #include "TextureLoader.h"
 #include <glad/glad.h>
 
+// Hard-coded vertices for skybox cube
 float skyboxVertices[] = {
 	// positions          
 	-1.0f,  1.0f, -1.0f,
@@ -64,6 +65,7 @@ float skyboxVertices[] = {
 class Renderer
 {
 public:
+	// Initializes shaders and generates the VAO for the skybox
 	static void Init()
 	{
 		auto r = GetInstance();
@@ -88,6 +90,7 @@ public:
 		BOBO_INFO("Renderer initialized!");
 	}
 
+	// Updates the model matrix of each entity with a transform every frame
 	static void Update()
 	{
 		auto scene = SceneManager::GetActiveScene();
@@ -112,6 +115,8 @@ public:
 		}
 	}
 
+	// Draws standard geometry
+	// Then changes depth function to draw skybox behind everything
 	static void Draw()
 	{
 		auto scene = SceneManager::GetActiveScene();
