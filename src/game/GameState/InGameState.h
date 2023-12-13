@@ -871,7 +871,7 @@ private:
     bool m_IsCueBallSunk = false;
 
     // Adjustables
-    int m_maxShotPower = 400;
+    int m_maxShotPower = 750;
     float m_rotateSpeed = 1.1;
     float m_PlayerMuscles = 1.25;
     float m_VelocityThreshold = 0.2;
